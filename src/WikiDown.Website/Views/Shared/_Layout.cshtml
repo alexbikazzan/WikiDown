@@ -1,0 +1,85 @@
+﻿<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie10 lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie10 lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie10 lt-ie9"> <![endif]-->
+<!--[if IE 9]>         <html class="no-js lt-ie10"> <![endif]-->
+<!--[if gt IE 9]><!-->
+<html class="no-js"><!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        @Html.SeoHtmlTitle()
+
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        
+        <link rel="shortcut icon" type="image/x-icon" href="~/favicon.ico" />
+        <link rel="apple-touch-icon" href="~/apple-touch-icon.png" />
+        
+        @Html.SeoMetaNoIndex()
+        @Html.SeoMetaDescription()
+        @Html.SeoMetaKeywords()
+        
+        <meta name="author" content="Seb Nilsson" />
+        
+        @Html.Canonical(Url.Absolute(this.Seo.CanonicalUrl))
+
+        <meta name="application-name" content="@SeoHelper.BaseTitle" />
+        <meta name="msapplication-TileColor" content="#ffffff" />
+        <meta name="msapplication-TileImage" content="~/apple-touch-icon-144x144-precomposed.png" />
+        
+        @Html.StylesheetConditional("//cdnjs.cloudflare.com/ajax/libs/normalize/3.0.1/normalize")
+        @Html.StylesheetConditional("//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.2.0/css/bootstrap")
+        @Html.StylesheetConditional("//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.2.0/css/bootstrap-theme")
+
+        @RenderSection("Css", @<text>@Html.BundledCss("site")</text>)
+        
+        @RenderSection("HeadContent", false)
+
+        <script type="text/javascript">
+            //var _gaq = _gaq || []; _gaq.push(["_setAccount", "UA-XXXXXXXXX-X"]), _gaq.push(["_trackPageview"]), function () { var n = document.createElement("script"), t; n.type = "text/javascript", n.async = !0, n.src = ("https:" == document.location.protocol ? "https://ssl" : "http://www") + ".google-analytics.com/ga.js", t = document.getElementsByTagName("script")[0], t.parentNode.insertBefore(n, t) }()
+        </script>
+    </head>
+    <body class="@Seo.BodyClass" ng-app="@ViewBag.NgApp" ng-init="@ViewBag.NgInit">
+        <script type="text/javascript">
+            try { document.body.parentNode.className = 'js'; } catch (e) { }
+        </script>
+
+        <div id="message-box">
+            <!--[if lt IE 10]>
+                <div class="important">
+                    <p>You are using an outdated browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to better experience this website.</p>
+                </div>
+            <![endif]-->
+            <noscript class="no-js">
+                <p>For <strong>optimal user-experience on this website</strong> please <a href="http://www.activatejavascript.org/">activate JavaScript</a>.</p>
+            </noscript>
+        </div>
+    
+        <div id="container">
+            <div>
+                @using(Html.BeginRouteForm(RouteNames.WikiSearch)) {
+                    @Html.TextBox("search")
+
+                    <button type="submit">Search</button>
+                }
+            </div>
+
+            <article id="current-article" ng-controller="@ViewBag.NgController">
+                @RenderBody()
+            </article>
+        
+            <footer>
+                <a href="@Url.WikiList()">
+                    Article List
+                </a>
+            </footer>
+        </div>
+    
+        @RenderSection("BodyBottomContent", false)
+        
+        @Html.JavascriptConditional("//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery")
+        @*@Html.JavascriptConditional("//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.2.0/js/bootstrap")*@
+
+        @RenderSection("Js", @<text>@Html.BundledJs("site")</text>)
+    </body>
+</html>

@@ -1,0 +1,53 @@
+﻿@model WikiArticleInfoViewModel
+
+<h1>@Model.PageTitle</h1>
+
+<div>
+    <a href="@Url.WikiArticle(Model.ArticleSlug)">Back to article</a>
+</div>
+
+@*<div>
+    @Html.LabelFor(x => x.Article.Created, "Created")<br />
+    @Html.DisplayFor(x => x.Article.Created)
+</div>
+<div>
+    @Html.LabelFor(x => x.Article.LatestRevision.Updated, "Updated")<br />
+    @Html.DisplayFor(x => x.Article.LatestRevision.Updated)
+</div>*@
+
+@if (Model.Revisions.Any())
+{
+    <div id="article-revisions">
+        <h2>Revisions</h2>
+
+        @foreach (var revision in Model.Revisions)
+        {
+            <div class="revision">
+                <a href="@Url.WikiArticle(Model.ArticleSlug, revision)">@revision.DateTime.ToString("yyyy-MM-dd HH:mm:ss")</a>
+            </div>
+        }
+    </div>
+}
+
+@if (Model.RedirectTitles.Any())
+{
+    <div id="redirect-titles">
+        <h2>Redirects</h2>
+
+        @foreach (var redirect in Model.RedirectTitles)
+        {
+            <div class="redirect">
+                <a href="@Url.WikiArticleEdit(redirect, noRedirect: true)">@redirect.Title</a>
+            </div>
+        }
+    </div>
+}
+
+@if (!string.IsNullOrWhiteSpace(Model.MetaKeywords))
+{
+    <div id="meta-keywords">
+        <h2>Meta-keywords</h2>
+
+        <div>@Model.MetaKeywords</div>
+    </div>
+}

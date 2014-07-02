@@ -1,0 +1,12 @@
+﻿@model WikiListViewModel
+
+<h1>Articles</h1>
+
+<div id="article-list">
+    @foreach (var article in Model.Articles)
+    {
+        <div class="article">
+            <a href="@Url.WikiArticle(article.Value)">@article.Key</a>
+        </div>
+    }
+</div>

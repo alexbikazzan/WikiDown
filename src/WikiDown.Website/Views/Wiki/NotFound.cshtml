@@ -1,0 +1,7 @@
+﻿@model WikiArticleNotFoundViewModel
+
+<h2>No article found for '@Model.ArticleTitle'</h2>
+
+<div>
+    Do you want to <a href="@Url.WikiArticleEdit(Model.ArticleSlug)">create the article</a>?
+</div>

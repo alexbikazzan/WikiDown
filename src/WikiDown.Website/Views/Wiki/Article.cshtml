@@ -1,0 +1,30 @@
+﻿@model WikiArticleViewModel
+
+<h1>@Model.ArticleTitle</h1>
+
+<div id="article-commands">
+    <a href="@Url.WikiArticleEdit(Model.ArticleSlug, Model.RevisionDateTime)" class="command">Edit</a>
+    <a href="@Url.WikiArticleInfo(Model.ArticleSlug)" class="command">Info</a>
+</div>
+<div class="clearfix"></div>
+
+@if (!string.IsNullOrWhiteSpace(Model.RedirectedFrom))
+{
+    <div id="redirected-from" class="article-meta">
+        Redirected from: <em>@Model.RedirectedFrom</em>
+    </div>
+}
+
+@if (Model.LatestRevisionCreatedAt.HasValue)
+{
+    <div id="revision-info" class="article-meta">
+        Revision from: @Model.LatestRevisionCreatedAt.Value.ToString("yyyy-MM-dd HH:mm:ss")
+        - <a href="@Url.WikiArticle(Model.ArticleSlug)">Go to latest</a>
+    </div>
+}
+
+<div class="clearfix"></div>
+
+<div id="content">
+    @Html.Raw(Model.HtmlContent)
+</div>

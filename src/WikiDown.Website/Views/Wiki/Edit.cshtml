@@ -1,0 +1,91 @@
+﻿@model WikiArticleEditViewModel
+@{
+    ViewBag.NgApp = "WikiDown";
+    ViewBag.NgController = "EditController";
+    ViewBag.NgInit = string.Format("articleSlug = '{0}';", Model.ArticleSlug);
+
+    if (Model.RevisionDateTime.HasValue)
+    {
+        string revisionDateTime = Model.RevisionDateTime.Value.ToString(WikiDown.ArticleRevision.IdDateTimeFormat);
+        ViewBag.NgInit += string.Format("selectedRevision = '{0}';", revisionDateTime);
+    }
+}
+
+<h1>@Model.PageTitle</h1>
+
+@*<div class="article-meta">
+    @if (!Model.IsCreateMode)
+    {
+        <div>
+            <a href="@Url.WikiArticle(Model.ArticleSlug)">Back to article</a>
+        </div>
+    }
+</div>*@
+
+<div class="article-revisions">
+    <select ng-options="revision.key as revision.value for revision in articleRevisions"
+            ng-model="selectedRevision" ng-change="articleRevisionChange(selectedRevision)"
+            ng-hide="articleRevisions && !articleRevisions.length"
+            ng-disabled="(articleRevisions && !articleRevisions.$resolved) || (articleRevision && !articleRevision.$resolved)"></select>
+</div>
+
+<form action="@Url.WikiArticleEdit(Model.ArticleSlug)" method="POST">
+    <div>
+        @Html.Label("title-editor", "Title")<br />
+        @Html.TextBoxFor(x => x.ArticleTitle, new { id = "title-editor", disabled = "disabled" })
+    </div>
+
+    <div id="wmd">
+        <div id="wmd-panel">
+            <div id="wmd-button-bar"></div>
+            @Html.TextAreaFor(x => x.MarkdownContent,
+                new { id = "wmd-input", ng_model = "markdownContent", model_value = string.Empty,
+                      ng_disabled = "articleRevision && !articleRevision.$resolved"
+                    })
+        </div>
+    </div>
+
+    <h2>Edit summary</h2>
+    <div>
+        @Html.TextBoxFor(x => x.RevisionEditSummary, new { id = "edit-summary"  })
+    </div>
+
+    <h2>MetaKeywords</h2>
+    <div>
+        @Html.TextBoxFor(x => x.MetaKeywords, new { id = "meta-keywords" })
+    </div>
+
+    <h2>Redirect titles (semi-colon seperated titles)</h2>
+    <div>
+        @Html.TextBoxFor(x => x.RedirectTitles, new { id = "redirect-titles", tags_input = string.Empty })
+    </div>
+    
+    <div>
+        <button type="submit">Submit</button>
+
+        <span>
+            <a href="@(Model.IsCreateMode ? Url.Empty() : Url.WikiArticle(Model.ArticleSlug))">Cancel</a>
+        </span>
+    </div>
+</form>
+
+<div class="article-html-preview">
+    <h2 id="article-preview">Preview</h2>
+    <div id="wmd-preview"></div>
+</div>
+
+@section Css {
+    @Html.BundledCss("edit")
+
+    @Html.StylesheetConditional("//cdnjs.cloudflare.com/ajax/libs/select2/3.5.0/select2")
+    @Html.StylesheetConditional("//cdnjs.cloudflare.com/ajax/libs/select2/3.5.0/select2-bootstrap")
+}
+
+@section Js {
+    @Html.JavascriptConditional("//ajax.googleapis.com/ajax/libs/angularjs/1.2.18/angular")
+    @Html.JavascriptConditional("//ajax.googleapis.com/ajax/libs/angularjs/1.2.18/angular-resource")
+
+    @Html.JavascriptConditional("//cdnjs.cloudflare.com/ajax/libs/select2/3.5.0/select2")
+
+    @Html.BundledJs("edit")
+}

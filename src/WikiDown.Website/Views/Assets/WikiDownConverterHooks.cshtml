@@ -1,0 +1,27 @@
+﻿@model AssetsWikiDownConverterHooksViewModel
+
+if (typeof window.WikiDown === 'undefined') {
+    window.WikiDown = {};
+}
+
+window.WikiDown.preConversions = window.WikiDown.preConversions || [];
+window.WikiDown.postConversions = window.WikiDown.postConversions || [];
+
+@foreach (var hook in Model.PreConversionHooks)
+{
+    @ConverterHook(hook, "preConversions")
+}
+
+@foreach (var hook in Model.PostConversionHooks)
+{
+    @ConverterHook(hook, "postConversions")
+}
+
+@helper ConverterHook(AssetsWikiDownConverterHooksViewModel.ConverterHookItem hook, string arrayName)
+{
+<text>
+window.WikiDown.@(hook.ArrayName).push(function(input) {
+    return input.replace(/@(hook.RegexPattern)/@(hook.RegexFlags), '@(hook.RegexReplace)');
+});
+</text>
+}
