@@ -29,16 +29,20 @@ namespace WikiDown.Website
         {
             var siteJs = Bundle.JavaScript();
             var editJs = Bundle.JavaScript();
+            var infoJs = Bundle.JavaScript();
 
             editJs.AddDirectory("~/Content/Libraries/pagedown")
                 .Add("~/" + AssetsController.WikiDownAssetsBasePath + "converter-hooks.js")
                 .AddDirectory("~/Content/App/", recursive: false)
                 .AddDirectory("~/Content/App/");
 
-            ConfigMultiple(x => x.Add("~/Content/Site.js"), siteJs, editJs);
+            infoJs.Add("~/Content/Info.js");
+
+            ConfigMultiple(x => x.Add("~/Content/Site.js"), siteJs, editJs, infoJs);
 
             siteJs.AsCached("site", "~/" + AssetsController.BundlesBasePath + "site_#.js");
             editJs.AsCached("edit", "~/" + AssetsController.BundlesBasePath + "edit_#.js");
+            infoJs.AsCached("info", "~/" + AssetsController.BundlesBasePath + "info_#.js");
         }
 
         private static void ConfigMultiple<TBundle>(Action<TBundle> configAction, params TBundle[] bundles)

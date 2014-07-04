@@ -1,0 +1,14 @@
+﻿@model WikiArticleViewModel
+
+<h2>No article found</h2>
+
+<div>
+    Do you want to <a href="@Url.WikiArticleEdit(Model.ArticleSlug)">create the article</a>?
+</div>
+
+@if (Model.ArticleRedirectFrom.HasValue)
+{
+    <div>
+        or <a href="@Url.WikiArticle(Model.ArticleRedirectTo)">go to redirected article</a>.
+    </div>
+}

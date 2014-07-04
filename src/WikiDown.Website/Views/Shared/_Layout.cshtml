@@ -4,7 +4,7 @@
 <!--[if IE 8]>         <html class="no-js lt-ie10 lt-ie9"> <![endif]-->
 <!--[if IE 9]>         <html class="no-js lt-ie10"> <![endif]-->
 <!--[if gt IE 9]><!-->
-<html class="no-js"><!--<![endif]-->
+<html class="no-js" lang="en"><!--<![endif]-->
     <head>
         <meta charset="utf-8">
         @Html.SeoHtmlTitle()
@@ -27,13 +27,18 @@
         <meta name="msapplication-TileColor" content="#ffffff" />
         <meta name="msapplication-TileImage" content="~/apple-touch-icon-144x144-precomposed.png" />
         
-        @Html.StylesheetConditional("//cdnjs.cloudflare.com/ajax/libs/normalize/3.0.1/normalize")
+        @*@Html.StylesheetConditional("//cdnjs.cloudflare.com/ajax/libs/normalize/3.0.1/normalize")*@
         @Html.StylesheetConditional("//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.2.0/css/bootstrap")
-        @Html.StylesheetConditional("//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.2.0/css/bootstrap-theme")
+        @*@Html.StylesheetConditional("//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.2.0/css/bootstrap-theme")*@
 
         @RenderSection("Css", @<text>@Html.BundledCss("site")</text>)
         
-        @RenderSection("HeadContent", false)
+        @RenderSection("Head", false)
+        
+        <!--[if lt IE 9]>
+            @Html.JavascriptConditional("//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv")
+            @Html.JavascriptConditional("//cdnjs.cloudflare.com/ajax/libs/respond.js/1.4.2/respond")
+        <![endif]-->
 
         <script type="text/javascript">
             //var _gaq = _gaq || []; _gaq.push(["_setAccount", "UA-XXXXXXXXX-X"]), _gaq.push(["_trackPageview"]), function () { var n = document.createElement("script"), t; n.type = "text/javascript", n.async = !0, n.src = ("https:" == document.location.protocol ? "https://ssl" : "http://www") + ".google-analytics.com/ga.js", t = document.getElementsByTagName("script")[0], t.parentNode.insertBefore(n, t) }()
@@ -43,43 +48,67 @@
         <script type="text/javascript">
             try { document.body.parentNode.className = 'js'; } catch (e) { }
         </script>
+        <div id="wrapper">
+            @Html.Partial("_MessageBox")
 
-        <div id="message-box">
-            <!--[if lt IE 10]>
-                <div class="important">
-                    <p>You are using an outdated browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to better experience this website.</p>
-                </div>
-            <![endif]-->
-            <noscript class="no-js">
-                <p>For <strong>optimal user-experience on this website</strong> please <a href="http://www.activatejavascript.org/">activate JavaScript</a>.</p>
-            </noscript>
-        </div>
-    
-        <div id="container">
-            <div>
-                @using(Html.BeginRouteForm(RouteNames.WikiSearch)) {
-                    @Html.TextBox("search")
+            <header>
+                <nav class="navbar navbar-default">
+                    <div class="container-fluid">
+                        @RenderSection("Navbar", false)
 
-                    <button type="submit">Search</button>
-                }
-            </div>
+                        @SearchForm()
+                        
+                        <ul class="nav navbar-nav navbar-right">
+                            <li>
+                                <a href="@Url.WikiList()">
+                                    <span class="glyphicon glyphicon-list-alt"></span> All Articles
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
+            </header>
 
-            <article id="current-article" ng-controller="@ViewBag.NgController">
+            <div id="main" class="container" ng-controller="@ViewBag.NgController">
                 @RenderBody()
-            </article>
-        
-            <footer>
-                <a href="@Url.WikiList()">
-                    Article List
-                </a>
-            </footer>
+            </div>
         </div>
-    
+
+        <footer class="footer row">
+            <div class="container">
+                <div class="panel panel-default panel-body">
+                    <a href="@Url.WikiList()">
+                        Article List
+                    </a>
+                </div>
+            </div>
+        </footer>
+
         @RenderSection("BodyBottomContent", false)
-        
+
         @Html.JavascriptConditional("//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery")
         @*@Html.JavascriptConditional("//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.2.0/js/bootstrap")*@
 
         @RenderSection("Js", @<text>@Html.BundledJs("site")</text>)
     </body>
 </html>
+
+@helper SearchForm() {
+    <div class="navbar-right">
+        @using(Html.BeginRouteForm(RouteNames.WikiSearch, FormMethod.Post, new { @class = "navbar-form " })) {
+            <div class="input-group">
+                <div class="form-group">
+                    @Html.TextBox("search", null, new { @class = "form-control", placeholder = "Search articles" })
+                </div>
+
+                <span class="input-group-btn">
+                    <button type="submit" class="btn btn-default" title="Search">
+                        <span class="glyphicon glyphicon-search">
+                            <span class="sr-only">Search</span>
+                        </span>
+                    </button>
+                </span>
+            </div>
+        }
+    </div>
+}

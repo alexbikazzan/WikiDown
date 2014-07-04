@@ -16,7 +16,7 @@ namespace WikiDown.Website
             RouteCollection routes,
             Action<RouteCollection, IInlineConstraintResolver> registerAutomaticRoutesFactory)
         {
-            routes.AppendTrailingSlash = false;
+            routes.AppendTrailingSlash = true;
             routes.RouteExistingFiles = true;
 
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");

@@ -15,7 +15,7 @@ namespace WikiDown.Website
         protected void Application_Start()
         {
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
-            ModelBinderConfig.RegisterModelBinders(ModelBinders.Binders);
+            ModelBinderConfig.RegisterModelBinders(ModelBinders.Binders, GlobalConfiguration.Configuration);
             WebApiConfig.Register(GlobalConfiguration.Configuration);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
 

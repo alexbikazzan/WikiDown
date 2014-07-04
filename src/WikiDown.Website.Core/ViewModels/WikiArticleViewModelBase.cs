@@ -10,20 +10,41 @@ namespace WikiDown.Website.ViewModels
         {
         }
 
-        protected WikiArticleViewModelBase(ArticleId articleId)
+        protected WikiArticleViewModelBase(
+            ArticleId articleId,
+            ArticleRevisionDate articleRevisionDate = null,
+            ArticleHeaderTab activeTab = ArticleHeaderTab.None)
         {
-            if (articleId == null)
-            {
-                throw new ArgumentNullException("articleId");
-            }
+            this.ArticleId = articleId;
+            this.DisplayArticleId = articleId;
 
-            this.ArticleSlug = articleId.Slug;
-            this.ArticleTitle = articleId.Title;
+            this.ArticleRevisionDate = articleRevisionDate;
+            this.ActiveTab = activeTab;
         }
 
-        public string ArticleSlug { get; set; }
+        public ArticleHeaderTab ActiveTab { get; set; }
 
-        public string ArticleTitle { get; set; }
+        public DateTime? ArticleRevisionDate { get; set; }
+
+        public ArticleId ArticleId { get; set; }
+
+        public string ArticleSlug
+        {
+            get
+            {
+                return this.ArticleId.HasValue ? this.ArticleId.Slug : null;
+            }
+        }
+
+        public string ArticleTitle
+        {
+            get
+            {
+                return this.DisplayArticleId.HasValue ? this.DisplayArticleId.Title : this.ArticleId.Title;
+            }
+        }
+
+        public ArticleId DisplayArticleId { get; set; }
 
         public virtual string PageTitle
         {
@@ -33,7 +54,7 @@ namespace WikiDown.Website.ViewModels
             }
         }
 
-        public void Populate(SeoHelper seoHelper)
+        public virtual void PopulateSeo(SeoHelper seoHelper)
         {
             seoHelper.Title = this.PageTitle;
         }

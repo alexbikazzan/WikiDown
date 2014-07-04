@@ -7,52 +7,63 @@ namespace WikiDown.Website.ViewModels
     public class WikiArticleViewModel : WikiArticleViewModelBase
     {
         public WikiArticleViewModel(
-            ArticlePage articlePage,
             ArticleId articleId,
-            ArticleRevisionDate revisionDateTime,
-            string redirectedFrom)
-            : base(articleId)
+            ArticleResult articleResult,
+            ArticleRevisionDate articleRevisionDate,
+            bool shouldRedirect)
+            : base(articleId, articleRevisionDate, ArticleHeaderTab.Article)
         {
-            if (articlePage == null)
+            if (articleResult == null)
             {
-                throw new ArgumentNullException("articlePage");
+                throw new ArgumentNullException("articleResult");
             }
 
-            this.RedirectedFrom = redirectedFrom;
-            this.RevisionDateTime = revisionDateTime;
+            this.ShouldRedirect = shouldRedirect;
 
-            if (articlePage.Revision == null)
+            this.ArticleRedirectFrom = articleResult.ArticleRedirectFromSlug;
+            this.ArticleRedirectTo = articleResult.ArticleRedirectToSlug;
+
+            if (articleResult.HasRedirect && !shouldRedirect)
             {
                 return;
             }
 
-            this.LatestRevisionCreatedAt = revisionDateTime.HasValue ? articlePage.Revision.CreatedAt : (DateTime?)null;
+            this.DisplayArticleId = articleResult.HasArticle ? articleResult.Article.Id : this.DisplayArticleId;
 
-            string markdown = articlePage.Revision.MarkdownContent;
+            if (!articleResult.HasArticle || articleResult.ArticleRevision == null)
+            {
+                return;
+            }
+            
+            string markdown = articleResult.ArticleRevision.MarkdownContent;
             this.HtmlContent = MarkdownService.MakeHtml(markdown);
+
+            this.HasArticle = true;
         }
+
+        public bool HasArticle { get; set; }
 
         public string HtmlContent { get; set; }
 
-        public DateTime? RevisionDateTime { get; set; }
+        public ArticleId ArticleRedirectFrom { get; set; }
 
-        public DateTime? LatestRevisionCreatedAt { get; set; }
+        public ArticleId ArticleRedirectTo { get; set; }
 
-        public string RedirectedFrom { get; set; }
+        public bool ShouldRedirect { get; set; }
 
         public override string PageTitle
         {
             get
             {
-                if (this.LatestRevisionCreatedAt.HasValue)
+                if (this.ArticleRevisionDate.HasValue)
                 {
                     return string.Format(
                         "{0} - Revision from {1}",
                         this.ArticleTitle,
-                        this.LatestRevisionCreatedAt.Value.ToString("yyyy-MM-dd HH:mm:ss"));
+                        this.ArticleRevisionDate.Value.ToString("yyyy-MM-dd HH:mm:ss"));
                 }
 
-                return this.ArticleTitle;
+                return base.PageTitle;
             }
         }
     }

@@ -33,27 +33,35 @@ namespace WikiDown.Website
         public static string WikiArticle(
             this UrlHelper urlHelper,
             ArticleId articleId,
-            ArticleRevisionDate revisionCreated = null)
+            ArticleRevisionDate revisionDate = null,
+            bool redirect = true)
         {
-            return urlHelper.RouteUrl(RouteNames.WikiArticle, new { slug = articleId.Slug, revisionCreated });
+            var noRedirectValue = redirect ? null : "0";
+
+            return urlHelper.RouteUrl(
+                RouteNames.WikiArticle,
+                new { slug = articleId.Slug, revisionDate, redirect = noRedirectValue });
         }
 
         public static string WikiArticleEdit(
             this UrlHelper urlHelper,
             ArticleId articleId,
-            ArticleRevisionDate revisionCreated = null,
-            bool noRedirect = false)
+            ArticleRevisionDate revisionDate = null)
         {
-            var noRedirectValue = noRedirect ? 1 : (int?)null;
-
-            return urlHelper.RouteUrl(
-                RouteNames.WikiArticleEdit,
-                new { slug = articleId.Slug, revisionCreated, noRedirect = noRedirectValue });
+            return urlHelper.RouteUrl(RouteNames.WikiArticleEdit, new { slug = articleId.Slug, revisionDate });
         }
 
         public static string WikiArticleInfo(this UrlHelper urlHelper, ArticleId articleId)
         {
             return urlHelper.RouteUrl(RouteNames.WikiArticleInfo, new { slug = articleId.Slug });
+        }
+
+        public static string WikiDeleteArticleRevision(
+            this UrlHelper urlHelper,
+            ArticleId articleId,
+            ArticleRevisionDate revisionDate)
+        {
+            return urlHelper.RouteUrl(RouteNames.WikiArticleRevisionDelete, new { slug = articleId.Slug, revisionDate });
         }
 
         public static string WikiList(this UrlHelper urlHelper)

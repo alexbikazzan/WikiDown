@@ -5,7 +5,7 @@ using WebApi = System.Web.Http;
 
 namespace WikiDown.Website
 {
-    public class ArticleRevisionDateModelBinder : Mvc.DefaultModelBinder, WebApi.ModelBinding.IModelBinder
+    public class ArticleIdModelBinder : Mvc.DefaultModelBinder, WebApi.ModelBinding.IModelBinder
     {
         public override object BindModel(
             Mvc.ControllerContext controllerContext,
@@ -15,9 +15,9 @@ namespace WikiDown.Website
 
             var modelState = new Mvc.ModelState { Value = valueProviderResult };
 
-            string value = (valueProviderResult != null) ? valueProviderResult.AttemptedValue : null;
+            var value = (valueProviderResult != null) ? valueProviderResult.AttemptedValue : null;
 
-            var model = !string.IsNullOrWhiteSpace(value) ? new ArticleRevisionDate(value) : ArticleRevisionDate.Empty;
+            var model = new ArticleId(value ?? string.Empty);
 
             bindingContext.ModelState.Add(bindingContext.ModelName, modelState);
 
@@ -28,7 +28,7 @@ namespace WikiDown.Website
             WebApi.Controllers.HttpActionContext actionContext,
             WebApi.ModelBinding.ModelBindingContext bindingContext)
         {
-            if (bindingContext.ModelType != typeof(ArticleRevisionDate))
+            if (bindingContext.ModelType != typeof(ArticleId))
             {
                 return false;
             }
@@ -41,7 +41,7 @@ namespace WikiDown.Website
                 throw new WebApi.HttpResponseException(HttpStatusCode.BadRequest);
             }
 
-            bindingContext.Model = new ArticleRevisionDate(value);
+            bindingContext.Model = new ArticleId(value);
             return true;
         }
     }

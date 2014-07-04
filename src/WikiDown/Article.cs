@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 
 namespace WikiDown
 {
@@ -12,7 +10,7 @@ namespace WikiDown
         {
         }
 
-        public Article(ArticleId articleId, string metaKeywords = null, IEnumerable<string> redirectTitles = null)
+        public Article(ArticleId articleId, string metaKeywords = null)
         {
             if (articleId == null)
             {
@@ -21,7 +19,6 @@ namespace WikiDown
 
             this.Title = articleId.Title;
             this.MetaKeywords = metaKeywords;
-            this.RedirectTitles = redirectTitles ?? Enumerable.Empty<string>();
 
             this.CreatedAt = DateTime.UtcNow;
         }
@@ -32,9 +29,9 @@ namespace WikiDown
 
         public string Id { get; set; }
 
-        public string MetaKeywords { get; set; }
+        public bool IsDeleted { get; set; }
 
-        public IEnumerable<string> RedirectTitles { get; set; }
+        public string MetaKeywords { get; set; }
 
         public string Title { get; private set; }
     }

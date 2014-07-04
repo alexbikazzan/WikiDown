@@ -1,123 +1,42 @@
-﻿.clearfix:before,
-.clearfix:after {
-    content: " "; /* 1 */
-    display: table; /* 2 */
+﻿/*html {
+  position: relative;
+  min-height: 100%;
 }
-.clearfix:after {
-    clear: both;
-}
-.clearfix {
-    *zoom: 1;
-}
-
-a, a:link, a:hover, a:active, a:visited {
-	color: #00e;
-}
-
 body {
-    background-color: #ccc;
+  margin-bottom: 60px;
 }
-#container {
-    background-color: #fff;
-
-    max-width: 800px;
-    margin: 0 auto;
-    /*padding: 1em;*/
-}
-
-label {
-    font-weight: bold;
-}
-
-form textarea, form input[type="text"] {
-    width: 99%;
-}
-form textarea[disabled], form input[type="text"][disabled], form textarea[readonly], form input[type="text"][readonly] {
-    background-color: #ddd;
-}
+.footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 60px;
+  background-color: #f5f5f5;
+}*/
 
 #wmd-input {
-    height: 18em;
+    /*height: 18em;*/
 }
 #wmd-preview {
 	max-height: 18em;
 	overflow: auto;
-    width: 100%;
-}
-
-
-header, article, footer {
-	padding: 1em;
-}
-h1, h2, h3 {
-    margin-bottom: 0;
-    padding-bottom: 0;
-}
-h1 {
-	display: inline;
-    margin-top: 0;
-}
-
-#article-commands {
-	font-family: Consolas, 'Lucida Console', 'DejaVu Sans Mono', monospace;
-    display: inline;
-    float: right;
-	font-size: 0.9em;
-
-	a, a:link, a:hover, a:active, a:visited {
-		color: #000;
-	}
-	.command {
-		background-color: #ccc;
-		padding: 0.15em 0.25em;
-	}
-}
-#revision-history {
-	float: right;
-	font-size: 0.9em;
-}
-
-.article-meta {
-    font-size: 0.9em;
-    font-style: italic;
-}
-
-#content, form {
-    border-top: 1px solid #555555;
-    margin-top: 1em;
-}
-form {
-    padding-top: 1em;
-}
-
-#article-redirect {
-	padding-top: 1em;
-}
-
-footer {
-	background-color: #999;
-	color: #fff;
-
-	a, a:link, a:hover, a:active, a:visited {
-		color: #000;
-	}
+    /*width: 100%;*/
 }
 
 /* Smartphone */
-@media screen and (max-width: 320px) {
+/*@media screen and (max-width: 320px) {
     body {
         font-size: 0.6em;
     }
 }
 /* Tablet */
-@media screen and (max-width: 768px) {
+/*@media screen and (max-width: 768px) {
     body {
         font-size: 0.8em;
     }
-}
+}*/
 /* Netbook */
-@media screen and (max-width: 1024px) {
+/*@media screen and (max-width: 1024px) {
     body {
         font-size: 0.9em;
     }
-}
+}*/

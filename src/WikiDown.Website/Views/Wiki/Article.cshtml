@@ -1,30 +1,38 @@
 ﻿@model WikiArticleViewModel
 
-<h1>@Model.ArticleTitle</h1>
+@section Navbar {
+    @Html.ArticleNavigation(Model)
+}
 
-<div id="article-commands">
-    <a href="@Url.WikiArticleEdit(Model.ArticleSlug, Model.RevisionDateTime)" class="command">Edit</a>
-    <a href="@Url.WikiArticleInfo(Model.ArticleSlug)" class="command">Info</a>
-</div>
-<div class="clearfix"></div>
+<h1>@Model.PageTitle</h1>
 
-@if (!string.IsNullOrWhiteSpace(Model.RedirectedFrom))
+@if (Model.ArticleRedirectFrom.HasValue && Model.ShouldRedirect)
 {
-    <div id="redirected-from" class="article-meta">
-        Redirected from: <em>@Model.RedirectedFrom</em>
+    <div class="breadcrumb">
+        redirected from:
+        <em>
+            <a href="@Url.WikiArticle(Model.ArticleRedirectFrom, redirect: false)">@Model.ArticleRedirectFrom.Title</a>
+        </em>
     </div>
 }
 
-@if (Model.LatestRevisionCreatedAt.HasValue)
+@if (Model.ArticleRevisionDate.HasValue)
 {
     <div id="revision-info" class="article-meta">
-        Revision from: @Model.LatestRevisionCreatedAt.Value.ToString("yyyy-MM-dd HH:mm:ss")
+        Revision from: @Model.ArticleRevisionDate.Value.ToString("yyyy-MM-dd HH:mm:ss")
         - <a href="@Url.WikiArticle(Model.ArticleSlug)">Go to latest</a>
     </div>
 }
 
 <div class="clearfix"></div>
 
-<div id="content">
-    @Html.Raw(Model.HtmlContent)
+<div id="content" class="container">
+    @if (Model.HasArticle)
+    {
+        @Html.Raw(Model.HtmlContent)
+    }
+    else
+    {
+        @Html.Partial("_NoArticle")
+    }
 </div>

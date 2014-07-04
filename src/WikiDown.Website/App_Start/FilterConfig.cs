@@ -8,7 +8,7 @@ namespace WikiDown.Website
     {
         public static void RegisterGlobalFilters(GlobalFilterCollection filters)
         {
-            //filters.Add(new HandleExceptionsAttribute());
+            filters.Add(new HandleExceptionsAttribute());
             filters.Add(new SeoModelFilterAttribute());
         }
     }

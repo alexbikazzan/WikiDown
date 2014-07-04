@@ -11,60 +11,59 @@
     }
 }
 
+@section Navbar {
+    @Html.ArticleNavigation(Model)
+}
+
 <h1>@Model.PageTitle</h1>
 
-@*<div class="article-meta">
-    @if (!Model.IsCreateMode)
-    {
-        <div>
-            <a href="@Url.WikiArticle(Model.ArticleSlug)">Back to article</a>
-        </div>
-    }
-</div>*@
-
-<div class="article-revisions">
+<div class="form-group col-md-3 col-md-offset-9">
     <select ng-options="revision.key as revision.value for revision in articleRevisions"
             ng-model="selectedRevision" ng-change="articleRevisionChange(selectedRevision)"
             ng-hide="articleRevisions && !articleRevisions.length"
-            ng-disabled="(articleRevisions && !articleRevisions.$resolved) || (articleRevision && !articleRevision.$resolved)"></select>
+            ng-disabled="(articleRevisions && !articleRevisions.$resolved) || (articleRevision && !articleRevision.$resolved)"
+            class="form-control"></select>
 </div>
 
 <form action="@Url.WikiArticleEdit(Model.ArticleSlug)" method="POST">
-    <div>
+    <div class="form-group">
         @Html.Label("title-editor", "Title")<br />
-        @Html.TextBoxFor(x => x.ArticleTitle, new { id = "title-editor", disabled = "disabled" })
+        @Html.TextBoxFor(x => x.ArticleTitle, new { id = "title-editor", disabled = "disabled", @class = "form-control" })
     </div>
+        
+    <!-- TODO: Navtabs-->
 
-    <div id="wmd">
+    <div id="wmd" class="form-group">
         <div id="wmd-panel">
             <div id="wmd-button-bar"></div>
             @Html.TextAreaFor(x => x.MarkdownContent,
-                new { id = "wmd-input", ng_model = "markdownContent", model_value = string.Empty,
-                      ng_disabled = "articleRevision && !articleRevision.$resolved"
+                new {
+                        id = "wmd-input", rows = 20, ng_model = "markdownContent", model_value = string.Empty,
+                        ng_disabled = "articleRevision && !articleRevision.$resolved", @class = "form-control"
                     })
         </div>
     </div>
-
-    <h2>Edit summary</h2>
-    <div>
-        @Html.TextBoxFor(x => x.RevisionEditSummary, new { id = "edit-summary"  })
+        
+    <div class="form-group">
+        <h2>Edit summary</h2>
+        @Html.TextBoxFor(x => x.RevisionEditSummary, new { id = "edit-summary", @class = "form-control" })
     </div>
 
-    <h2>MetaKeywords</h2>
-    <div>
-        @Html.TextBoxFor(x => x.MetaKeywords, new { id = "meta-keywords" })
+    <div class="form-group">
+        <h2>MetaKeywords</h2>
+        @Html.TextBoxFor(x => x.MetaKeywords, new { id = "meta-keywords", @class = "form-control" })
     </div>
 
-    <h2>Redirect titles (semi-colon seperated titles)</h2>
-    <div>
-        @Html.TextBoxFor(x => x.RedirectTitles, new { id = "redirect-titles", tags_input = string.Empty })
+    <div class="form-group">
+        <h2>Redirect titles (semi-colon seperated titles)</h2>
+        @Html.TextBoxFor(x => x.ArticleRedirects, new { id = "article-redirects", @class = "form-control" })
     </div>
-    
-    <div>
-        <button type="submit">Submit</button>
+
+    <div class="form-group">
+        <button type="submit" class="btn btn-default">Submit</button>
 
         <span>
-            <a href="@(Model.IsCreateMode ? Url.Empty() : Url.WikiArticle(Model.ArticleSlug))">Cancel</a>
+            <a href="@(Model.IsCreateMode ? Url.Empty() : Url.WikiArticle(Model.ArticleSlug))" class="btn btn-link">Cancel</a>
         </span>
     </div>
 </form>
@@ -78,13 +77,14 @@
     @Html.BundledCss("edit")
 
     @Html.StylesheetConditional("//cdnjs.cloudflare.com/ajax/libs/select2/3.5.0/select2")
-    @Html.StylesheetConditional("//cdnjs.cloudflare.com/ajax/libs/select2/3.5.0/select2-bootstrap")
+    @*@Html.StylesheetConditional("//cdnjs.cloudflare.com/ajax/libs/select2/3.5.0/select2-bootstrap")*@
 }
 
 @section Js {
     @Html.JavascriptConditional("//ajax.googleapis.com/ajax/libs/angularjs/1.2.18/angular")
     @Html.JavascriptConditional("//ajax.googleapis.com/ajax/libs/angularjs/1.2.18/angular-resource")
 
+    @Html.JavascriptConditional("//cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.2.10/angular-ui-router")
     @Html.JavascriptConditional("//cdnjs.cloudflare.com/ajax/libs/select2/3.5.0/select2")
 
     @Html.BundledJs("edit")

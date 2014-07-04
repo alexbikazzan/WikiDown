@@ -1,53 +1,87 @@
-﻿@model WikiArticleInfoViewModel
+﻿@using WikiDown
+@model WikiArticleInfoViewModel
+@{
+    bool hasRevisions = Model.Revisions.Any();
+    bool hasRedirects = Model.ArticleRedirects.Any();
+    int colWidth = (hasRevisions && hasRedirects) ? 6 : 12;
+}
+
+@section Navbar {
+    @Html.ArticleNavigation(Model)
+}
 
 <h1>@Model.PageTitle</h1>
 
-<div>
-    <a href="@Url.WikiArticle(Model.ArticleSlug)">Back to article</a>
-</div>
-
-@*<div>
-    @Html.LabelFor(x => x.Article.Created, "Created")<br />
-    @Html.DisplayFor(x => x.Article.Created)
-</div>
-<div>
-    @Html.LabelFor(x => x.Article.LatestRevision.Updated, "Updated")<br />
-    @Html.DisplayFor(x => x.Article.LatestRevision.Updated)
-</div>*@
-
-@if (Model.Revisions.Any())
+@if (hasRevisions || hasRedirects)
 {
-    <div id="article-revisions">
-        <h2>Revisions</h2>
-
-        @foreach (var revision in Model.Revisions)
+    <div class="row">
+        @if (hasRevisions)
         {
-            <div class="revision">
-                <a href="@Url.WikiArticle(Model.ArticleSlug, revision)">@revision.DateTime.ToString("yyyy-MM-dd HH:mm:ss")</a>
+            <div id="article-revisions" class="col-sm-@colWidth ">
+                <h2>Revisions</h2>
+                
+                <ul class="list-group">
+                    @foreach (var revision in Model.Revisions)
+                    {
+                        <li class="list-group-item @(Model.ActiveArticleRevisionId == revision.Key ? "list-group-item-success" : null)">
+                            @RevisionLink(revision.Value)
+
+                            @*<a href="@Url.WikiDeleteArticleRevision(Model.ArticleSlug, revision)" class="btn btn-danger">Delete</a>*@
+
+                            <a href="#"
+                               data-api-url="@Url.ApiArticleRevisionPreview(Model.ArticleId, revision.Value)"
+                               class="article-revision-preview btn btn-info">Preview</a>
+                        </li>
+                    }
+                </ul>
+            </div>
+        }
+        
+        @if (hasRedirects)
+        {
+            <div class="col-sm-@colWidth">
+                <h2>Redirects</h2>
+
+                <div class="content">
+                    @foreach (var redirect in Model.ArticleRedirects)
+                    {
+                        <div class="redirect">
+                            <a href="@Url.WikiArticle(redirect.Key, redirect: false)">@redirect.Value</a>
+                        </div>
+                    }
+                </div>
             </div>
         }
     </div>
-}
 
-@if (Model.RedirectTitles.Any())
-{
-    <div id="redirect-titles">
-        <h2>Redirects</h2>
-
-        @foreach (var redirect in Model.RedirectTitles)
-        {
-            <div class="redirect">
-                <a href="@Url.WikiArticleEdit(redirect, noRedirect: true)">@redirect.Title</a>
+    if (hasRevisions)
+    {
+        <div id="article-revision-preview" class="panel panel-default" hidden>
+            <div class="panel-heading">
+                <h2 class="panel-title">Revision preview</h2>
             </div>
-        }
-    </div>
+            <div id="article-revision-preview-content" class="panel-body"></div>
+        </div>
+    }
 }
 
-@if (!string.IsNullOrWhiteSpace(Model.MetaKeywords))
+@if (Model.MetaKeywords.Any())
 {
-    <div id="meta-keywords">
+    <div id="meta-keywords" class="row container">
         <h2>Meta-keywords</h2>
-
-        <div>@Model.MetaKeywords</div>
+        
+        @foreach (var keyword in Model.MetaKeywords)
+        {
+            <span class="label label-default">@keyword</span>
+        }
     </div>
+}
+
+@helper RevisionLink(ArticleRevisionDate articleRevisionDate)
+{
+    <a href="@Url.WikiArticle(Model.ArticleSlug, articleRevisionDate)">@articleRevisionDate.DateTime.ToString("yyyy-MM-dd HH:mm:ss")</a>
+}
+
+@section Js {
+    @Html.BundledJs("info")
 }

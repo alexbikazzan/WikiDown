@@ -1,46 +1,32 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Web.Http;
 
+using WikiDown.Markdown;
 using WikiDown.Website.ApiModels;
 
 namespace WikiDown.Website.Controllers.Api
 {
-    [RoutePrefix("api/articlerevisions/{slug}")]
+    [RoutePrefix("api/articlerevisions/{articleId}")]
     public class ArticleRevisionsController : ApiControllerBase
     {
         [HttpGet]
-        [Route("{revisionDateTime}")]
-        public ArticleRevisionApiModel GetArticleRevision(string slug, string revisionDateTime)
+        [Route("{articleRevisionDate}", Name = ApiRouteNames.ArticleRevisions)]
+        public ArticleRevisionApiModel GetArticleRevision(
+            [FromUri] ArticleId articleId,
+            [FromUri] ArticleRevisionDate articleRevisionDate)
         {
-            var articleId = new ArticleId(slug);
-            if (!articleId.HasValue)
-            {
-                throw new HttpResponseException(HttpStatusCode.BadRequest);
-            }
-
-            var revisionDate = new ArticleRevisionDate(revisionDateTime);
-            if (!revisionDate.HasValue)
-            {
-                throw new HttpResponseException(HttpStatusCode.BadRequest);
-            }
-
-            var articleRevision = this.CurrentRepository.GetArticleRevision(articleId, revisionDate.DateTime);
-            if (articleRevision == null)
-            {
-                throw new HttpResponseException(HttpStatusCode.NotFound);
-            }
+            var articleRevision = this.GetEnsuredArticleRevision(articleId, articleRevisionDate.DateTime);
 
             return new ArticleRevisionApiModel(articleRevision);
         }
 
         [HttpGet]
         [Route("")]
-        public IReadOnlyCollection<KeyValuePair<string, string>> ListArticleRevisions(string slug)
+        public IReadOnlyCollection<KeyValuePair<string, string>> ListArticleRevisions([FromUri] ArticleId articleId)
         {
-            var revisions = this.CurrentRepository.GetArticleRevisions(slug);
+            var revisions = this.CurrentRepository.GetArticleRevisions(articleId);
 
             return
                 revisions.Select(x => x.DateTime)
@@ -50,6 +36,29 @@ namespace WikiDown.Website.Controllers.Api
                             x.ToString(ArticleRevision.IdDateTimeFormat),
                             x.ToString(ArticleRevision.ReadableDateTimeFormat)))
                     .ToList();
+        }
+
+        [HttpGet]
+        [Route("{articleRevisionDate}/preview", Name = ApiRouteNames.ArticleRevisionPreview)]
+        public dynamic GetArticleRevisionPreview(
+            [FromUri] ArticleId articleId,
+            [FromUri] ArticleRevisionDate articleRevisionDate)
+        {
+            var articleRevision = this.GetEnsuredArticleRevision(articleId, articleRevisionDate.DateTime);
+
+            string htmlContent = MarkdownService.MakeHtml(articleRevision.MarkdownContent);
+            return new { htmlContent = htmlContent };
+        }
+
+        private ArticleRevision GetEnsuredArticleRevision(ArticleId articleId, ArticleRevisionDate articleRevisionDate)
+        {
+            var articleRevision = this.CurrentRepository.GetArticleRevision(articleId, articleRevisionDate.DateTime);
+            if (articleRevision == null)
+            {
+                throw new HttpResponseException(HttpStatusCode.NotFound);
+            }
+
+            return articleRevision;
         }
     }
 }

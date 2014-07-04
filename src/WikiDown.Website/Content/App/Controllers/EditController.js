@@ -37,7 +37,7 @@
         editor.refreshPreview();
 
         function updateMarkdownContent(markdownContent) {
-            console.log('updateMarkdownContent -- markdownContent:', markdownContent);
+            //console.log('updateMarkdownContent -- markdownContent:', markdownContent);
             $scope.markdownContent = markdownContent;
             //converter.makeHtml(markdownContent);
             editor.refreshPreview();

@@ -6,7 +6,7 @@ using System.Web.Mvc;
 using System.Web.Mvc.Routing;
 using System.Web.Routing;
 
-namespace WikiDown.Website
+namespace WikiDown.Website.Tests
 {
     public static class RouteCollectionTestExtensions
     {
@@ -21,7 +21,7 @@ namespace WikiDown.Website
                                        && type.Name.EndsWith("Controller", StringComparison.OrdinalIgnoreCase)
                                        && !type.IsAbstract && typeof(IController).IsAssignableFrom(type)
                                    select type).ToList();
-
+            routeCollection.MapMvcAttributeRoutes();
             var attributeRoutingAssembly = typeof(RouteCollectionAttributeRoutingExtensions).Assembly;
             var attributeRoutingMapperType =
                 attributeRoutingAssembly.GetType("System.Web.Mvc.Routing.AttributeRoutingMapper");

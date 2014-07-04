@@ -1,4 +1,5 @@
-﻿using System.Web.Mvc;
+﻿using System;
+using System.Web.Mvc;
 
 using AspNetSeo;
 using WikiDown.Website.ViewModels;
@@ -19,50 +20,70 @@ namespace WikiDown.Website.Controllers
 
         [Route("wiki", Name = RouteNames.WikiList)]
         [SeoTitle("List")]
+        [BodyClass("wiki list")]
         public ActionResult List()
         {
             var model = new WikiListViewModel(this.CurrentRepository);
             return this.View(model);
         }
 
-        [Route("wiki/{slug}/{revisionCreated?}", Name = RouteNames.WikiArticle)]
-        public ActionResult ArticleShow(
-            string slug,
-            ArticleRevisionDate revisionCreated = null,
-            string from = null,
-            int? noRedirect = 0)
+        [Route("wiki/{slug}/{revisionDate?}", Name = RouteNames.WikiArticle)]
+        [BodyClass("wiki article")]
+        public ActionResult Article(string slug, ArticleRevisionDate revisionDate = null, bool redirect = true)
         {
-            var articlePage = this.CurrentRepository.GetArticlePage(slug, revisionCreated);
-
-            if (!string.IsNullOrWhiteSpace(articlePage.RedirectArticleSlug))
+            try
             {
-                string redirectUrl = this.Url.WikiArticle(articlePage.RedirectArticleSlug, revisionCreated);
-                return this.Redirect(redirectUrl);
+                var articleResult = this.CurrentRepository.GetArticleResult(slug, revisionDate);
+
+                this.Seo.CanonicalUrl = this.GetArticleCanonicalUrl(articleResult);
+
+                var model = new WikiArticleViewModel(slug, articleResult, revisionDate, redirect);
+                return this.View(model);
+            }
+            catch (ArticleIdNotEnsuredException ex)
+            {
+                string ensuredArticleRedirectUrl = this.Url.WikiArticle(ex.EnsuredSlug);
+                return this.RedirectPermanent(ensuredArticleRedirectUrl);
+            }
+        }
+
+        [Route("delete/{slug}/{revisionDate}", Name = RouteNames.WikiArticleRevisionDelete)]
+        public ActionResult DeleteRevision(string slug, ArticleRevisionDate revisionDate)
+        {
+            if (revisionDate == null || !revisionDate.HasValue)
+            {
+                throw new ArgumentNullException("revisionDate");
             }
 
-            var articleId = new ArticleId(slug);
-
-            if (!articlePage.HasArticle)
+            bool isDeleteSuccessful = this.CurrentRepository.DeleteArticleRevision(slug, revisionDate);
+            if (!isDeleteSuccessful)
             {
-                var notFoundArticleModel = new WikiArticleNotFoundViewModel(articleId);
-                return this.View(ViewNames.WikiArticleNotFound, notFoundArticleModel);
+                string message = string.Format(
+                    "No article-revision found for slug '{0}' and revision-date '{1}'.",
+                    slug,
+                    revisionDate);
+                throw new ArgumentOutOfRangeException("revisionDate", message);
             }
 
-            var model = new WikiArticleViewModel(articlePage, articleId, revisionCreated, from);
-            return this.View(ViewNames.WikiArticle, model);
+            string redirectUrl = this.Url.WikiArticleInfo(slug);
+            return this.Redirect(redirectUrl);
         }
 
         [HttpGet]
-        [Route("edit/{slug}/{revisionCreated?}", Name = RouteNames.WikiArticleEdit)]
-        public ActionResult Edit(string slug, ArticleRevisionDate revisionCreated = null)
+        [Route("edit/{slug}/{revisionDate?}", Name = RouteNames.WikiArticleEdit)]
+        [SeoMetaNoIndex]
+        [BodyClass("wiki edit")]
+        public ActionResult Edit(string slug, ArticleRevisionDate revisionDate = null)
         {
-            var model = new WikiArticleEditViewModel(this.CurrentRepository, slug, revisionCreated);
+            var model = new WikiArticleEditViewModel(this.CurrentRepository, slug, revisionDate);
             return this.View(model);
         }
 
         [HttpPost]
         [Route("edit/{slug}")]
         [ValidateInput(false)]
+        [SeoMetaNoIndex]
+        [BodyClass("wiki edit")]
         public ActionResult Edit(string slug, WikiArticleEditViewModel editedArticle)
         {
             if (!this.ModelState.IsValid)
@@ -73,15 +94,29 @@ namespace WikiDown.Website.Controllers
             var articleId = new ArticleId(slug);
             var savedArticle = editedArticle.Save(this.CurrentRepository, articleId);
 
-            var savedArticleId = new ArticleId(savedArticle.Title);
+            var savedArticleId = (savedArticle.HasArticle) ? savedArticle.Article.Id : articleId;
             return this.Redirect(url => url.WikiArticle(savedArticleId));
         }
 
         [Route("info/{slug}", Name = RouteNames.WikiArticleInfo)]
+        [BodyClass("wiki info")]
         public ActionResult Info(string slug)
         {
-            var model = new WikiArticleInfoViewModel(this.CurrentRepository, slug);
-            return this.View(model);
+            try
+            {
+                var model = new WikiArticleInfoViewModel(this.CurrentRepository, slug);
+                return this.View(model);
+            }
+            catch (ArgumentOutOfRangeException ex)
+            {
+                if (ex.ParamName == "articleId")
+                {
+                    string redirectUrl = this.Url.WikiArticle(slug);
+                    return this.Redirect(redirectUrl);
+                }
+
+                throw;
+            }
         }
 
         [HttpPost]
@@ -89,6 +124,22 @@ namespace WikiDown.Website.Controllers
         public ActionResult Search(string search)
         {
             return this.Redirect(url => url.WikiArticle(search));
+        }
+
+        private string GetArticleCanonicalUrl(ArticleResult articleResult)
+        {
+            string canonicalUrl = null;
+
+            if (articleResult.HasRedirect)
+            {
+                canonicalUrl = this.Url.WikiArticle(articleResult.ArticleRedirect.RedirectToArticleSlug);
+            }
+            else if (articleResult.HasArticle)
+            {
+                canonicalUrl = this.Url.WikiArticle(articleResult.Article.Id);
+            }
+
+            return canonicalUrl;
         }
     }
 }

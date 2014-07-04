@@ -13,6 +13,8 @@ namespace WikiDown.RavenDb
         {
             RegisterConvention<Article>(documentStore, ArticleId.CreateArticleId);
 
+            RegisterConvention<ArticleRedirect>(documentStore, ArticleId.CreateArticleRedirectId);
+
             RegisterConvention<ArticleRevision>(documentStore, ArticleId.CreateArticleRevisionId);
         }
 

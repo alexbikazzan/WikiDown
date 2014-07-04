@@ -6,7 +6,10 @@ namespace WikiDown.Tests
 {
     public static class RepositoryTestHelper
     {
-        public static Repository GetMockRepository(Article article = null, ArticleRevision articleRevision = null)
+        public static Repository GetMockRepository(
+            Article article = null,
+            ArticleRevision articleRevision = null,
+            ArticleRedirect articleRedirect = null)
         {
             var documentStore =
                 new EmbeddableDocumentStore
@@ -27,6 +30,12 @@ namespace WikiDown.Tests
             if (article != null)
             {
                 repository.SaveArticle(article, articleRevision);
+            }
+
+            if (articleRedirect != null)
+            {
+                string articleId = articleRedirect.RedirectToArticleSlug;
+                repository.SaveArticleRedirects(articleId, articleRedirect);
             }
 
             return new Repository(documentStore);

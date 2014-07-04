@@ -18,13 +18,11 @@ namespace WikiDown.Website
             var dateTimeConverter = new IsoDateTimeConverter { DateTimeFormat = "yyyy'-'MM'-'dd'T'HH':'mm':'ss.fff" };
 
             var jsonSerializerSettings = config.Formatters.JsonFormatter.SerializerSettings;
-
+            
             jsonSerializerSettings.Formatting = formatting;
             jsonSerializerSettings.ContractResolver = contractResolver;
             jsonSerializerSettings.Converters.Add(dateTimeConverter);
-
-            //config.Services.Replace(typeof(IExceptionHandler), new HandleExceptionsAttribute());
-
+            
             config.IncludeErrorDetailPolicy = DevEnvironment.IsDebug
                                                   ? IncludeErrorDetailPolicy.Always
                                                   : IncludeErrorDetailPolicy.Default;

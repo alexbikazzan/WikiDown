@@ -14,7 +14,7 @@ namespace WikiDown.Website.ViewModels
         }
 
         public WikiArticleEditViewModel(Repository repository, ArticleId articleId, DateTime? revisionDateTime)
-            : base(articleId)
+            : base(articleId, activeTab: ArticleHeaderTab.Edit)
         {
             if (repository == null)
             {
@@ -38,9 +38,11 @@ namespace WikiDown.Website.ViewModels
 
             this.MetaKeywords = (article != null) ? article.MetaKeywords : null;
 
-            var redirectTitles = (article != null) ? article.RedirectTitles : Enumerable.Empty<string>();
-            this.RedirectTitles = string.Join(RedirectTitlesSeparator + " ", redirectTitles);
+            var articleRedirects = repository.GetArticleRedirects(articleId).Select(x => x.Title);
+            this.ArticleRedirects = string.Join(RedirectTitlesSeparator + " ", articleRedirects);
         }
+
+        public string ArticleRedirects { get; set; }
 
         public bool IsCreateMode { get; private set; }
 
@@ -58,41 +60,39 @@ namespace WikiDown.Website.ViewModels
             }
         }
 
-        public string RedirectTitles { get; set; }
-
         public DateTime? RevisionDateTime { get; set; }
 
         public string RevisionEditSummary { get; set; }
 
-        public Article Save(Repository repository, ArticleId articleId)
+        public ArticleResult Save(Repository repository, ArticleId articleId)
         {
             if (articleId == null)
             {
                 throw new ArgumentNullException("articleId");
             }
 
-            var redirectTitles = GetRedirectTitles();
-
-            var article = repository.GetArticle(articleId) ?? new Article(articleId, this.MetaKeywords, redirectTitles);
+            var article = repository.GetArticle(articleId) ?? new Article(articleId, this.MetaKeywords);
 
             var articleRevision = new ArticleRevision(this.MarkdownContent, this.RevisionEditSummary);
 
-            return repository.SaveArticle(article, articleRevision);
+            var articleRedirects = GetArticleRedirects(articleId).ToArray();
+
+            return repository.SaveArticle(article, articleRevision, articleRedirects);
         }
 
-        private IEnumerable<string> GetRedirectTitles()
+        private IEnumerable<ArticleRedirect> GetArticleRedirects(ArticleId articleId)
         {
-            var redirectTitles = this.RedirectTitles ?? string.Empty;
-
-            return
-                redirectTitles.Split(RedirectTitlesSeparator)
-                    .Where(
-                        x =>
-                        !string.IsNullOrWhiteSpace(x)
-                        && !x.Equals(this.ArticleTitle, StringComparison.InvariantCultureIgnoreCase))
+            var articleRedirectItems = (this.ArticleRedirects ?? string.Empty).Split(RedirectTitlesSeparator);
+            var articleRedirects =
+                articleRedirectItems.Where(
+                    x =>
+                    !string.IsNullOrWhiteSpace(x)
+                    && !x.Equals(this.ArticleTitle, StringComparison.InvariantCultureIgnoreCase))
                     .Select(x => x.Trim())
                     .Distinct()
                     .ToList();
+
+            return articleRedirects.Select(x => new ArticleRedirect(x, articleId));
         }
     }
 }
