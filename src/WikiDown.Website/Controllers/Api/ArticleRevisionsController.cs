@@ -26,7 +26,7 @@ namespace WikiDown.Website.Controllers.Api
         [Route("")]
         public IReadOnlyCollection<KeyValuePair<string, string>> ListArticleRevisions([FromUri] ArticleId articleId)
         {
-            var revisions = this.CurrentRepository.GetArticleRevisions(articleId);
+            var revisions = this.CurrentRepository.GetArticleRevisionList(articleId);
 
             return
                 revisions.Select(x => x.DateTime)

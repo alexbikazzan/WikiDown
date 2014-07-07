@@ -56,6 +56,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Article.cs" />
+    <Compile Include="IdUtility.cs" />
+    <Compile Include="Security\ArticleAccess.cs" />
+    <Compile Include="Security\ArticleAccessManager.cs" />
+    <Compile Include="Security\RepositorySecurityExtensions.cs" />
+    <Compile Include="Security\SecurityIdUtility.cs" />
+    <Compile Include="Security\ArticleAccessLevel.cs" />
     <Compile Include="ArticleId.cs" />
     <Compile Include="ArticleIdNotEnsuredException.cs" />
     <Compile Include="ArticleRedirect.cs" />
@@ -66,7 +72,7 @@
     <Compile Include="Markdown\ConverterHook.cs" />
     <Compile Include="Markdown\ConverterHooksConfig.cs" />
     <Compile Include="Markdown\ConverterHookType.cs" />
-    <Compile Include="RavenDb\ConvensionsHelper.cs" />
+    <Compile Include="RavenDb\IdConvensionsHelper.cs" />
     <Compile Include="RavenDb\IndexesHelper.cs" />
     <Compile Include="RavenDb\Indexes\ActiveArticlesSlugsIndex.cs" />
     <Compile Include="RavenDb\Indexes\ArticleSlugsIndex.cs" />

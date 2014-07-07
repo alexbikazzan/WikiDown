@@ -1,4 +1,4 @@
-﻿angular.module('WikiDown')
+﻿angular.module('WikiEdit')
     .value('articlesApiBaseUrl', '/api/articles/')
     .factory('articlesDataApi', [
         '$resource', 'articlesApiBaseUrl',

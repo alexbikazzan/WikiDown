@@ -1,8 +1,12 @@
-﻿namespace WikiDown
+﻿using WikiDown.Security;
+
+namespace WikiDown
 {
     public class ArticleResult
     {
-        public ArticleResult(Article article = null, ArticleRevision articleRevision = null)
+        public ArticleResult(
+            Article article = null,
+            ArticleRevision articleRevision = null)
         {
             this.Article = article;
             this.ArticleRevision = articleRevision;

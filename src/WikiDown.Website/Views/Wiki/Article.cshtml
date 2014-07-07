@@ -26,7 +26,7 @@
 
 <div class="clearfix"></div>
 
-<div id="content" class="container">
+<article id="content" class="container">
     @if (Model.HasArticle)
     {
         @Html.Raw(Model.HtmlContent)
@@ -35,4 +35,4 @@
     {
         @Html.Partial("_NoArticle")
     }
-</div>
+</article>

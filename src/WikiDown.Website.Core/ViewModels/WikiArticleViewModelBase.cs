@@ -4,16 +4,12 @@ using AspNetSeo;
 
 namespace WikiDown.Website.ViewModels
 {
-    public abstract class WikiArticleViewModelBase : ISeoModel
+    public class WikiArticleViewModelBase : ISeoModel
     {
-        internal WikiArticleViewModelBase()
-        {
-        }
-
-        protected WikiArticleViewModelBase(
+        public WikiArticleViewModelBase(
             ArticleId articleId,
             ArticleRevisionDate articleRevisionDate = null,
-            ArticleHeaderTab activeTab = ArticleHeaderTab.None)
+            HeaderTab activeTab = HeaderTab.None)
         {
             this.ArticleId = articleId;
             this.DisplayArticleId = articleId;
@@ -22,7 +18,7 @@ namespace WikiDown.Website.ViewModels
             this.ActiveTab = activeTab;
         }
 
-        public ArticleHeaderTab ActiveTab { get; set; }
+        public HeaderTab ActiveTab { get; set; }
 
         public DateTime? ArticleRevisionDate { get; set; }
 
@@ -57,6 +53,17 @@ namespace WikiDown.Website.ViewModels
         public virtual void PopulateSeo(SeoHelper seoHelper)
         {
             seoHelper.Title = this.PageTitle;
+        }
+
+        public enum HeaderTab
+        {
+            None,
+
+            Article,
+
+            Edit,
+
+            Info
         }
     }
 }

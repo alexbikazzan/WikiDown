@@ -24,13 +24,16 @@
                     @foreach (var revision in Model.Revisions)
                     {
                         <li class="list-group-item @(Model.ActiveArticleRevisionId == revision.Key ? "list-group-item-success" : null)">
-                            @RevisionLink(revision.Value)
-
+                            <div class="pull-left btn btn-link">
+                                @RevisionLink(revision.Value)
+                            </div>
                             @*<a href="@Url.WikiDeleteArticleRevision(Model.ArticleSlug, revision)" class="btn btn-danger">Delete</a>*@
-
-                            <a href="#"
-                               data-api-url="@Url.ApiArticleRevisionPreview(Model.ArticleId, revision.Value)"
-                               class="article-revision-preview btn btn-info">Preview</a>
+                            <div class="pull-right">
+                                <a href="#"
+                                   data-api-url="@Url.ApiArticleRevisionPreview(Model.ArticleId, revision.Value)"
+                                   class="article-revision-preview btn btn-info">Preview</a>
+                            </div>
+                            <div class="clearfix"></div>
                         </li>
                     }
                 </ul>

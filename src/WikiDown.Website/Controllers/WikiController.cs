@@ -2,6 +2,7 @@
 using System.Web.Mvc;
 
 using AspNetSeo;
+using Raven.Client;
 using WikiDown.Website.ViewModels;
 
 namespace WikiDown.Website.Controllers
@@ -13,24 +14,26 @@ namespace WikiDown.Website.Controllers
         {
         }
 
-        public WikiController(Repository repository)
-            : base(repository)
+        public WikiController(IDocumentStore documentStore)
+            : base(documentStore)
         {
         }
 
-        [Route("wiki", Name = RouteNames.WikiList)]
-        [SeoTitle("List")]
+        [SeoTitle("All Articles")]
         [BodyClass("wiki list")]
+        [Route("wiki", Name = RouteNames.WikiList)]
         public ActionResult List()
         {
             var model = new WikiListViewModel(this.CurrentRepository);
             return this.View(model);
         }
 
-        [Route("wiki/{slug}/{revisionDate?}", Name = RouteNames.WikiArticle)]
         [BodyClass("wiki article")]
+        [Route("wiki/{slug}/{revisionDate?}", Name = RouteNames.WikiArticle)]
         public ActionResult Article(string slug, ArticleRevisionDate revisionDate = null, bool redirect = true)
         {
+            this.ValidateCanReadArticle(slug, this.User);
+
             try
             {
                 var articleResult = this.CurrentRepository.GetArticleResult(slug, revisionDate);
@@ -55,6 +58,8 @@ namespace WikiDown.Website.Controllers
                 throw new ArgumentNullException("revisionDate");
             }
 
+            this.ValidateCanEditArticle(slug, this.User);
+
             bool isDeleteSuccessful = this.CurrentRepository.DeleteArticleRevision(slug, revisionDate);
             if (!isDeleteSuccessful)
             {
@@ -70,38 +75,44 @@ namespace WikiDown.Website.Controllers
         }
 
         [HttpGet]
-        [Route("edit/{slug}/{revisionDate?}", Name = RouteNames.WikiArticleEdit)]
         [SeoMetaNoIndex]
         [BodyClass("wiki edit")]
+        [Route("edit/{slug}/{revisionDate?}", Name = RouteNames.WikiArticleEdit)]
         public ActionResult Edit(string slug, ArticleRevisionDate revisionDate = null)
         {
+            this.ValidateCanEditArticle(slug, this.User);
+
             var model = new WikiArticleEditViewModel(this.CurrentRepository, slug, revisionDate);
             return this.View(model);
         }
 
-        [HttpPost]
-        [Route("edit/{slug}")]
-        [ValidateInput(false)]
-        [SeoMetaNoIndex]
-        [BodyClass("wiki edit")]
-        public ActionResult Edit(string slug, WikiArticleEditViewModel editedArticle)
-        {
-            if (!this.ModelState.IsValid)
-            {
-                return this.View(editedArticle);
-            }
+        //[HttpPost]
+        //[ValidateInput(false)]
+        //[SeoMetaNoIndex]
+        //[BodyClass("wiki edit")]
+        //[Route("edit/{slug}")]
+        //public ActionResult Edit(string slug, WikiArticleEditViewModel editedArticle)
+        //{
+        //    this.ValidateCanEditArticle(slug, this.User);
 
-            var articleId = new ArticleId(slug);
-            var savedArticle = editedArticle.Save(this.CurrentRepository, articleId);
+        //    if (!this.ModelState.IsValid)
+        //    {
+        //        return this.View(editedArticle);
+        //    }
 
-            var savedArticleId = (savedArticle.HasArticle) ? savedArticle.Article.Id : articleId;
-            return this.Redirect(url => url.WikiArticle(savedArticleId));
-        }
+        //    var articleId = new ArticleId(slug);
+        //    var savedArticle = editedArticle.Save(this.CurrentRepository, articleId);
 
-        [Route("info/{slug}", Name = RouteNames.WikiArticleInfo)]
+        //    var savedArticleId = (savedArticle.HasArticle) ? savedArticle.Article.Id : articleId;
+        //    return this.Redirect(url => url.WikiArticle(savedArticleId));
+        //}
+
         [BodyClass("wiki info")]
+        [Route("info/{slug}", Name = RouteNames.WikiArticleInfo)]
         public ActionResult Info(string slug)
         {
+            this.ValidateCanReadArticle(slug, this.User);
+
             try
             {
                 var model = new WikiArticleInfoViewModel(this.CurrentRepository, slug);

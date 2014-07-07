@@ -4,6 +4,8 @@ using System.Web.Http.ModelBinding;
 using System.Web.Http.ModelBinding.Binders;
 using System.Web.Mvc;
 
+using WikiDown.Website.ModelBinding;
+
 using WebApi = System.Web.Http;
 
 namespace WikiDown.Website

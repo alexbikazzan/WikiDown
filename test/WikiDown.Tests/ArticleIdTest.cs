@@ -17,7 +17,7 @@ namespace WikiDown.Tests
         {
             var articleSlug = "TestArticleTitleÅäö";
 
-            string id = ArticleId.CreateArticleId(articleSlug);
+            string id = IdUtility.CreateArticleId(articleSlug);
             string idSuffix = GetIdSuffix(id);
 
             bool matches3986 = Rfc3986Regex.IsMatch(idSuffix);
@@ -29,7 +29,7 @@ namespace WikiDown.Tests
         {
             var articleSlug = "TestArticleTitle Test";
 
-            string id = ArticleId.CreateArticleId(articleSlug);
+            string id = IdUtility.CreateArticleId(articleSlug);
             string idSuffix = GetIdSuffix(id);
 
             bool matches3986 = Rfc3986Regex.IsMatch(idSuffix);

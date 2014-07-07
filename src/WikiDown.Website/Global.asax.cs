@@ -3,8 +3,13 @@ using System.Web.Mvc;
 using System.Web.Routing;
 
 using AspNetSeo;
+using Microsoft.Owin;
+using Owin;
 using Raven.Client;
 using WikiDown.RavenDb;
+using WikiDown.Website.Security;
+
+[assembly: OwinStartupAttribute(typeof(WikiDown.Website.Startup))]
 
 namespace WikiDown.Website
 {
@@ -24,6 +29,16 @@ namespace WikiDown.Website
             DocumentStore = DocumentStoreInitializer.FromAppSettingName("RavenDbConnectionString");
 
             SeoHelper.BaseTitle = "WikiDown";
+        }
+    }
+
+    public class Startup
+    {
+        public void Configuration(IAppBuilder app)
+        {
+            AuthConfig.Configure(app);
+
+            RootUserUtility.EnsureRootAccount(MvcApplication.DocumentStore);
         }
     }
 }

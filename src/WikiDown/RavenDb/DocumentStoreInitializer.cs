@@ -36,7 +36,7 @@ namespace WikiDown.RavenDb
 
         internal static void InitDocumentStore(IDocumentStore documentStore)
         {
-            ConvensionsHelper.Register(documentStore);
+            IdConvensionsHelper.Register(documentStore);
 
             IndexesHelper.Create(documentStore);
         }

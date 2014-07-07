@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using System.Web.Mvc;
 
-namespace WikiDown.Website
+namespace WikiDown.Website.ModelBinding
 {
     public class BooleanModelBinder : DefaultModelBinder
     {

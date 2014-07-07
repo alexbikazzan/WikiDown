@@ -1,7 +1,9 @@
-﻿angular.module('WikiDown').controller('EditController', [
+﻿angular.module('WikiEdit').controller('EditController', [
     '$scope', 'wikiDown', 'articleRevisionsDataApi',
     function($scope, wikiDown, articleRevisionsDataApi) {
         'use strict';
+
+        console.log('EditController');
 
         function registerConverterHook(converterHooks, chainType) {
             var conversionsName = chainType + 's',

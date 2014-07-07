@@ -1,10 +1,17 @@
 ﻿using System.Web;
 using System.Web.Mvc;
+using System.Web.Mvc.Html;
 
 namespace WikiDown.Website
 {
     public static class HtmlHelperExtensions
     {
+        public static bool HasValidationMessage(this HtmlHelper helper, string modelName)
+        {
+            var message = helper.ValidationMessage(modelName);
+            return (message != null) && !string.IsNullOrWhiteSpace(message.ToHtmlString());
+        }
+
         public static IHtmlString Javascript(this HtmlHelper helper, string src)
         {
             var tag = new TagBuilder("script");

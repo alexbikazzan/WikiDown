@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Security.Principal;
+using System.Web;
 
 using WikiDown.Markdown;
+using WikiDown.Security;
 
 namespace WikiDown.Website.ViewModels
 {
@@ -11,7 +14,7 @@ namespace WikiDown.Website.ViewModels
             ArticleResult articleResult,
             ArticleRevisionDate articleRevisionDate,
             bool shouldRedirect)
-            : base(articleId, articleRevisionDate, ArticleHeaderTab.Article)
+            : base(articleId, articleRevisionDate, HeaderTab.Article)
         {
             if (articleResult == null)
             {
@@ -34,7 +37,7 @@ namespace WikiDown.Website.ViewModels
             {
                 return;
             }
-            
+
             string markdown = articleResult.ArticleRevision.MarkdownContent;
             this.HtmlContent = MarkdownService.MakeHtml(markdown);
 

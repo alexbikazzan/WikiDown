@@ -1,4 +1,4 @@
-﻿angular.module('WikiDown').service('wikiDown', [
+﻿angular.module('WikiEdit').service('wikiDown', [
     '$window',
     function($window) {
         var wikiDown = $window.WikiDown || {};

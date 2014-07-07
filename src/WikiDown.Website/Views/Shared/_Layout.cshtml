@@ -57,6 +57,8 @@
                         @RenderSection("Navbar", false)
 
                         @SearchForm()
+
+                        @UserInfo()
                         
                         <ul class="nav navbar-nav navbar-right">
                             <li>
@@ -74,12 +76,10 @@
             </div>
         </div>
 
-        <footer class="footer row">
-            <div class="container">
-                <div class="panel panel-default panel-body">
-                    <a href="@Url.WikiList()">
-                        Article List
-                    </a>
+        <footer class="footer container">
+            <div class="panel panel-info">
+                <div class="panel-body small text-info text-right">
+                    WikiDown - created by <a href="http://twitter.com/sebnilsson">Seb Nilsson</a>
                 </div>
             </div>
         </footer>
@@ -87,7 +87,7 @@
         @RenderSection("BodyBottomContent", false)
 
         @Html.JavascriptConditional("//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery")
-        @*@Html.JavascriptConditional("//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.2.0/js/bootstrap")*@
+        @Html.JavascriptConditional("//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.2.0/js/bootstrap")
 
         @RenderSection("Js", @<text>@Html.BundledJs("site")</text>)
     </body>
@@ -95,7 +95,8 @@
 
 @helper SearchForm() {
     <div class="navbar-right">
-        @using(Html.BeginRouteForm(RouteNames.WikiSearch, FormMethod.Post, new { @class = "navbar-form " })) {
+        @using (Html.BeginRouteForm(RouteNames.WikiSearch, FormMethod.Post, new { @class = "navbar-form " }))
+        {
             <div class="input-group">
                 <div class="form-group">
                     @Html.TextBox("search", null, new { @class = "form-control", placeholder = "Search articles" })
@@ -111,4 +112,36 @@
             </div>
         }
     </div>
+}
+
+@helper UserInfo() {
+    <ul class="nav navbar-nav navbar-right">
+        @if (User.Identity.IsAuthenticated)
+        {
+            <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                    <span class="glyphicon glyphicon-user"></span> @User.Identity.Name <span class="caret"></span>
+                </a>
+                <ul class="dropdown-menu">
+                    @if (User.IsInRole(WikiDown.Security.ArticleAccessLevel.Admin))
+                    {
+                        <li>
+                            <a href="@Url.AccountAdmin()" class="">Account Admin</a>
+                        </li>
+                    }
+                    <li>
+                        <a href="@Url.Logout()" class="">Logout</a>
+                    </li>
+                </ul>
+            </li>
+        }
+        else
+        {
+            <li>
+                <a href="@Url.Login()">
+                    <span class="glyphicon glyphicon-user"></span> Login
+                </a>
+            </li>
+        }
+    </ul>
 }

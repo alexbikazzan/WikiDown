@@ -1,4 +1,4 @@
-﻿angular.module('WikiDown').directive('tagsInput', [
+﻿angular.module('WikiEdit').directive('tagsInput', [
     function () {
         'use strict';
 

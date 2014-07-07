@@ -4,18 +4,21 @@ using System.Threading.Tasks;
 using Raven.Client;
 using Raven.Client.Connection;
 using Raven.Client.Connection.Async;
+using WikiDown.Security;
 
 namespace WikiDown.RavenDb
 {
-    internal static class ConvensionsHelper
+    internal static class IdConvensionsHelper
     {
         public static void Register(IDocumentStore documentStore)
         {
-            RegisterConvention<Article>(documentStore, ArticleId.CreateArticleId);
+            RegisterConvention<Article>(documentStore, IdUtility.CreateArticleId);
 
-            RegisterConvention<ArticleRedirect>(documentStore, ArticleId.CreateArticleRedirectId);
+            RegisterConvention<ArticleRedirect>(documentStore, IdUtility.CreateArticleRedirectId);
 
-            RegisterConvention<ArticleRevision>(documentStore, ArticleId.CreateArticleRevisionId);
+            RegisterConvention<ArticleRevision>(documentStore, IdUtility.CreateArticleRevisionId);
+
+            RegisterConvention<ArticleAccess>(documentStore, SecurityIdUtility.GetArticleAccessId);
         }
 
         private static void RegisterConvention<TEntity>(

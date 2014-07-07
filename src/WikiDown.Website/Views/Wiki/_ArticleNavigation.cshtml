@@ -2,18 +2,18 @@
 
 <ul class="nav navbar-nav">
     @NavTab("Article", Url.WikiArticle(Model.DisplayArticleId, Model.ArticleRevisionDate),
-        ArticleHeaderTab.Article, glyph: "glyphicon-file")
+        WikiArticleViewModelBase.HeaderTab.Article, glyph: "glyphicon-file")
     @NavTab("Info", Url.WikiArticleInfo(Model.DisplayArticleId),
-        ArticleHeaderTab.Info, glyph: "glyphicon-info-sign")
+        WikiArticleViewModelBase.HeaderTab.Info, glyph: "glyphicon-info-sign")
 
-    @*@if (User.IsInRole("edit"))
-            {*@
-    @NavTab("Edit", Url.WikiArticleEdit(Model.DisplayArticleId, Model.ArticleRevisionDate),
-        ArticleHeaderTab.Edit, glyph: "glyphicon-pencil")
-    @*}*@
+    @if (User.IsInRole(WikiDown.Security.ArticleAccessLevel.Editor))
+    {
+        @NavTab("Edit", Url.WikiArticleEdit(Model.DisplayArticleId, Model.ArticleRevisionDate),
+            WikiArticleViewModelBase.HeaderTab.Edit, glyph: "glyphicon-pencil")
+    }
 </ul>
 
-@helper NavTab(string title, string url, ArticleHeaderTab tab, string glyph = null) {
+@helper NavTab(string title, string url, WikiArticleViewModelBase.HeaderTab tab, string glyph = null) {
     <li class="@(tab == Model.ActiveTab ? "active" : null)">
         <a href="@url">
             @if (!string.IsNullOrWhiteSpace(glyph))

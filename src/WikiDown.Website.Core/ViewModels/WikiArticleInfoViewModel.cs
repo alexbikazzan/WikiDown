@@ -7,7 +7,7 @@ namespace WikiDown.Website.ViewModels
     public class WikiArticleInfoViewModel : WikiArticleViewModelBase
     {
         public WikiArticleInfoViewModel(Repository repository, ArticleId articleId)
-            : base(articleId, activeTab: ArticleHeaderTab.Info)
+            : base(articleId, activeTab: HeaderTab.Info)
         {
             if (repository == null)
             {
@@ -28,7 +28,7 @@ namespace WikiDown.Website.ViewModels
             this.ActiveArticleRevisionId = article.ActiveRevisionId;
 
             this.ArticleRedirects =
-                repository.GetArticleRedirects(articleId)
+                repository.GetArticleRedirectList(articleId)
                     .Select(x => new KeyValuePair<string, string>(x.Slug, x.Title))
                     .ToList();
 
@@ -36,8 +36,8 @@ namespace WikiDown.Website.ViewModels
             this.MetaKeywords =
                 metaKeywords.Split(' ').Where(x => !string.IsNullOrWhiteSpace(x)).Select(x => x.Trim()).ToList();
 
-            this.Revisions = (from revision in repository.GetArticleRevisions(articleId)
-                              let revisionId = ArticleId.CreateArticleRevisionId(articleId, revision)
+            this.Revisions = (from revision in repository.GetArticleRevisionList(articleId)
+                              let revisionId = IdUtility.CreateArticleRevisionId(articleId, revision)
                               select new KeyValuePair<string, ArticleRevisionDate>(revisionId, revision)).ToList();
         }
 

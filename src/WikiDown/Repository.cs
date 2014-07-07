@@ -5,6 +5,7 @@ using System.Linq;
 using Raven.Client;
 using Raven.Client.Linq;
 using WikiDown.RavenDb.Indexes;
+using WikiDown.Security;
 
 namespace WikiDown
 {
@@ -24,7 +25,7 @@ namespace WikiDown
             this.currentSessionLazy = new Lazy<IDocumentSession>(() => this.documentStore.OpenSession());
         }
 
-        private IAsyncDocumentSession CurrentAsyncSession
+        internal IAsyncDocumentSession CurrentAsyncSession
         {
             get
             {
@@ -32,7 +33,7 @@ namespace WikiDown
             }
         }
 
-        private IDocumentSession CurrentSession
+        internal IDocumentSession CurrentSession
         {
             get
             {
@@ -49,7 +50,7 @@ namespace WikiDown
             }
 
             this.CurrentSession.Delete(articleRevision);
-            
+
             this.CurrentSession.SaveChanges();
             return true;
         }
@@ -59,24 +60,24 @@ namespace WikiDown
             return (articleId != null && articleId.HasValue) ? this.CurrentSession.Load<Article>(articleId.Id) : null;
         }
 
-        public IReadOnlyCollection<KeyValuePair<string, string>> GetArticles()
+        public IReadOnlyCollection<ArticleId> GetArticleList()
         {
             var result = (from article in this.CurrentSession.Query<Article, ActiveArticlesSlugsIndex>()
                           where article.ActiveRevisionId != null
                           orderby article.Title
-                          select new { article.Id, article.Title }).ToList();
+                          select new { article.Title }).ToList();
 
-            return result.Select(x => new KeyValuePair<string, string>(x.Title, x.Id)).ToList();
+            return result.Select(x => new ArticleId(x.Title)).ToList();
         }
 
         public ArticleRedirect GetArticleRedirect(ArticleId originalArticleId)
         {
-            string articleRedirectId = ArticleId.CreateArticleRedirectId(originalArticleId);
+            string articleRedirectId = IdUtility.CreateArticleRedirectId(originalArticleId);
 
             return this.CurrentSession.Load<ArticleRedirect>(articleRedirectId);
         }
 
-        public IReadOnlyCollection<ArticleId> GetArticleRedirects(ArticleId redirectToArticleId)
+        public IReadOnlyCollection<ArticleId> GetArticleRedirectList(ArticleId redirectToArticleId)
         {
             if (redirectToArticleId == null || !redirectToArticleId.HasValue)
             {
@@ -90,7 +91,7 @@ namespace WikiDown
             return result.Select(x => new ArticleId(x.OriginalArticleSlug)).ToList();
         }
 
-        public IReadOnlyCollection<ArticleRevisionDate> GetArticleRevisions(ArticleId articleId)
+        public IReadOnlyCollection<ArticleRevisionDate> GetArticleRevisionList(ArticleId articleId)
         {
             if (articleId == null || !articleId.HasValue)
             {
@@ -109,7 +110,7 @@ namespace WikiDown
         {
             string id = (articleId != null) ? articleId.Id : null;
 
-            string articleRevisionId = ArticleId.CreateArticleRevisionId(id, articleRevisionDate);
+            string articleRevisionId = IdUtility.CreateArticleRevisionId(id, articleRevisionDate);
 
             return this.GetArticleRevision(articleRevisionId);
         }
@@ -151,7 +152,7 @@ namespace WikiDown
             EnsureArticleSlug(articleId);
 
             var result = new ArticleResult();
-            
+
             var article = this.GetArticle(articleId);
             if (article == null)
             {
@@ -169,7 +170,7 @@ namespace WikiDown
             string articleRevisionId = GetArticleRevisionId(revisionDate, article);
 
             result.ArticleRevision = this.GetArticleRevision(articleRevisionId);
-            
+
             return result;
         }
 
@@ -177,7 +178,7 @@ namespace WikiDown
         {
             if (revisionDate.HasValue && article != null)
             {
-                return ArticleId.CreateArticleRevisionId(article.Id, revisionDate.Value);
+                return IdUtility.CreateArticleRevisionId(article.Id, revisionDate.Value);
             }
             if (article != null)
             {
@@ -196,7 +197,9 @@ namespace WikiDown
                 throw new ArgumentNullException("article");
             }
 
-            if (string.IsNullOrWhiteSpace(article.Id))
+            bool isNewArticle = string.IsNullOrWhiteSpace(article.Id);
+
+            if (isNewArticle)
             {
                 this.CurrentSession.Store(article);
             }
@@ -262,7 +265,7 @@ namespace WikiDown
             }
 
             var articleRedirectIds =
-                articleRedirects.Select(x => ArticleId.CreateArticleRedirectId(x.OriginalArticleSlug)).ToList();
+                articleRedirects.Select(x => IdUtility.CreateArticleRedirectId(x.OriginalArticleSlug)).ToList();
 
             var storedRedirects = this.CurrentSession.Load<ArticleRedirect>(articleRedirectIds);
 
@@ -321,7 +324,7 @@ namespace WikiDown
 
             return session;
         }
-        
+
         private void SaveArticleRevision(Article article, ArticleRevision articleRevision)
         {
             if (articleRevision == null)

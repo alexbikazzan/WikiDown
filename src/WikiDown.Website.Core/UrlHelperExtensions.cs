@@ -25,6 +25,21 @@ namespace WikiDown.Website
             return urlHelper.RouteUrl(RouteNames.Empty);
         }
 
+        public static string AccountAdmin(this UrlHelper urlHelper)
+        {
+            return urlHelper.RouteUrl(RouteNames.AccountAdmin);
+        }
+
+        public static string Login(this UrlHelper urlHelper)
+        {
+            return urlHelper.RouteUrl(RouteNames.Login);
+        }
+
+        public static string Logout(this UrlHelper urlHelper)
+        {
+            return urlHelper.RouteUrl(RouteNames.Logout);
+        }
+
         public static string SiteAbout(this UrlHelper urlHelper)
         {
             return urlHelper.RouteUrl(RouteNames.Site, new { action = "About" });
