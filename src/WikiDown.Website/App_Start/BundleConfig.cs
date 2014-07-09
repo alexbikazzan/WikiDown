@@ -19,10 +19,10 @@ namespace WikiDown.Website
 
             ConfigMultiple(x => x.Add("~/Content/Site.css"), siteCss, wikiArticleEditCss);
 
-            siteCss.AsCached("site", "~/bundles/site_#.css");
+            siteCss.AsCached("site", "~/assets/bundles/site_#.css");
 
             wikiArticleEditCss.Add("~/Content/Libraries/pagedown/Markdown.css")
-                .AsCached("wiki-edit", "~/bundles/wiki-edit_#.css");
+                .AsCached("wiki-edit", "~/assets/bundles/wiki-edit_#.css");
         }
 
         private static void RegisterJsBundles()

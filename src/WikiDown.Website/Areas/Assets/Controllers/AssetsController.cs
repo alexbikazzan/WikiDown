@@ -50,6 +50,7 @@ namespace WikiDown.Website.Areas.Assets.Controllers
             }
         }
 
+        // TODO: Add hash to URL
         [Route("wikidown/index.js")]
         public ActionResult WikiDownJs()
         {
