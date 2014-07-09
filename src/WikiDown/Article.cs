@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 
 namespace WikiDown
 {
@@ -10,7 +12,7 @@ namespace WikiDown
         {
         }
 
-        public Article(ArticleId articleId, string metaKeywords = null)
+        public Article(ArticleId articleId, IEnumerable<string> tags = null)
         {
             if (articleId == null)
             {
@@ -18,7 +20,7 @@ namespace WikiDown
             }
 
             this.Title = articleId.Title;
-            this.MetaKeywords = metaKeywords;
+            this.Tags = tags ?? Enumerable.Empty<string>();
 
             this.CreatedAt = DateTime.UtcNow;
         }
@@ -31,7 +33,7 @@ namespace WikiDown
 
         public bool IsDeleted { get; set; }
 
-        public string MetaKeywords { get; set; }
+        public IEnumerable<string> Tags { get; set; }
 
         public string Title { get; private set; }
     }

@@ -12,8 +12,9 @@ namespace WikiDown
         {
         }
 
-        public ArticleRevision(string markdownContent, string editSummary = null)
+        public ArticleRevision(ArticleId articleId, string markdownContent, string editSummary = null)
         {
+            this.ArticleId = articleId.Id;
             this.MarkdownContent = markdownContent;
             this.EditSummary = editSummary;
             this.CreatedAt = DateTime.UtcNow;

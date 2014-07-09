@@ -1,17 +1,4 @@
-﻿/*html {
-  position: relative;
-  min-height: 100%;
-}
-body {
-  margin-bottom: 60px;
-}
-.footer {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  height: 60px;
-  background-color: #f5f5f5;
-}*/
+﻿/* Sticky Footer */
 html {
   position: relative;
   min-height: 100%; }
@@ -26,32 +13,56 @@ body {
   width: 100%;
   /* Set the fixed height of the footer here */
   height: 69px;
-  background-color: #f5f5f5; }
-
-.footer {
+  background-color: #f5f5f5;
   margin-top: 2em; }
 
-#wmd-preview {
-  max-height: 18em;
-  overflow: auto;
-  /*width: 100%;*/ }
+/* WMD Editor */
+#wmd-input {
+  height: 280px;
+  height: 45vh; }
 
-/* Smartphone */
-/*@media screen and (max-width: 320px) {
-    body {
-        font-size: 0.6em;
-    }
-}
-/* Tablet */
-/*@media screen and (max-width: 768px) {
-    body {
-        font-size: 0.8em;
-    }
-}*/
-/* Netbook */
-/*@media screen and (max-width: 1024px) {
-    body {
-        font-size: 0.9em;
-    }
-}*/
+#wmd-preview-container {
+  max-height: 280px;
+  max-height: 45vh;
+  overflow: auto; }
+
+@media screen and (max-height: 600px) {
+  #wmd-input {
+    height: 565px;
+    height: 80vh; }
+  #wmd-preview-container {
+    max-height: 565px;
+    max-height: 80vh; } }
+
+@media screen and (max-height: 450px) {
+  #wmd-input {
+    height: 415px;
+    height: 90vh; }
+  #wmd-preview-container {
+    max-height: 415px;
+    max-height: 90vh; } }
+
+@media screen and (max-height: 300px) {
+  #wmd-input {
+    height: 265px;
+    height: 85vh; }
+  #wmd-preview-container {
+    max-height: 265px;
+    max-height: 85vh; } }
+
+/* Site */
+/* AngularJS */
+[ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak, .ng-hide {
+  display: none !important; }
+
+ng\:form {
+  display: block; }
+
+.ng-animate-block-transitions {
+  transition: 0s all !important;
+  -webkit-transition: 0s all !important; }
+
+.ng-hide-add-active, .ng-hide-remove {
+  display: block !important; }
+
 /*# sourceMappingURL=Site.css.map */

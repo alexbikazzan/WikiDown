@@ -1,0 +1,29 @@
+﻿<h2>Revisions</h2>
+
+<div class="list-group">
+    <div ng-repeat="revision in articleRevisions" ng-click="previewRevision(revision)"
+          ng-class="{'list-group-item-info':revision.isActive}" class="list-group-item">
+        <div class="col-lg-9 col-md-6 col-sm-6">
+            {{revision.text}}
+        </div>
+        <div class="col-lg-3 col-md-6 col-sm-6 text-right">
+            <button ng-click="editRevision(revision, $event)" class="btn btn-default">Edit</button>
+            <button ng-click="setActiveRevision(revision, $event)" class="btn btn-primary">Set Active</button>
+            <button ng-click="deleteRevision(revision, $event)" class="btn btn-danger">Delete</button>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+</div>
+
+<h2>Preview</h2>
+
+<div class="panel panel-default">
+    <div class="panel-body">
+        <div ng-show="revisionPreview.htmlContent" ng-bind-html="revisionPreview.htmlContent"></div>
+
+        <div ng-hide="revisionPreview.htmlContent" class="small">Click on revision to preview</div>
+    </div>
+    <div ng-show="revisionPreview.htmlContent" class="panel-footer">
+        <button ng-show="revisionPreview.htmlContent" ng-click="revisionPreview = undefined" class="btn btn-link">Close</button>
+    </div>
+</div>

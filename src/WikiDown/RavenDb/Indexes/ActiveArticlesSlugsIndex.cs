@@ -10,9 +10,7 @@ namespace WikiDown.RavenDb.Indexes
         {
             this.Map =
                 articles =>
-                from article in articles
-                where !article.IsDeleted
-                select new { article.ActiveRevisionId, article.Id, article.Title };
+                from article in articles where !article.IsDeleted select new { article.ActiveRevisionId, article.Title };
         }
     }
 }

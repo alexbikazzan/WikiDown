@@ -10,7 +10,10 @@ namespace WikiDown.Markdown
 
         public ConverterHooksConfig(IEnumerable<ConverterHook> converterHooks = null)
         {
-            this.converterHooks = (converterHooks ?? Enumerable.Empty<ConverterHook>()).ToList();
+            converterHooks = converterHooks ?? Enumerable.Empty<ConverterHook>();
+            var defaultConverterHooks = GetDefaultConverterHooks();
+
+            this.converterHooks = defaultConverterHooks.Concat(converterHooks).ToList();
         }
 
         public void Register(ConverterHook converterHook)
@@ -76,19 +79,18 @@ namespace WikiDown.Markdown
             return this.PostConversionHooks.Aggregate(html, (current, hook) => hook.Apply(current));
         }
 
+        private static IEnumerable<ConverterHook> GetDefaultConverterHooks()
+        {
+            // https://help.github.com/articles/github-flavored-markdown
+
+            var strikeThrough = new ConverterHook(@"~~(.*)~~", @"<del>$1</del>", ConverterHookType.PreConversion);
+            yield return strikeThrough;
+        }
+
         #region Singleton
 
         private static readonly Lazy<ConverterHooksConfig> CurrentLazy =
-            new Lazy<ConverterHooksConfig>(GetDefaultConverterHooksConfig);
-
-        private static ConverterHooksConfig GetDefaultConverterHooksConfig()
-        {
-            var config = new ConverterHooksConfig();
-            
-            // TODO: Add WikiDown-converter-hooks
-
-            return config;
-        }
+            new Lazy<ConverterHooksConfig>(() => new ConverterHooksConfig());
 
         public static ConverterHooksConfig Default
         {

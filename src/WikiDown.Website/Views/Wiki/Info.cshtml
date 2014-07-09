@@ -1,5 +1,4 @@
-﻿@using WikiDown
-@model WikiArticleInfoViewModel
+﻿@model WikiArticleInfoViewModel
 @{
     bool hasRevisions = Model.Revisions.Any();
     bool hasRedirects = Model.ArticleRedirects.Any();
@@ -23,17 +22,10 @@
                 <ul class="list-group">
                     @foreach (var revision in Model.Revisions)
                     {
-                        <li class="list-group-item @(Model.ActiveArticleRevisionId == revision.Key ? "list-group-item-success" : null)">
-                            <div class="pull-left btn btn-link">
+                        <li class="list-group-item @(Model.ActiveArticleRevisionId == revision.Key ? "list-group-item-info" : null)">
+                            <div class="btn btn-link">
                                 @RevisionLink(revision.Value)
                             </div>
-                            @*<a href="@Url.WikiDeleteArticleRevision(Model.ArticleSlug, revision)" class="btn btn-danger">Delete</a>*@
-                            <div class="pull-right">
-                                <a href="#"
-                                   data-api-url="@Url.ApiArticleRevisionPreview(Model.ArticleId, revision.Value)"
-                                   class="article-revision-preview btn btn-info">Preview</a>
-                            </div>
-                            <div class="clearfix"></div>
                         </li>
                     }
                 </ul>
@@ -59,23 +51,23 @@
 
     if (hasRevisions)
     {
-        <div id="article-revision-preview" class="panel panel-default" hidden>
+        <div class="panel panel-default" hidden>
             <div class="panel-heading">
                 <h2 class="panel-title">Revision preview</h2>
             </div>
-            <div id="article-revision-preview-content" class="panel-body"></div>
+            @*<div id="article-revision-preview-content" class="panel-body"></div>*@
         </div>
     }
 }
 
-@if (Model.MetaKeywords.Any())
+@if (Model.Tags.Any())
 {
-    <div id="meta-keywords" class="row container">
-        <h2>Meta-keywords</h2>
+    <div class="row container">
+        <h2>Tags</h2>
         
-        @foreach (var keyword in Model.MetaKeywords)
+        @foreach (var tag in Model.Tags)
         {
-            <span class="label label-default">@keyword</span>
+            <span class="label label-default">@tag</span>
         }
     </div>
 }

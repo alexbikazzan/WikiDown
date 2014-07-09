@@ -21,9 +21,11 @@
                                       ? SecurityIdUtility.GetArticleAccessId(articleId)
                                       : null;
 
-            return !string.IsNullOrWhiteSpace(articleAccessId)
-                       ? repository.CurrentSession.Load<ArticleAccess>(articleAccessId)
-                       : null;
+            var articleAccess = !string.IsNullOrWhiteSpace(articleAccessId)
+                                    ? repository.CurrentSession.Load<ArticleAccess>(articleAccessId)
+                                    : null;
+
+            return articleAccess ?? ArticleAccess.Default(articleId);
         }
 
         public static void SaveArticleAccess(this Repository repository, ArticleAccess articleAccess)

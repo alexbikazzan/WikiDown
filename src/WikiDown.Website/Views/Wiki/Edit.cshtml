@@ -2,24 +2,32 @@
 @{
     ViewBag.NgApp = "WikiEdit";
     //ViewBag.NgController = "EditController";
-    ViewBag.NgInit = string.Format("articleSlug = '{0}';", Model.ArticleSlug);
+    
+    string isEditMode = (!Model.IsCreateMode).ToString().ToLowerInvariant();
+    ViewBag.NgInit = string.Format("articleSlug = '{0}'; isEditMode = {1};", Model.ArticleSlug, isEditMode);
 }
 
 @section Navbar {
     @Html.ArticleNavigation(Model)
 }
 
-<h1>@Model.PageTitle</h1>
+<h1>
+    <span ng-cloak>{{isEditMode ? 'Edit' : 'Create'}}:</span>
+    @Model.PageTitle
+</h1>
 
-<ul class="nav nav-tabs" role="tablist">
+<ul class="nav nav-tabs" role="tablist" ng-show="isEditMode">
     <li ui-sref-active="active">
         <a ui-sref="edit">Edit</a>
     </li>
     <li ui-sref-active="active">
-        <a ui-sref="meta">Meta</a>
+        <a ui-sref="history">History</a>
     </li>
     <li ui-sref-active="active" class="pull-right">
         <a ui-sref="admin">Admin</a>
+    </li>
+    <li ui-sref-active="active" class="pull-right">
+        <a ui-sref="meta">Meta</a>
     </li>
 </ul>
 

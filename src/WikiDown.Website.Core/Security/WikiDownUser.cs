@@ -3,46 +3,43 @@ using System.Collections.Generic;
 using System.Linq;
 
 using AspNet.Identity.RavenDB.Entities;
-using Microsoft.AspNet.Identity;
 using Raven.Imports.Newtonsoft.Json;
 
 namespace WikiDown.Website.Security
 {
-    public class WikiDownUser : RavenUser, IUser
+    public class WikiDownUser : RavenUser
     {
-        private static readonly string WikiDownUserTypeName = typeof(WikiDownUser).Name;
-
-        private HashSet<string> roles;
+        private HashSet<string> rolesList;
 
         [JsonConstructor]
         public WikiDownUser(string userName)
             : base(userName)
         {
-            this.roles = new HashSet<string>();
+            this.rolesList = new HashSet<string>();
         }
 
         public WikiDownUser(string userName, string email)
             : base(userName, email)
         {
-            this.roles = new HashSet<string>();
+            this.rolesList = new HashSet<string>();
         }
 
         public IEnumerable<string> Roles
         {
             get
             {
-                return this.roles;
+                return this.rolesList;
             }
             set
             {
-                if (this.roles == null)
+                if (this.rolesList == null)
                 {
-                    this.roles = new HashSet<string>();
+                    this.rolesList = new HashSet<string>();
                 }
 
                 foreach (var val in value ?? Enumerable.Empty<string>())
                 {
-                    this.roles.Add(val);
+                    this.rolesList.Add(val);
                 }
             }
         }
@@ -54,9 +51,9 @@ namespace WikiDown.Website.Security
                 throw new ArgumentNullException("roleName");
             }
 
-            if (!this.roles.Contains(roleName))
+            if (!this.rolesList.Contains(roleName))
             {
-                this.roles.Add(roleName);
+                this.rolesList.Add(roleName);
             }
         }
 
@@ -67,15 +64,21 @@ namespace WikiDown.Website.Security
                 throw new ArgumentNullException("roleName");
             }
 
-            if (this.roles.Contains(roleName))
+            if (this.rolesList.Contains(roleName))
             {
-                this.roles.Remove(roleName);
+                this.rolesList.Remove(roleName);
             }
         }
 
-        //internal static string GenerateKey(string userName)
-        //{
-        //    return string.Format("{0}/{1}", WikiDownUserTypeName, userName);
-        //}
+        public void SetRoles(IEnumerable<string> roles)
+        {
+            if (roles == null)
+            {
+                throw new ArgumentNullException("roles");
+            }
+
+            this.rolesList.Clear();
+            roles.ToList().ForEach(x => this.rolesList.Add(x));
+        }
     }
 }

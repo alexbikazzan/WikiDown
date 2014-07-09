@@ -9,24 +9,8 @@ using WikiDown.Website.ViewModels;
 
 namespace WikiDown.Website.Controllers
 {
-    public class AccountsController : ControllerBase
+    public class AccountsController : WikiDownControllerBase
     {
-        //[Route("create-account")]
-        //public ActionResult Create()
-        //{
-        //    var user = new WikiDownUser("sebnilsson", "seb.nilsson@gmail.com");
-        //    this.UserManager.Create(user, "test123");
-
-        //    string redirectUrl = this.Url.Login();
-        //    return this.Redirect(redirectUrl);
-        //}
-
-        [Route("admin", Name = RouteNames.AccountAdmin)]
-        public ActionResult Admin()
-        {
-            return this.View();
-        }
-
         [HttpGet]
         [Route("login", Name = RouteNames.Login)]
         public ActionResult Login(string returnUrl)

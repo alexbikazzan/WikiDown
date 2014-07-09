@@ -1,0 +1,47 @@
+﻿<h2>Tags <small>(semi-colon seperated)</small></h2>
+
+<div class="panel panel-default">
+    <div class="panel-body">
+        <div class="form-group">
+            <label for="article-tags" class="sr-only">Tags</label>
+            <input id="article-tags" type="text" ng-model="articleTags" class="form-control" />
+        </div>
+    </div>
+
+    <div class="panel-footer">
+        <button ng-click="saveArticleTags()" class="btn btn-primary">Save</button>
+    </div>
+</div>
+
+<h2>Redirect titles <small>(semi-colon seperated)</small></h2>
+
+<div class="panel panel-default">
+    <div class="panel-body">
+        <div class="form-group">
+            <label for="article-redirects" class="sr-only">Redirect titles</label>
+            <input id="article-redirects" type="text" ng-model="articleRedirects" class="form-control" />
+        </div>
+    </div>
+
+    <div class="panel-footer">
+        <button ng-click="saveArticleRedirects()" class="btn btn-primary">Save</button>
+    </div>
+</div>
+
+<h2>Meta</h2>
+
+<div class="panel panel-default">
+    <div class="panel-body">
+        <div class="form-group">
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" ng-model="articleMeta.isDeleted" />
+                    Marked as deleted
+                </label>
+            </div>
+        </div>
+    </div>
+    <div class="panel-footer">
+        <button ng-click="saveArticleMeta()" class="btn btn-primary">Save</button>
+    </div>
+</div>

@@ -1,2 +1,6 @@
-﻿@Html.JavascriptConditional("//ajax.googleapis.com/ajax/libs/angularjs/1.2.18/angular")
-@Html.JavascriptConditional("//ajax.googleapis.com/ajax/libs/angularjs/1.2.18/angular-resource")
+﻿@{
+    const string AngularUrlPrefix = "//ajax.googleapis.com/ajax/libs/angularjs/1.2.19/";
+}
+@Html.JavascriptConditional(AngularUrlPrefix + "/angular")
+@Html.JavascriptConditional(AngularUrlPrefix + "/angular-resource")
+@Html.JavascriptConditional(AngularUrlPrefix + "/angular-sanitize")

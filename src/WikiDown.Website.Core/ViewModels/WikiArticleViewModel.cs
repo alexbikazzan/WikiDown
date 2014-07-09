@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Security.Principal;
-using System.Web;
 
 using WikiDown.Markdown;
-using WikiDown.Security;
 
 namespace WikiDown.Website.ViewModels
 {

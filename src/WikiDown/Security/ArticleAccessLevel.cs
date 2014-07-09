@@ -1,24 +1,17 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-
-namespace WikiDown.Security
+﻿namespace WikiDown.Security
 {
-    public static class ArticleAccessLevel
+    public enum ArticleAccessLevel
     {
-        public const string Editor = "Editor";
+        Anonymous = 0,
 
-        public const string SuperUser = "SuperUser";
+        LoggedIn = 1,
 
-        public const string Admin = "Admin";
+        Editor = 10,
 
-        public const string Root = "Root";
+        SuperUser = 20,
 
-        public static readonly IReadOnlyCollection<string> EditorRoles = new[] { Editor }.ToList();
+        Admin = 30,
 
-        public static readonly IReadOnlyCollection<string> SuperUserRoles = new[] { Editor, SuperUser }.ToList();
-
-        public static readonly IReadOnlyCollection<string> AdminRoles = new[] { Editor, SuperUser, Admin }.ToList();
-
-        public static readonly IReadOnlyCollection<string> RootRoles = new[] { Editor, SuperUser, Admin, Root }.ToList();
+        Root = 100
     }
 }

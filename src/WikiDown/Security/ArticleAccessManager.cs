@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Security.Principal;
 
@@ -21,6 +20,21 @@ namespace WikiDown.Security
             this.repository = repository;
         }
 
+        public bool GetCanRead(ArticleAccess articleAccess, IPrincipal principal)
+        {
+            return (articleAccess == null) || GetIsInRole(articleAccess.CanRead, principal);
+        }
+
+        public bool GetCanEdit(ArticleAccess articleAccess, IPrincipal principal)
+        {
+            return (articleAccess == null) || GetIsInRole(articleAccess.CanEdit, principal);
+        }
+
+        public bool GetCanAdmin(ArticleAccess articleAccess, IPrincipal principal)
+        {
+            return (articleAccess == null) || GetIsInRole(articleAccess.CanAdmin, principal);
+        }
+
         public bool GetCanRead(ArticleId articleId, IPrincipal principal)
         {
             if (articleId == null)
@@ -29,7 +43,7 @@ namespace WikiDown.Security
             }
 
             var articleAccess = repository.GetArticleAccess(articleId);
-            return (articleAccess == null) || GetIsInRole(articleAccess.CanRead, principal);
+            return this.GetCanRead(articleAccess, principal);
         }
 
         public bool GetCanEdit(ArticleId articleId, IPrincipal principal)
@@ -40,7 +54,7 @@ namespace WikiDown.Security
             }
 
             var articleAccess = repository.GetArticleAccess(articleId);
-            return (articleAccess == null) || GetIsInRole(articleAccess.CanEdit, principal);
+            return this.GetCanEdit(articleAccess, principal);
         }
 
         public bool GetCanAdmin(ArticleId articleId, IPrincipal principal)
@@ -51,18 +65,20 @@ namespace WikiDown.Security
             }
 
             var articleAccess = repository.GetArticleAccess(articleId);
-            return (articleAccess == null) || GetIsInRole(articleAccess.CanAdmin, principal);
+            return this.GetCanAdmin(articleAccess, principal);
         }
 
-        private static bool GetIsInRole(IEnumerable<string> roles, IPrincipal principal)
+        internal static bool GetIsInRole(ArticleAccessLevel? acccesLevel, IPrincipal principal)
         {
-            var roleList = (roles != null) ? roles.ToList() : null;
-            if (roleList == null || !roleList.Any())
+            var roles = ArticleAccessHelper.GetRoles(acccesLevel);
+
+            var rolesList = (roles != null) ? roles.ToList() : null;
+            if (rolesList == null || !rolesList.Any())
             {
                 return true;
             }
 
-            return (principal != null) && roleList.Any(principal.IsInRole);
+            return rolesList.Any(principal.IsInRole);
         }
     }
 }

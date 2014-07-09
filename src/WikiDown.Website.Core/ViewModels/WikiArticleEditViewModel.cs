@@ -57,14 +57,14 @@ namespace WikiDown.Website.ViewModels
 
         //public string MetaKeywords { get; set; }
 
-        public override string PageTitle
-        {
-            get
-            {
-                string modeText = this.IsCreateMode ? "Create" : "Edit";
-                return string.Format("{0}: {1}", modeText, this.ArticleTitle);
-            }
-        }
+        //public override string PageTitle
+        //{
+        //    get
+        //    {
+        //        string modeText = this.IsCreateMode ? "Create" : "Edit";
+        //        return string.Format("{0}: {1}", modeText, this.ArticleTitle);
+        //    }
+        //}
 
         //public DateTime? RevisionDateTime { get; set; }
 

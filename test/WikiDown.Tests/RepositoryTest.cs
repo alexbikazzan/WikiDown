@@ -13,7 +13,7 @@ namespace WikiDown.Tests
         public void GetArticleResult_WithArticle_ShouldReturnArticleView()
         {
             var article = new Article(TestArticleId);
-            var articleRevision = new ArticleRevision(string.Empty) { ArticleId = article.Id };
+            var articleRevision = new ArticleRevision(article.Id, string.Empty);
 
             var repository = RepositoryTestHelper.GetMockRepository(article, articleRevision);
             var articleResult = repository.GetArticleResult(TestArticleId);

@@ -30,16 +30,16 @@ namespace WikiDown
             bool isId = GetIsId(articleIdOrSlug);
             if (isId)
             {
-                this.idLazy = new Lazy<string>(() => articleIdOrSlug);
                 this.originalSlugLazy = this.slugLazy;
-                this.slugLazy = new Lazy<string>(() => GetArticleSlug(this.idLazy.Value));
+                this.slugLazy = new Lazy<string>(() => GetArticleSlug(articleIdOrSlug));
             }
             else
             {
-                this.idLazy = new Lazy<string>(() => IdUtility.CreateArticleId(this.slugLazy.Value));
                 this.originalSlugLazy = new Lazy<string>(() => articleIdOrSlugOrTitle);
                 this.slugLazy = new Lazy<string>(() => ArticleSlugUtility.Encode(articleIdOrSlug));
             }
+
+            this.idLazy = new Lazy<string>(() => IdUtility.CreateArticleId(this.slugLazy.Value));
 
             this.titleLazy = new Lazy<string>(() => ArticleSlugUtility.Decode(this.slugLazy.Value));
         }

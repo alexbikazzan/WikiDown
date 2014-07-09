@@ -1,12 +1,17 @@
 ﻿using System;
 
 using SquishIt.Framework;
-using WikiDown.Website.Controllers;
 
 namespace WikiDown.Website
 {
     public static class BundleConfig
     {
+        public const string AssetsBasePath = "assets";
+
+        public const string BundlesBasePath = "bundles";
+
+        public const string WikiDownAssetsBasePath = "wikidown";
+
         public static void RegisterBundles()
         {
             RegisterCssBundles();
@@ -23,7 +28,7 @@ namespace WikiDown.Website
             siteCss.AsCached("site", "~/bundles/site_#.css");
 
             wikiArticleEditCss.Add("~/Content/Libraries/pagedown/Markdown.css")
-                .AsCached("wiki-edit", "~/" + AssetsController.BundlesBasePath + "wiki-edit_#.css");
+                .AsCached("wiki-edit", "~/" + BundlesBasePath + "wiki-edit_#.css");
         }
 
         private static void RegisterJsBundles()
@@ -39,25 +44,35 @@ namespace WikiDown.Website
                 accountAdminJs,
                 wikiArticleEditJs);
 
-            accountAdminJs.AddDirectory("~/Content/App/AccountAdmin/", recursive: false)
-                .AddDirectory("~/Content/App/AccountAdmin/");
+            accountAdminJs.AddDirectory("~/Areas/AccountAdmin/Content/App/", recursive: false)
+                .AddDirectory("~/Areas/AccountAdmin/Content/App/");
+
+            string converterHooksPath = string.Format(
+                "~/{0}/{1}/converter-hooks.js",
+                AssetsBasePath,
+                WikiDownAssetsBasePath);
 
             wikiArticleEditJs.AddDirectory("~/Content/Libraries/pagedown")
-                .Add("~/" + AssetsController.WikiDownAssetsBasePath + "converter-hooks.js")
-                .AddDirectory("~/Content/App/WikiEdit", recursive: false)
-                .AddDirectory("~/Content/App/WikiEdit");
+                .Add(converterHooksPath)
+                .AddDirectory("~/Areas/WikiEdit/Content/App/", recursive: false)
+                .AddDirectory("~/Areas/WikiEdit/Content/App/");
 
-            infoJs.Add("~/Content/Info.js");
+            //infoJs.Add("~/Content/Info.js");
 
             ConfigMultiple(x => x.Add("~/Content/Site.js"), siteJs, wikiArticleEditJs, infoJs);
 
-            siteJs.AsCached("site", "~/" + AssetsController.BundlesBasePath + "site_#.js");
+            siteJs.AsCached("site", GetCachedFilePath("site"));
 
-            infoJs.AsCached("info", "~/" + AssetsController.BundlesBasePath + "info_#.js");
+            infoJs.AsCached("info", GetCachedFilePath("info"));
 
-            accountAdminJs.AsCached("account-admin", "~/" + AssetsController.BundlesBasePath + "account-admin_#.js");
+            accountAdminJs.AsCached("account-admin", GetCachedFilePath("account-admin"));
 
-            wikiArticleEditJs.AsCached("wiki-edit", "~/" + AssetsController.BundlesBasePath + "wiki-edit_#.js");
+            wikiArticleEditJs.AsCached("wiki-edit", GetCachedFilePath("wiki-edit"));
+        }
+
+        private static string GetCachedFilePath(string filename)
+        {
+            return string.Format("~/assets/{0}/{1}_#.js", BundlesBasePath, filename);
         }
 
         private static void ConfigMultiple<TBundle>(Action<TBundle> configAction, params TBundle[] bundles)

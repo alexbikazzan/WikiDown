@@ -24,7 +24,7 @@ namespace WikiDown.Website.Security
                 return;
             }
 
-            var user = new WikiDownUser(UserName, "root@root.com") { Roles = ArticleAccessLevel.RootRoles };
+            var user = new WikiDownUser(UserName, "root@root.com") { Roles = ArticleAccessHelper.RootRoles };
 
             await userManager.CreateAsync(user, AppSetting.RootPassword);
         }

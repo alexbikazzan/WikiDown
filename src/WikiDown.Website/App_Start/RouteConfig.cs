@@ -36,9 +36,9 @@ namespace WikiDown.Website
             RouteCollection routes,
             IInlineConstraintResolver constraintResolver)
         {
-            AreaRegistration.RegisterAllAreas();
-
             routes.MapMvcAttributeRoutes(constraintResolver);
+
+            AreaRegistration.RegisterAllAreas();
         }
     }
 }

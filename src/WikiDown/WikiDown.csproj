@@ -57,7 +57,10 @@
   <ItemGroup>
     <Compile Include="Article.cs" />
     <Compile Include="IdUtility.cs" />
+    <Compile Include="RavenDb\Indexes\ArticleRedirectsIndex.cs" />
+    <Compile Include="RavenDb\Indexes\ArticleRevisionsIndex.cs" />
     <Compile Include="Security\ArticleAccess.cs" />
+    <Compile Include="Security\ArticleAccessHelper.cs" />
     <Compile Include="Security\ArticleAccessManager.cs" />
     <Compile Include="Security\RepositorySecurityExtensions.cs" />
     <Compile Include="Security\SecurityIdUtility.cs" />
@@ -75,7 +78,6 @@
     <Compile Include="RavenDb\IdConvensionsHelper.cs" />
     <Compile Include="RavenDb\IndexesHelper.cs" />
     <Compile Include="RavenDb\Indexes\ActiveArticlesSlugsIndex.cs" />
-    <Compile Include="RavenDb\Indexes\ArticleSlugsIndex.cs" />
     <Compile Include="RavenDb\Indexes\SearchArticlesIndex.cs" />
     <Compile Include="Markdown\MarkdownService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

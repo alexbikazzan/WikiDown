@@ -4,7 +4,7 @@ using System.Web.Mvc;
 namespace WikiDown.Website.Controllers
 {
     [Route("site/{action=index}/{id=guid?}", Name = RouteNames.Site)]
-    public class SiteController : ControllerBase
+    public class SiteController : WikiDownControllerBase
     {
         [Route("~/", Name = RouteNames.Empty)]
         public ActionResult Index()

@@ -32,9 +32,7 @@ namespace WikiDown.Website.ViewModels
                     .Select(x => new KeyValuePair<string, string>(x.Slug, x.Title))
                     .ToList();
 
-            var metaKeywords = article.MetaKeywords ?? string.Empty;
-            this.MetaKeywords =
-                metaKeywords.Split(' ').Where(x => !string.IsNullOrWhiteSpace(x)).Select(x => x.Trim()).ToList();
+            this.Tags = (article.Tags ?? Enumerable.Empty<string>()).ToList();
 
             this.Revisions = (from revision in repository.GetArticleRevisionList(articleId)
                               let revisionId = IdUtility.CreateArticleRevisionId(articleId, revision)
@@ -45,7 +43,7 @@ namespace WikiDown.Website.ViewModels
 
         public IReadOnlyCollection<KeyValuePair<string, string>> ArticleRedirects { get; set; }
 
-        public IReadOnlyCollection<string> MetaKeywords { get; set; }
+        public IReadOnlyCollection<string> Tags { get; set; }
 
         public IReadOnlyCollection<KeyValuePair<string, ArticleRevisionDate>> Revisions { get; set; }
     }

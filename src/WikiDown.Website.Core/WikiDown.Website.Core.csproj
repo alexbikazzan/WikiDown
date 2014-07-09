@@ -127,9 +127,13 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ApiModels\AccountUserApiModel.cs" />
+    <Compile Include="ApiModels\ArticlesMetaApiModel.cs" />
+    <Compile Include="ApiModels\ArticlesAdminApiModel.cs" />
+    <Compile Include="ApiModels\ArticleRevisionListItem.cs" />
     <Compile Include="ApiModels\ArticleRevisionApiModel.cs" />
+    <Compile Include="ApiModels\IdTextApiModel.cs" />
     <Compile Include="AppSetting.cs" />
+    <Compile Include="EnsureSlugAttribute.cs" />
     <Compile Include="ModelBinding\ArticleIdModelBinder.cs" />
     <Compile Include="DevEnvironment.cs" />
     <Compile Include="HandleExceptionsAttribute.cs" />
@@ -140,6 +144,7 @@
     <Compile Include="ModelBinding\BooleanModelBinder.cs" />
     <Compile Include="NullableGuidConstraint.cs" />
     <Compile Include="ApiRouteNames.cs" />
+    <Compile Include="AreaNames.cs" />
     <Compile Include="RouteNames.cs" />
     <Compile Include="Security\RootUserUtility.cs" />
     <Compile Include="Security\UserManagerHelper.cs" />
@@ -148,7 +153,6 @@
     <Compile Include="UrlHelperHttpExtensions.cs" />
     <Compile Include="UrlHelperExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ViewModels\AssetsWikiDownConverterHooksViewModel.cs" />
     <Compile Include="ViewModels\AuthLoginViewModel.cs" />
     <Compile Include="ViewModels\WikiArticleEditViewModel.cs">
       <SubType>Code</SubType>

@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Security.Principal;
+﻿using System.Security.Principal;
 
 namespace WikiDown.Security
 {
@@ -8,49 +6,38 @@ namespace WikiDown.Security
     {
         public string ArticleId { get; set; }
 
-        public IEnumerable<string> CanRead { get; set; }
+        public ArticleAccessLevel? CanRead { get; set; }
 
-        public IEnumerable<string> CanEdit { get; set; }
+        public ArticleAccessLevel? CanEdit { get; set; }
 
-        public IEnumerable<string> CanAdmin { get; set; }
+        public ArticleAccessLevel? CanAdmin { get; set; }
 
         public string Id { get; set; }
 
         public bool GetCanRead(IPrincipal principal)
         {
-            return GetIsPrincipalInRole(this.CanRead, principal);
+            return ArticleAccessManager.GetIsInRole(this.CanRead, principal);
         }
 
         public bool GetCanEdit(IPrincipal principal)
         {
-            return GetIsPrincipalInRole(this.CanEdit, principal);
+            return ArticleAccessManager.GetIsInRole(this.CanEdit, principal);
         }
 
         public bool GetCanAdmin(IPrincipal principal)
         {
-            return GetIsPrincipalInRole(this.CanAdmin, principal);
+            return ArticleAccessManager.GetIsInRole(this.CanAdmin, principal);
         }
 
-        public static ArticleAccess Empty(string articleId)
+        public static ArticleAccess Default(ArticleId articleId)
         {
             return new ArticleAccess
                        {
-                           ArticleId = articleId,
-                           CanRead = Enumerable.Empty<string>(),
-                           CanEdit = Enumerable.Empty<string>(),
-                           CanAdmin = Enumerable.Empty<string>()
+                           ArticleId = articleId.Id,
+                           CanAdmin = ArticleAccessLevel.Admin,
+                           CanEdit = ArticleAccessLevel.Editor,
+                           CanRead = ArticleAccessLevel.Anonymous
                        };
-        }
-
-        private static bool GetIsPrincipalInRole(IEnumerable<string> roles, IPrincipal principal)
-        {
-            var rolesList = (roles != null) ? roles.ToList() : null;
-            if (rolesList == null || !rolesList.Any())
-            {
-                return true;
-            }
-
-            return rolesList.Any(principal.IsInRole);
         }
     }
 }

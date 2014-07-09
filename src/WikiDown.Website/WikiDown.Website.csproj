@@ -172,14 +172,20 @@
     <Compile Include="App_Start\ModelBinderConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
-    <Compile Include="Controllers\Api\AccountsController.cs" />
-    <Compile Include="Controllers\Api\ApiControllerBase.cs" />
-    <Compile Include="Controllers\Api\ArticleRevisionsController.cs" />
-    <Compile Include="Controllers\Api\ArticlesController.cs" />
-    <Compile Include="Controllers\ControllerBase.cs" />
-    <Compile Include="Controllers\AssetsController.cs" />
+    <Compile Include="Areas\AccountAdmin\Controllers\AccountAdminController.cs" />
+    <Compile Include="Areas\AccountAdmin\Models\AccountUserApiModel.cs" />
+    <Compile Include="Areas\Assets\AssetsAreaRegistration.cs" />
+    <Compile Include="Areas\Assets\Models\AssetsWikiDownConverterHooksViewModel.cs" />
+    <Compile Include="Areas\WikiEdit\Controllers\Api\ArticlesMetaController.cs" />
+    <Compile Include="Controllers\Api\MetaController.cs" />
+    <Compile Include="Areas\AccountAdmin\Controllers\Api\AccountAdminController.cs" />
+    <Compile Include="Controllers\Api\WikiDownApiControllerBase.cs" />
+    <Compile Include="Areas\WikiEdit\Controllers\Api\ArticleRevisionsController.cs" />
+    <Compile Include="Areas\WikiEdit\Controllers\Api\ArticlesAdminController.cs" />
+    <Compile Include="Controllers\WikiDownControllerBase.cs" />
+    <Compile Include="Areas\Assets\Controllers\AssetsController.cs" />
     <Compile Include="Controllers\AccountsController.cs" />
-    <Compile Include="Controllers\WikiEditPartialsController.cs" />
+    <Compile Include="Areas\WikiEdit\Controllers\WikiEditPartialsController.cs" />
     <Compile Include="Controllers\SiteController.cs" />
     <Compile Include="Controllers\WikiController.cs" />
     <Compile Include="Global.asax.cs">
@@ -188,31 +194,28 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Content\App\AccountAdmin\Controller.js" />
-    <Content Include="Content\App\AccountAdmin\App.js" />
-    <Content Include="Content\App\AccountAdmin\DataApis.js" />
-    <Content Include="Content\App\WikiEdit\Controllers\Meta.js" />
-    <Content Include="Content\App\WikiEdit\Controllers\Admin.js" />
-    <Content Include="Content\App\_Shared\WikiDown.js" />
-    <Content Include="Content\Info.js" />
-    <Content Include="Content\Site.css.map">
-      <DependentUpon>Site.css</DependentUpon>
-    </Content>
+    <Content Include="Areas\AccountAdmin\Content\App\AccountAdminApp.js" />
+    <Content Include="Areas\AccountAdmin\Content\App\AccountAdminDataApis.js" />
+    <Content Include="Areas\WikiEdit\Content\App\Controllers\History.js" />
+    <Content Include="Areas\WikiEdit\Content\App\Controllers\Meta.js" />
+    <Content Include="Areas\WikiEdit\Content\App\Controllers\Admin.js" />
+    <Content Include="Content\App\_Shared\DataApis.js" />
+    <Content Include="Content\App\_Shared\_WikiDown.js" />
+    <Content Include="Areas\AccountAdmin\Views\web.config" />
+    <Content Include="Areas\Assets\Views\web.config" />
+    <Content Include="Areas\WikiEdit\Views\web.config" />
     <None Include="Content\_References.js" />
-    <Content Include="Content\App\WikiEdit\Controllers\Edit.js" />
+    <Content Include="Areas\WikiEdit\Content\App\Controllers\Edit.js" />
     <None Include="Content\App\_References.js" />
-    <Content Include="Content\App\WikiEdit\Directives\TagsInput.js" />
-    <Content Include="Content\App\WikiEdit\Services\WikiDown.js" />
-    <Content Include="Content\App\WikiEdit\WikiEditDataApis.js" />
-    <Content Include="Content\App\WikiEdit\WikiEditApp.js" />
+    <Content Include="Areas\WikiEdit\Content\App\Directives\TagsInput.js" />
+    <Content Include="Areas\WikiEdit\Content\App\Services\WikiDown.js" />
+    <Content Include="Areas\WikiEdit\Content\App\WikiEditDataApis.js" />
+    <Content Include="Areas\WikiEdit\Content\App\WikiEditApp.js" />
     <Content Include="Content\Libraries\pagedown\Markdown.Converter.js" />
     <Content Include="Content\Libraries\pagedown\Markdown.css" />
     <Content Include="Content\Libraries\pagedown\Markdown.Editor.js" />
     <Content Include="Content\Libraries\pagedown\Markdown.Sanitizer.js" />
     <Content Include="Content\Libraries\pagedown\wmd-buttons.png" />
-    <Content Include="Content\Site.min.css">
-      <DependentUpon>Site.css</DependentUpon>
-    </Content>
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css">
       <DependentUpon>Site.scss</DependentUpon>
@@ -223,17 +226,17 @@
       <DependentUpon>Web.config</DependentUpon>
     </Content>
     <Content Include="Views\Web.config" />
-    <Content Include="Views\Assets\WikiDownConverterHooks.cshtml" />
-    <Content Include="Views\Assets\_ViewStart.cshtml" />
+    <Content Include="Areas\Assets\Views\Assets\WikiDownConverterHooks.cshtml" />
+    <Content Include="Areas\Assets\Views\Assets\_ViewStart.cshtml" />
     <Content Include="Views\Wiki\_ArticleNavigation.cshtml" />
     <Content Include="Views\Shared\_MessageBox.cshtml" />
     <Content Include="Views\Accounts\Login.cshtml" />
-    <Content Include="Views\WikiEditPartials\Admin.cshtml" />
-    <Content Include="Views\WikiEditPartials\Edit.cshtml" />
-    <Content Include="Views\WikiEditPartials\Meta.cshtml" />
-    <Content Include="Views\WikiEditPartials\_ViewStart.cshtml" />
-    <Content Include="Views\Accounts\Admin.cshtml" />
+    <Content Include="Areas\WikiEdit\Views\WikiEditPartials\Admin.cshtml" />
+    <Content Include="Areas\WikiEdit\Views\WikiEditPartials\Edit.cshtml" />
+    <Content Include="Areas\WikiEdit\Views\WikiEditPartials\Meta.cshtml" />
+    <Content Include="Areas\AccountAdmin\Views\AccountAdmin\Index.cshtml" />
     <Content Include="Views\Shared\_AngularScripts.cshtml" />
+    <Content Include="Areas\WikiEdit\Views\WikiEditPartials\History.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\Site.scss">

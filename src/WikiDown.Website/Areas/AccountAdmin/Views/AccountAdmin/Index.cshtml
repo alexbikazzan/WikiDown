@@ -1,0 +1,73 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    
+    ViewBag.NgApp = "AccountAdmin";
+    ViewBag.NgController = "AccountAdminController";
+}
+
+<table class="table" ng-show="accounts && accounts.length">
+    <thead>
+        <tr>
+            <td>Username</td>
+            <td>Email</td>
+            <td>Role</td>
+            <td>Password</td>
+            <td></td>
+        </tr>
+    </thead>
+    <tbody>
+        <tr ng-repeat="account in accounts">
+            <td>{{account.userName}}</td>
+            <td>
+                <input type="email" ng-model="account.email" class="form-control" />
+            </td>
+            <td>
+                <select ng-model="account.accessLevel" ng-options="role.id as role.text for role in roleOptions"
+                        ng-disabled="account.userName === '@WikiDown.Security.ArticleAccessManager.RootAccountName'"
+                        class="form-control">
+                </select>
+            </td>
+            <td>
+                <input type="password" ng-model="account.password" class="form-control" />
+            </td>
+            <td>
+                <button ng-click="saveAccount(account)" ng-disabled="!account.userName" class="btn btn-primary">Save</button>
+                <button ng-click="deleteAccount(account)" class="btn btn-danger">Delete</button>
+            </td>
+        </tr>
+    </tbody>
+    <tfoot class="bg-info">
+        <tr>
+            <td colspan="4">Add Account</td>
+        </tr>
+        <tr>
+            <td>
+                <input type="text" ng-model="addAccount.userName" class="form-control" />
+            </td>
+            <td>
+                <input type="email" ng-model="addAccount.email" class="form-control" />
+            </td>
+            <td>
+                <select ng-model="addAccount.accessLevel" ng-options="role.id as role.text for role in roleOptions" class="form-control">
+                    <option value="">-- Choose a role --</option>
+                </select>
+            </td>
+            <td>
+                <input type="password" ng-model="addAccount.password" class="form-control" />
+            </td>
+            <td>
+                <button ng-click="saveAccount(addAccount, true)"
+                        ng-disabled="!addAccount.userName || !addAccount.password || !addAccount.role"
+                        class="btn btn-primary">
+                    Save
+                </button>
+            </td>
+        </tr>
+    </tfoot>
+</table>
+
+@section Js {
+    @Html.Partial("_AngularScripts")
+
+    @Html.BundledJs("account-admin")
+}

@@ -7,7 +7,7 @@ using WikiDown.Website.ViewModels;
 
 namespace WikiDown.Website.Controllers
 {
-    public class WikiController : ControllerBase
+    public class WikiController : WikiDownControllerBase
     {
         public WikiController()
             : this(null)
@@ -29,89 +29,39 @@ namespace WikiDown.Website.Controllers
         }
 
         [BodyClass("wiki article")]
+        [EnsureSlug(RouteName = RouteNames.WikiArticle)]
         [Route("wiki/{slug}/{revisionDate?}", Name = RouteNames.WikiArticle)]
         public ActionResult Article(string slug, ArticleRevisionDate revisionDate = null, bool redirect = true)
         {
-            this.ValidateCanReadArticle(slug, this.User);
+            this.EnsureCanReadArticle(slug, this.User);
 
-            try
-            {
-                var articleResult = this.CurrentRepository.GetArticleResult(slug, revisionDate);
+            var articleResult = this.CurrentRepository.GetArticleResult(slug, revisionDate);
 
-                this.Seo.CanonicalUrl = this.GetArticleCanonicalUrl(articleResult);
+            this.Seo.CanonicalUrl = this.GetArticleCanonicalUrl(articleResult);
 
-                var model = new WikiArticleViewModel(slug, articleResult, revisionDate, redirect);
-                return this.View(model);
-            }
-            catch (ArticleIdNotEnsuredException ex)
-            {
-                string ensuredArticleRedirectUrl = this.Url.WikiArticle(ex.EnsuredSlug);
-                return this.RedirectPermanent(ensuredArticleRedirectUrl);
-            }
-        }
-
-        [Route("delete/{slug}/{revisionDate}", Name = RouteNames.WikiArticleRevisionDelete)]
-        public ActionResult DeleteRevision(string slug, ArticleRevisionDate revisionDate)
-        {
-            if (revisionDate == null || !revisionDate.HasValue)
-            {
-                throw new ArgumentNullException("revisionDate");
-            }
-
-            this.ValidateCanEditArticle(slug, this.User);
-
-            bool isDeleteSuccessful = this.CurrentRepository.DeleteArticleRevision(slug, revisionDate);
-            if (!isDeleteSuccessful)
-            {
-                string message = string.Format(
-                    "No article-revision found for slug '{0}' and revision-date '{1}'.",
-                    slug,
-                    revisionDate);
-                throw new ArgumentOutOfRangeException("revisionDate", message);
-            }
-
-            string redirectUrl = this.Url.WikiArticleInfo(slug);
-            return this.Redirect(redirectUrl);
+            var model = new WikiArticleViewModel(slug, articleResult, revisionDate, redirect);
+            return this.View(model);
         }
 
         [HttpGet]
-        [SeoMetaNoIndex]
         [BodyClass("wiki edit")]
+        [EnsureSlug(RouteName = RouteNames.WikiArticleEdit)]
+        [SeoMetaNoIndex]
         [Route("edit/{slug}/{revisionDate?}", Name = RouteNames.WikiArticleEdit)]
         public ActionResult Edit(string slug, ArticleRevisionDate revisionDate = null)
         {
-            this.ValidateCanEditArticle(slug, this.User);
+            this.EnsureCanEditArticle(slug, this.User);
 
             var model = new WikiArticleEditViewModel(this.CurrentRepository, slug, revisionDate);
             return this.View(model);
         }
 
-        //[HttpPost]
-        //[ValidateInput(false)]
-        //[SeoMetaNoIndex]
-        //[BodyClass("wiki edit")]
-        //[Route("edit/{slug}")]
-        //public ActionResult Edit(string slug, WikiArticleEditViewModel editedArticle)
-        //{
-        //    this.ValidateCanEditArticle(slug, this.User);
-
-        //    if (!this.ModelState.IsValid)
-        //    {
-        //        return this.View(editedArticle);
-        //    }
-
-        //    var articleId = new ArticleId(slug);
-        //    var savedArticle = editedArticle.Save(this.CurrentRepository, articleId);
-
-        //    var savedArticleId = (savedArticle.HasArticle) ? savedArticle.Article.Id : articleId;
-        //    return this.Redirect(url => url.WikiArticle(savedArticleId));
-        //}
-
         [BodyClass("wiki info")]
+        [EnsureSlug(RouteName = RouteNames.WikiArticleInfo)]
         [Route("info/{slug}", Name = RouteNames.WikiArticleInfo)]
         public ActionResult Info(string slug)
         {
-            this.ValidateCanReadArticle(slug, this.User);
+            this.EnsureCanReadArticle(slug, this.User);
 
             try
             {

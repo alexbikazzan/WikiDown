@@ -1,6 +1,4 @@
-﻿using WikiDown.Security;
-
-namespace WikiDown
+﻿namespace WikiDown
 {
     public class ArticleResult
     {

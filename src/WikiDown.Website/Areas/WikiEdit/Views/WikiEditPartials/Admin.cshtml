@@ -1,0 +1,34 @@
+﻿<h2>Security</h2>
+
+<div class="panel panel-default">
+    <div class="panel-body">
+        <div class="form-group col-sm-4">
+            <label for="can-read">Can Read</label>
+            @CanDoSelect("can-read", "canRead")
+        </div>
+
+        <div class="form-group col-sm-4">
+            <label for="can-edit">Can Edit</label>
+            @CanDoSelect("can-edit", "canEdit")
+        </div>
+
+        <div class="form-group col-sm-4">
+            <label for="can-admin">Can Admin</label>
+            @CanDoSelect("can-admin", "canAdmin")
+        </div>
+    </div>
+    <div class="panel-footer">
+        <button ng-click="saveArticleAccess()" class="btn btn-primary">Save</button>
+        <small><button ng-click="setDefaultArticleAccess()" class="btn btn-link">Set defaults</button></small>
+    </div>
+</div>
+
+<h2>Delete</h2>
+
+<button ng-click="deleteArticle()" class="btn btn-danger">Delete Article</button>
+
+@helper CanDoSelect(string id, string modelName)
+{
+    <select id="@id" ng-model="articleAccess.@modelName" ng-options="role.id as role.text for role in roleOptions"
+            ng-change="articleAccessChange()" class="form-control"></select>
+}

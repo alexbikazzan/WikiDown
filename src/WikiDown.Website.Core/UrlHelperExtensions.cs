@@ -27,7 +27,7 @@ namespace WikiDown.Website
 
         public static string AccountAdmin(this UrlHelper urlHelper)
         {
-            return urlHelper.RouteUrl(RouteNames.AccountAdmin);
+            return urlHelper.RouteUrl(RouteNames.AccountAdmin); //, new { Area = AreaNames.AccountAdmin });
         }
 
         public static string Login(this UrlHelper urlHelper)
