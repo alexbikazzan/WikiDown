@@ -17,7 +17,6 @@ namespace WikiDown.Website.Areas.Assets.Controllers
         private const string JavaScriptContentType = "text/javascript";
 
         [Route("bundles/{name}_{hash}.css")]
-        [Route("bundles/{name}.css")]
         public ActionResult BundledCss(string name)
         {
             try
@@ -34,7 +33,6 @@ namespace WikiDown.Website.Areas.Assets.Controllers
         }
 
         [Route("bundles/{name}_{hash}.js")]
-        [Route("bundles/{name}.js")]
         public ActionResult BundledJs(string name)
         {
             try
