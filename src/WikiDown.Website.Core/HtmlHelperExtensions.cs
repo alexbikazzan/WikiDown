@@ -14,9 +14,11 @@ namespace WikiDown.Website
 
         public static IHtmlString Javascript(this HtmlHelper helper, string src)
         {
+            var urlHelper = new UrlHelper(helper.ViewContext.RequestContext);
+
             var tag = new TagBuilder("script");
             tag.Attributes["type"] = "text/javascript";
-            tag.Attributes["src"] = HttpUtility.HtmlAttributeEncode(src);
+            tag.Attributes["src"] = urlHelper.Content(src);
 
             return new HtmlString(tag.ToString());
         }
@@ -29,12 +31,13 @@ namespace WikiDown.Website
             return helper.Javascript(src);
         }
 
-        public static IHtmlString Stylesheet(this HtmlHelper helper, string href)
-        {
+        public static IHtmlString Stylesheet(this HtmlHelper helper, string href) {
+            var urlHelper = new UrlHelper(helper.ViewContext.RequestContext);
+
             var tag = new TagBuilder("link");
             tag.Attributes["rel"] = "stylesheet";
             tag.Attributes["type"] = "text/css";
-            tag.Attributes["href"] = HttpUtility.HtmlAttributeEncode(href);
+            tag.Attributes["href"] = urlHelper.Content(href);
 
             return new HtmlString(tag.ToString(TagRenderMode.SelfClosing));
         }

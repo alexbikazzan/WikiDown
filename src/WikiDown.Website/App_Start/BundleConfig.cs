@@ -6,12 +6,6 @@ namespace WikiDown.Website
 {
     public static class BundleConfig
     {
-        public const string AssetsBasePath = "assets";
-
-        public const string BundlesBasePath = "bundles";
-
-        public const string WikiDownAssetsBasePath = "wikidown";
-
         public static void RegisterBundles()
         {
             RegisterCssBundles();
@@ -28,7 +22,7 @@ namespace WikiDown.Website
             siteCss.AsCached("site", "~/bundles/site_#.css");
 
             wikiArticleEditCss.Add("~/Content/Libraries/pagedown/Markdown.css")
-                .AsCached("wiki-edit", "~/" + BundlesBasePath + "wiki-edit_#.css");
+                .AsCached("wiki-edit", "~/bundles/wiki-edit_#.css");
         }
 
         private static void RegisterJsBundles()
@@ -47,13 +41,7 @@ namespace WikiDown.Website
             accountAdminJs.AddDirectory("~/Areas/AccountAdmin/Content/App/", recursive: false)
                 .AddDirectory("~/Areas/AccountAdmin/Content/App/");
 
-            string converterHooksPath = string.Format(
-                "~/{0}/{1}/converter-hooks.js",
-                AssetsBasePath,
-                WikiDownAssetsBasePath);
-
             wikiArticleEditJs.AddDirectory("~/Content/Libraries/pagedown")
-                .Add(converterHooksPath)
                 .AddDirectory("~/Areas/WikiEdit/Content/App/", recursive: false)
                 .AddDirectory("~/Areas/WikiEdit/Content/App/");
 
@@ -72,7 +60,7 @@ namespace WikiDown.Website
 
         private static string GetCachedFilePath(string filename)
         {
-            return string.Format("~/assets/{0}/{1}_#.js", BundlesBasePath, filename);
+            return string.Format("~/assets/bundles/{0}_#.js", filename);
         }
 
         private static void ConfigMultiple<TBundle>(Action<TBundle> configAction, params TBundle[] bundles)

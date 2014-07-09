@@ -175,7 +175,7 @@
     <Compile Include="Areas\AccountAdmin\Controllers\AccountAdminController.cs" />
     <Compile Include="Areas\AccountAdmin\Models\AccountUserApiModel.cs" />
     <Compile Include="Areas\Assets\AssetsAreaRegistration.cs" />
-    <Compile Include="Areas\Assets\Models\AssetsWikiDownConverterHooksViewModel.cs" />
+    <Compile Include="Areas\Assets\Models\AssetsWikiDownJsViewModel.cs" />
     <Compile Include="Areas\WikiEdit\Controllers\Api\ArticlesMetaController.cs" />
     <Compile Include="Controllers\Api\MetaController.cs" />
     <Compile Include="Areas\AccountAdmin\Controllers\Api\AccountAdminController.cs" />
@@ -226,7 +226,7 @@
       <DependentUpon>Web.config</DependentUpon>
     </Content>
     <Content Include="Views\Web.config" />
-    <Content Include="Areas\Assets\Views\Assets\WikiDownConverterHooks.cshtml" />
+    <Content Include="Areas\Assets\Views\Assets\WikiDownJs.cshtml" />
     <Content Include="Areas\Assets\Views\Assets\_ViewStart.cshtml" />
     <Content Include="Views\Wiki\_ArticleNavigation.cshtml" />
     <Content Include="Views\Shared\_MessageBox.cshtml" />

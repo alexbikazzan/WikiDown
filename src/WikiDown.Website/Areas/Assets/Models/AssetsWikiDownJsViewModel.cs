@@ -6,9 +6,9 @@ using WikiDown.Markdown;
 
 namespace WikiDown.Website.Areas.Assets.Models
 {
-    public class AssetsWikiDownConverterHooksViewModel
+    public class AssetsWikiDownJsViewModel
     {
-        public AssetsWikiDownConverterHooksViewModel(
+        public AssetsWikiDownJsViewModel(
             IEnumerable<ConverterHook> preConversionHooks,
             IEnumerable<ConverterHook> postConversionHooks)
         {

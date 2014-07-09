@@ -1,4 +1,4 @@
-﻿@model AssetsWikiDownConverterHooksViewModel
+﻿@model AssetsWikiDownJsViewModel
 
 if (typeof window.WikiDown === 'undefined') {
     window.WikiDown = {};
@@ -17,7 +17,7 @@ window.WikiDown.postConversions = window.WikiDown.postConversions || [];
     @ConverterHook(hook, "postConversions")
 }
 
-@helper ConverterHook(AssetsWikiDownConverterHooksViewModel.ConverterHookItem hook, string arrayName)
+@helper ConverterHook(AssetsWikiDownJsViewModel.ConverterHookItem hook, string arrayName)
 {
 <text>
 window.WikiDown.@(hook.ArrayName).push(function(input) {

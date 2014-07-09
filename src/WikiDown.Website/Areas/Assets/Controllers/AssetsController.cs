@@ -16,8 +16,8 @@ namespace WikiDown.Website.Areas.Assets.Controllers
 
         private const string JavaScriptContentType = "text/javascript";
 
-        [Route(BundleConfig.BundlesBasePath + "/{name}_{hash}.css")]
-        [Route(BundleConfig.BundlesBasePath + "/{name}.css")]
+        [Route("bundles/{name}_{hash}.css")]
+        [Route("bundles/{name}.css")]
         public ActionResult BundledCss(string name)
         {
             try
@@ -33,8 +33,8 @@ namespace WikiDown.Website.Areas.Assets.Controllers
             }
         }
 
-        [Route(BundleConfig.BundlesBasePath + "/{name}_{hash}.js")]
-        [Route(BundleConfig.BundlesBasePath + "/{name}.js")]
+        [Route("bundles/{name}_{hash}.js")]
+        [Route("bundles/{name}.js")]
         public ActionResult BundledJs(string name)
         {
             try
@@ -50,10 +50,10 @@ namespace WikiDown.Website.Areas.Assets.Controllers
             }
         }
 
-        [Route(BundleConfig.WikiDownAssetsBasePath + "/converter-hooks.js")]
-        public ActionResult WikiDownConverterHooks()
+        [Route("wikidown/index.js")]
+        public ActionResult WikiDownJs()
         {
-            var model = new AssetsWikiDownConverterHooksViewModel(
+            var model = new AssetsWikiDownJsViewModel(
                 ConverterHooksConfig.Default.PreConversionHooks,
                 ConverterHooksConfig.Default.PostConversionHooks);
 
