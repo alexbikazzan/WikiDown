@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using System.Security.Principal;
 using System.Web.Http;
 
 namespace WikiDown.Website.ApiModels
@@ -11,10 +12,10 @@ namespace WikiDown.Website.ApiModels
 
         public ArticlesMetaApiModel(Article article)
         {
-            this.IsDeleted = article.IsDeleted;
+            this.IsHidden = article.IsHidden;
         }
 
-        public bool IsDeleted { get; set; }
+        public bool IsHidden { get; set; }
 
         public void Save(ArticleId articleId, Repository repository)
         {
@@ -24,7 +25,7 @@ namespace WikiDown.Website.ApiModels
                 throw new HttpResponseException(HttpStatusCode.NotFound);
             }
 
-            article.IsDeleted = this.IsDeleted;
+            article.IsHidden = this.IsHidden;
 
             repository.SaveArticle(article);
         }

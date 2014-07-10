@@ -199,11 +199,17 @@
     <Content Include="Areas\WikiEdit\Content\App\Controllers\History.js" />
     <Content Include="Areas\WikiEdit\Content\App\Controllers\Meta.js" />
     <Content Include="Areas\WikiEdit\Content\App\Controllers\Admin.js" />
+    <Content Include="Areas\WikiEdit\Content\App\Directives\WmdEditor.js" />
     <Content Include="Content\App\_Shared\DataApis.js" />
+    <Content Include="Content\App\_Shared\Directives\Loading.js" />
+    <Content Include="Content\App\_Shared\Services\Notifications.js" />
     <Content Include="Content\App\_Shared\_WikiDown.js" />
     <Content Include="Areas\AccountAdmin\Views\web.config" />
     <Content Include="Areas\Assets\Views\web.config" />
     <Content Include="Areas\WikiEdit\Views\web.config" />
+    <Content Include="Content\Site.css.map">
+      <DependentUpon>Site.css</DependentUpon>
+    </Content>
     <None Include="Content\_References.js" />
     <Content Include="Areas\WikiEdit\Content\App\Controllers\Edit.js" />
     <None Include="Content\App\_References.js" />
@@ -216,6 +222,9 @@
     <Content Include="Content\Libraries\pagedown\Markdown.Editor.js" />
     <Content Include="Content\Libraries\pagedown\Markdown.Sanitizer.js" />
     <Content Include="Content\Libraries\pagedown\wmd-buttons.png" />
+    <Content Include="Content\Site.min.css">
+      <DependentUpon>Site.css</DependentUpon>
+    </Content>
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css">
       <DependentUpon>Site.scss</DependentUpon>

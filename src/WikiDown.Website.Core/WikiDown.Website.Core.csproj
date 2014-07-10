@@ -133,6 +133,11 @@
     <Compile Include="ApiModels\ArticleRevisionApiModel.cs" />
     <Compile Include="ApiModels\IdTextApiModel.cs" />
     <Compile Include="AppSetting.cs" />
+    <Compile Include="AuthorizeArticleApiAttribute.cs" />
+    <Compile Include="AuthorizeArticleAttribute.cs" />
+    <Compile Include="AuthorizeArticleHelper.cs" />
+    <Compile Include="AuthorizeType.cs" />
+    <Compile Include="DocumentStoreAppInstance.cs" />
     <Compile Include="EnsureSlugAttribute.cs" />
     <Compile Include="ModelBinding\ArticleIdModelBinder.cs" />
     <Compile Include="DevEnvironment.cs" />
@@ -145,6 +150,7 @@
     <Compile Include="NullableGuidConstraint.cs" />
     <Compile Include="ApiRouteNames.cs" />
     <Compile Include="AreaNames.cs" />
+    <Compile Include="RepositoryRequestInstance.cs" />
     <Compile Include="RouteNames.cs" />
     <Compile Include="Security\RootUserUtility.cs" />
     <Compile Include="Security\UserManagerHelper.cs" />

@@ -29,9 +29,11 @@ namespace WikiDown
 
         public DateTime CreatedAt { get; set; }
 
+        public string CreatedByUserId { get; set; }
+
         public string Id { get; set; }
 
-        public bool IsDeleted { get; set; }
+        public bool IsHidden { get; set; }
 
         public IEnumerable<string> Tags { get; set; }
 

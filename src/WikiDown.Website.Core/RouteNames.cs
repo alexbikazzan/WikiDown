@@ -20,6 +20,8 @@
 
         public const string WikiArticleRevisionDelete = "WikiArticleRevisionDelete";
 
+        public const string WikiIndex = "WikiIndex";
+
         public const string WikiList = "WikiList";
 
         public const string WikiSearch = "WikiSearch";

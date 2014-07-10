@@ -6,9 +6,9 @@ namespace WikiDown.Website
 {
     public static class HtmlHelperExtensions
     {
-        public static bool HasValidationMessage(this HtmlHelper helper, string modelName)
+        public static bool HasValidationMessage(this HtmlHelper htmlHelper, string modelName)
         {
-            var message = helper.ValidationMessage(modelName);
+            var message = htmlHelper.ValidationMessage(modelName);
             return (message != null) && !string.IsNullOrWhiteSpace(message.ToHtmlString());
         }
 
@@ -23,16 +23,17 @@ namespace WikiDown.Website
             return new HtmlString(tag.ToString());
         }
 
-        public static IHtmlString JavascriptConditional(this HtmlHelper helper, string srcWithoutExtension)
+        public static IHtmlString JavascriptConditional(this HtmlHelper htmlHelper, string srcWithoutExtension)
         {
             string srcFormat = DevEnvironment.IsDebug ? "{0}.js" : "{0}.min.js";
             string src = string.Format(srcFormat, srcWithoutExtension);
 
-            return helper.Javascript(src);
+            return htmlHelper.Javascript(src);
         }
 
-        public static IHtmlString Stylesheet(this HtmlHelper helper, string href) {
-            var urlHelper = new UrlHelper(helper.ViewContext.RequestContext);
+        public static IHtmlString Stylesheet(this HtmlHelper htmlHelper, string href)
+        {
+            var urlHelper = new UrlHelper(htmlHelper.ViewContext.RequestContext);
 
             var tag = new TagBuilder("link");
             tag.Attributes["rel"] = "stylesheet";
@@ -42,12 +43,12 @@ namespace WikiDown.Website
             return new HtmlString(tag.ToString(TagRenderMode.SelfClosing));
         }
 
-        public static IHtmlString StylesheetConditional(this HtmlHelper helper, string hrefWithoutExtension)
+        public static IHtmlString StylesheetConditional(this HtmlHelper htmlHelper, string hrefWithoutExtension)
         {
             string hrefFormat = DevEnvironment.IsDebug ? "{0}.css" : "{0}.min.css";
             string href = string.Format(hrefFormat, hrefWithoutExtension);
 
-            return helper.Stylesheet(href);
+            return htmlHelper.Stylesheet(href);
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿@model WikiListViewModel
 
-<h1>All Articles</h1>
+<h1 ﻿class="page-header">All Articles</h1>
 
 @if (Model.Articles.Any())
 {
@@ -8,7 +8,7 @@
         @foreach (var article in Model.Articles)
         {
             <li class="list-group-item">
-                <a href="@Url.WikiArticle(article.Value)">@article.Key</a>
+                <a href="@Url.WikiArticle(article.Key)">@article.Value</a>
             </li>
         }
     </ul>
@@ -18,4 +18,18 @@ else
     <div class="bg-warning">
         No articles created yet
     </div>
+}
+
+@if (Model.Drafts.Any())
+{
+    <h2>Draft</h2>
+
+    <ul class="list-group">
+        @foreach (var draft in Model.Drafts)
+        {
+            <li class="list-group-item">
+                <a href="@Url.WikiArticle(draft.Key)">@draft.Value</a>
+            </li>
+        }
+    </ul>
 }

@@ -97,8 +97,7 @@ namespace WikiDown.Website.Areas.WikiEdit.Controllers.Api
         private static IEnumerable<string> GetFilteredList(IEnumerable<string> values)
         {
             return
-                (values ?? Enumerable.Empty<string>())
-                    .Select(x => (x ?? string.Empty).Trim())
+                (values ?? Enumerable.Empty<string>()).Select(x => (x ?? string.Empty).Trim())
                     .Where(x => !string.IsNullOrWhiteSpace(x))
                     .Distinct()
                     .ToList();

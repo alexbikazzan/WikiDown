@@ -60,10 +60,10 @@ namespace WikiDown.Website.Areas.WikiEdit.Controllers.Api
         }
 
         [HttpPost]
-        [Route("{revisionDate}/update-active")]
-        public void UpdateActiveRevision([FromUri] ArticleId slug, [FromUri] ArticleRevisionDate revisionDate)
+        [Route("{revisionDate}/publish")]
+        public void PublishRevision([FromUri] ArticleId slug, [FromUri] ArticleRevisionDate revisionDate)
         {
-            bool setSuccess = this.CurrentRepository.SaveActiveArticleRevision(slug, revisionDate);
+            bool setSuccess = this.CurrentRepository.PublishArticleRevision(slug, revisionDate);
             if (!setSuccess)
             {
                 throw new HttpResponseException(HttpStatusCode.NotFound);
@@ -71,16 +71,28 @@ namespace WikiDown.Website.Areas.WikiEdit.Controllers.Api
         }
 
         [HttpPost]
+        [Route("revert-to-draft")]
+        public void RevertToDraft([FromUri] ArticleId slug)
+        {
+            bool revertSuccess = this.CurrentRepository.RevertArticleToDraft(slug);
+            if (!revertSuccess)
+            {
+                throw new HttpResponseException(HttpStatusCode.NotFound);
+            }
+        }
+
+        [HttpPost]
         [Route("")]
-        public ArticleRevisionListItem SaveRevision(
+        public ArticleRevisionApiModel SaveRevision(
             [FromUri] ArticleId slug,
-            [FromBody] ArticleRevisionApiModel formData)
+            [FromBody] ArticleRevisionApiModel formData,
+            [FromUri] bool publish = false)
         {
             var articleRevision = new ArticleRevision(slug, formData.MarkdownContent, formData.EditSummary);
 
-            this.CurrentRepository.SaveArticleRevision(slug, articleRevision);
+            this.CurrentRepository.SaveArticleRevision(slug, articleRevision, publish);
 
-            return new ArticleRevisionListItem(articleRevision.CreatedAt, true /*isActive*/);
+            return new ArticleRevisionApiModel(articleRevision);
         }
 
         private ArticleRevision GetEnsuredArticleRevision(ArticleId slug, ArticleRevisionDate articleRevisionDate)

@@ -9,8 +9,8 @@ namespace WikiDown.Website.ViewModels
         public WikiArticleViewModel(
             ArticleId articleId,
             ArticleResult articleResult,
-            ArticleRevisionDate articleRevisionDate,
-            bool shouldRedirect)
+            ArticleRevisionDate articleRevisionDate = null,
+            bool shouldRedirect = false)
             : base(articleId, articleRevisionDate, HeaderTab.Article)
         {
             if (articleResult == null)

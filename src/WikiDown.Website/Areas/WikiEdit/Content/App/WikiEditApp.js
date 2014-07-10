@@ -24,6 +24,11 @@
                     templateUrl: wikiPartialsUrlBase + 'history/',
                     controller: 'HistoryController'
                 })
+                .state('history.revision', {
+                    url: '{revisionDate}/',
+                    templateUrl: wikiPartialsUrlBase + 'history/',
+                    controller: 'HistoryController'
+                })
                 .state('meta', {
                     url: '/meta/',
                     templateUrl: wikiPartialsUrlBase + 'meta/',

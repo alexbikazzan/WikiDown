@@ -68,7 +68,7 @@ namespace WikiDown.Security
             return this.GetCanAdmin(articleAccess, principal);
         }
 
-        internal static bool GetIsInRole(ArticleAccessLevel? acccesLevel, IPrincipal principal)
+        internal static bool GetIsInRole(ArticleAccessRole? acccesLevel, IPrincipal principal)
         {
             var roles = ArticleAccessHelper.GetRoles(acccesLevel);
 

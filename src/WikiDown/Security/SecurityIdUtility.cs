@@ -4,7 +4,7 @@ namespace WikiDown.Security
 {
     public static class SecurityIdUtility
     {
-        private static readonly string ArticleAccessIdSuffix = (typeof(ArticleAccess).Name.ToLowerInvariant());
+        private static readonly string ArticleAccessIdSuffix = (typeof(ArticleAccess).Name);
 
         public static string GetArticleAccessId(ArticleAccess articleAccess)
         {

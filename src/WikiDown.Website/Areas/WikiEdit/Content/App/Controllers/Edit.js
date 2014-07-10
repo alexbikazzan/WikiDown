@@ -3,6 +3,8 @@
     function($scope, $timeout, wikiDown, articleRevisionsDataApi) {
         'use strict';
 
+        console.log('EditController');
+
         function getLatestRevisionId() {
             var revision = ($scope.articleRevisions && $scope.articleRevisions.length) ?
                 $scope.articleRevisions[0] :
@@ -10,39 +12,25 @@
             return (revision) ? revision.id : undefined;
         }
 
-        function registerConverterHook(converterHooks, chainType) {
-            var conversionsName = chainType + 's',
-                conversions = wikiDown[conversionsName];
+        function onArticleRevisionsLoaded() {
+            $scope.isCreateMode = (!$scope.articleRevisions || !$scope.articleRevisions.length);
 
-            if (!conversions || !conversions.length) {
-                return;
-            }
+            var revisionId = getLatestRevisionId();
+            if (revisionId) {
+                $scope.selectedRevisionId = revisionId;
 
-            for (var i = 0, len = conversions.length; i < len; i++) {
-                var conversion = conversions[i];
-                converterHooks.chain(chainType, conversion);
+                updateArticleRevision(revisionId);
             }
         }
 
-        function registerConverterHooks(converterHooks) {
-            // https://code.google.com/p/pagedown/wiki/PageDown
+        function onSaveRevisionSuccess(result) {
+            $scope.$root.isCreateMode = false;
 
-            registerConverterHook(converterHooks, 'preConversion');
-            registerConverterHook(converterHooks, 'postConversion');
-            //registerConverterHook(converterHooks, 'plainLinkText');
-        }
-
-        function updateMarkdownContent(markdownContent) {
-            $scope.markdownContent = markdownContent;
-
-            $timeout(function() {
-                editor.refreshPreview();
-            });
+            var revisionDate = result ? result.dateId : undefined;
+            $scope.$state.go('history', { revisionDate: revisionDate });
         }
 
         function updateArticleRevision(selectedRevisionId) {
-            $scope.$state.go('edit.revision', { revisionDate: selectedRevisionId }, { notify: false, location: 'replace' });
-
             $scope.articleRevision = articleRevisionsDataApi.get(
                 { slug: $scope.articleSlug, revisionDate: selectedRevisionId },
                 function() {
@@ -50,53 +38,25 @@
                 });
         }
 
-        //$scope.$on('markdownInputChange', function(e, markdownContent) {
-        //    updateMarkdownContent(markdownContent);
-        //});
+        function updateMarkdownContent(content) {
+            $scope.$emit('markdownEditorContentChange', content);
+        }
 
-        var converter = Markdown.getSanitizingConverter();
-        var editor = new Markdown.Editor(converter);
-
-        registerConverterHooks(converter.hooks);
-
-        editor.hooks.chain('onPreviewRefresh', function() {
-            ($scope.$root || $scope).$broadcast('onWmdPreviewRefresh');
-        });
-
-        editor.run();
-        //editor.refreshPreview();
-
-        $scope.saveArticleRevision = function() {
-            articleRevisionsDataApi.save(
-                { slug: $scope.articleSlug },
+        $scope.saveArticleRevision = function(publish) {
+            $scope.articleSaving = articleRevisionsDataApi.save(
+                { slug: $scope.articleSlug, publish: publish },
                 $scope.articleRevision,
-                function(result) {
-                    $scope.articleRevisions.unshift(result);
-
-                    var revisionId = getLatestRevisionId();
-                    if (revisionId) {
-                        $scope.selectedRevisionId = revisionId;
-                    }
-
-                    $scope.$root.isEditMode = !!revisionId;
-                });
+                onSaveRevisionSuccess);
         };
 
-        $scope.articleRevisionChange = function(selectedRevisionId) {
-            updateArticleRevision(selectedRevisionId);
-        };
-
-        var revisionDate = $scope.$state.params.revisionDate;
+        var revisionDateParam = $scope.$state.params.revisionDate;
+        if (revisionDateParam) {
+            updateArticleRevision(revisionDateParam);
+            return;
+        }
 
         $scope.articleRevisions = articleRevisionsDataApi.query(
             { slug: $scope.articleSlug },
-            function() {
-                var revisionId = revisionDate || getLatestRevisionId();
-                if (revisionId) {
-                    $scope.selectedRevisionId = revisionId;
-
-                    updateArticleRevision(revisionId);
-                }
-            });
+            onArticleRevisionsLoaded);
     }
 ]);

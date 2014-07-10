@@ -21,7 +21,7 @@ namespace WikiDown.RavenDb
                     .Select(x => x.Name);
 
             var createIndexesTask = Task.Run(() => IndexCreation.CreateIndexes(indexesAssembly, documentStore));
-
+            
             bool hasAllIndexes = wikiDownIndexes.All(existingIndexes.Contains);
             if (!hasAllIndexes)
             {

@@ -1,4 +1,5 @@
-﻿using System.Web.Http;
+﻿using System.Web;
+using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Routing;
 
@@ -27,6 +28,9 @@ namespace WikiDown.Website
             BundleConfig.RegisterBundles();
 
             DocumentStore = DocumentStoreInitializer.FromAppSettingName("RavenDbConnectionString");
+
+            var application = new HttpApplicationStateWrapper(this.Application);
+            DocumentStoreAppInstance.Set(DocumentStore, application);
 
             SeoHelper.BaseTitle = "WikiDown";
         }

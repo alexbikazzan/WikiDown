@@ -36,14 +36,11 @@ namespace WikiDown.Website.Areas.WikiEdit.Controllers.Api
         }
 
         [HttpDelete]
-        public void DeleteArticle([FromUri] ArticleId slug, [FromUri] bool? permanent = null)
+        public void DeleteArticle([FromUri] ArticleId slug)
         {
             this.EnsureCanAdminArticle(slug, this.User);
 
-            bool deletePermanent = (permanent.HasValue && permanent.Value
-                                    && this.User.IsInRole(ArticleAccessHelper.Admin));
-
-            bool deleteSuccess = this.CurrentRepository.DeleteArticle(slug, deletePermanent);
+            bool deleteSuccess = this.CurrentRepository.DeleteArticle(slug);
             if (!deleteSuccess)
             {
                 throw new HttpResponseException(HttpStatusCode.NotFound);

@@ -12,22 +12,24 @@ namespace WikiDown.Website.Controllers.Api
 {
     public abstract class WikiDownApiControllerBase : ApiController
     {
+        private readonly IDocumentStore documentStore;
+
         internal const int UnauthorizedHttpCode = (int)HttpStatusCode.Unauthorized;
 
         private readonly Lazy<ArticleAccessManager> articleAccessManagerLazy;
 
-        private readonly Lazy<Repository> currentRepositoryLazy;
+        //private readonly Lazy<Repository> currentRepositoryLazy;
 
         private readonly Lazy<UserManager<WikiDownUser>> userManagerLazy;
 
         protected WikiDownApiControllerBase(IDocumentStore documentStore = null)
         {
-            documentStore = documentStore ?? MvcApplication.DocumentStore;
+            this.documentStore = documentStore ?? MvcApplication.DocumentStore;
 
             this.articleAccessManagerLazy =
-                new Lazy<ArticleAccessManager>(() => new ArticleAccessManager(this.currentRepositoryLazy.Value));
+                new Lazy<ArticleAccessManager>(() => new ArticleAccessManager(this.CurrentRepository));
 
-            this.currentRepositoryLazy = new Lazy<Repository>(() => new Repository(documentStore));
+            //this.currentRepositoryLazy = new Lazy<Repository>(() => new Repository(documentStore, this.User));
 
             this.userManagerLazy = UserManagerHelper.GetLazy(documentStore);
         }
@@ -42,9 +44,9 @@ namespace WikiDown.Website.Controllers.Api
 
         protected Repository CurrentRepository
         {
-            get
-            {
-                return this.currentRepositoryLazy.Value;
+            get {
+                return RepositoryRequestInstance.Get(this.RequestContext, this.documentStore);
+                //return this.currentRepositoryLazy.Value;
             }
         }
 
@@ -85,7 +87,7 @@ namespace WikiDown.Website.Controllers.Api
 
         protected override void Dispose(bool disposing)
         {
-            TryDisposeLazy(this.currentRepositoryLazy);
+            RepositoryRequestInstance.TryDispose(this.RequestContext);
 
             TryDisposeLazy(this.userManagerLazy);
 

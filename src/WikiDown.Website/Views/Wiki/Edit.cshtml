@@ -1,7 +1,6 @@
 ﻿@model WikiArticleEditViewModel
 @{
     ViewBag.NgApp = "WikiEdit";
-    //ViewBag.NgController = "EditController";
     
     string isEditMode = (!Model.IsCreateMode).ToString().ToLowerInvariant();
     ViewBag.NgInit = string.Format("articleSlug = '{0}'; isEditMode = {1};", Model.ArticleSlug, isEditMode);
@@ -12,21 +11,25 @@
 }
 
 <h1>
-    <span ng-cloak>{{isEditMode ? 'Edit' : 'Create'}}:</span>
     @Model.PageTitle
+    <small ng-cloak>
+        {{isEditMode ? 'Edit' : 'Create'}}
+        <small class="glyphicon glyphicon-pencil"></small>
+    </small>
+    
 </h1>
 
-<ul class="nav nav-tabs" role="tablist" ng-show="isEditMode">
-    <li ui-sref-active="active">
+<ul class="nav nav-tabs" role="tablist" ng-hide="isCreateMode" ng-cloak>
+    <li ng-class="{'active': ('edit' | includedByState)}">
         <a ui-sref="edit">Edit</a>
     </li>
-    <li ui-sref-active="active">
+    <li ng-class="{'active': ('history' | includedByState)}">
         <a ui-sref="history">History</a>
     </li>
-    <li ui-sref-active="active" class="pull-right">
+    <li ng-class="{'active': ('admin' | includedByState)}" class="pull-right">
         <a ui-sref="admin">Admin</a>
     </li>
-    <li ui-sref-active="active" class="pull-right">
+    <li ng-class="{'active': ('meta' | includedByState)}" class="pull-right">
         <a ui-sref="meta">Meta</a>
     </li>
 </ul>
@@ -36,16 +39,21 @@
 @section Css {
     @Html.BundledCss("wiki-edit")
 
-    @Html.StylesheetConditional("//cdnjs.cloudflare.com/ajax/libs/select2/3.5.0/select2")
-    @*@Html.StylesheetConditional("//cdnjs.cloudflare.com/ajax/libs/select2/3.5.0/select2-bootstrap")*@
+    @Html.StylesheetConditional("//cdnjs.cloudflare.com/ajax/libs/alertify.js/0.3.11/alertify.core")
+    @Html.StylesheetConditional("//cdnjs.cloudflare.com/ajax/libs/alertify.js/0.3.11/alertify.bootstrap")
+    @Html.StylesheetConditional("//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.1.0/css/font-awesome")
+    @*@Html.StylesheetConditional("//cdnjs.cloudflare.com/ajax/libs/angular-busy/4.0.2/angular-busy")*@
+    @*@Html.StylesheetConditional("//cdnjs.cloudflare.com/ajax/libs/select2/3.5.0/select2")*@
 }
 
 @section Js {
     @Html.Partial("_AngularScripts")
 
     @Html.JavascriptConditional("//cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.2.10/angular-ui-router")
-
-    @Html.JavascriptConditional("//cdnjs.cloudflare.com/ajax/libs/select2/3.5.0/select2")
+    
+    @Html.JavascriptConditional("//cdnjs.cloudflare.com/ajax/libs/alertify.js/0.3.11/alertify")
+    @*@Html.JavascriptConditional("//cdnjs.cloudflare.com/ajax/libs/angular-busy/4.0.2/angular-busy")*@
+    @*@Html.JavascriptConditional("//cdnjs.cloudflare.com/ajax/libs/select2/3.5.0/select2")*@
 
     @Html.Javascript("~/assets/wikidown/index.js")
 

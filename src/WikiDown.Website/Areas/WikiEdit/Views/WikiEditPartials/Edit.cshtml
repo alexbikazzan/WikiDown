@@ -1,38 +1,42 @@
-﻿<div class="row">
+﻿@*<div class="row">
     <div class="form-group col-lg-2 col-lg-offset-10 col-md-3 col-md-offset-9 col-sm-4 col-sm-offset-8">
-        
-
-        <select ng-options="revision.id as revision.text for revision in articleRevisions"
+        <select id="article-revision-select" ng-options="revision.id as revision.text for revision in articleRevisions"
                 ng-model="selectedRevisionId" ng-change="articleRevisionChange(selectedRevisionId)"
                 ng-hide="articleRevisions && !articleRevisions.length"
                 ng-disabled="(articleRevisions && !articleRevisions.$resolved) || (articleRevision && !articleRevision.$resolved)"
                 class="form-control input-sm"></select>
     </div>
-</div>
+</div>*@
 
 @* TODO: Markdown-help in overlay *@
 
-<div id="wmd" class="form-group">
+<div id="wmd-container" class="form-group">
+    <div ng-show="articleRevision.dateFormatted" class="label label-default pull-right">
+        Revision: {{articleRevision.dateFormatted}}
+    </div>
+    <div class="clearfix"></div>
+    
     <div id="wmd-panel">
         <div id="wmd-button-bar"></div>
-        <textarea id="wmd-input" ng-model="articleRevision.markdownContent"
-                  ng-disabled="articleRevision && !articleRevision.$resolved" class="form-control"></textarea>
+        <textarea id="wmd-input" ng-model="articleRevision.markdownContent" wmd-editor
+                  ng-disabled="articleRevision && articleRevision.$resolved === false" class="form-control"></textarea>
     </div>
 </div>
 
 <div class="label label-primary pull-right">Preview</div>
 <div class="clearfix"></div>
 
-<div id="wmd-preview-container" class="panel panel-default panel-body">
+<div id="wmd-preview-container" class="panel panel-primary panel-body">
     <div id="wmd-preview"></div>
 </div>
 
 <div class="form-group">
     <label for="edit-summary">Edit summary</label>
     <input id="edit-summary" type="text" ng-model="articleRevision.editSummary"
-           ng-disabled="articleRevision && !articleRevision.$resolved" class="form-control" />
+           ng-disabled="articleRevision && articleRevision.$resolved === false" class="form-control" />
 </div>
 
 <div class="form-group">
     <button ng-click="saveArticleRevision()" class="btn btn-primary">Save</button>
+    <button ng-click="saveArticleRevision(true)" class="btn btn-warning">Publish</button>
 </div>

@@ -64,7 +64,7 @@
     <Compile Include="Security\ArticleAccessManager.cs" />
     <Compile Include="Security\RepositorySecurityExtensions.cs" />
     <Compile Include="Security\SecurityIdUtility.cs" />
-    <Compile Include="Security\ArticleAccessLevel.cs" />
+    <Compile Include="Security\ArticleAccessRole.cs" />
     <Compile Include="ArticleId.cs" />
     <Compile Include="ArticleIdNotEnsuredException.cs" />
     <Compile Include="ArticleRedirect.cs" />
@@ -77,7 +77,7 @@
     <Compile Include="Markdown\ConverterHookType.cs" />
     <Compile Include="RavenDb\IdConvensionsHelper.cs" />
     <Compile Include="RavenDb\IndexesHelper.cs" />
-    <Compile Include="RavenDb\Indexes\ActiveArticlesSlugsIndex.cs" />
+    <Compile Include="RavenDb\Indexes\ArticlesListIndex.cs" />
     <Compile Include="RavenDb\Indexes\SearchArticlesIndex.cs" />
     <Compile Include="Markdown\MarkdownService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

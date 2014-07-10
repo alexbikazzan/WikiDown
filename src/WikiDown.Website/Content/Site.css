@@ -51,6 +51,9 @@ body {
     max-height: 85vh; } }
 
 /* Site */
+#wmd-container {
+  margin-top: 20px; }
+
 /* AngularJS */
 [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak, .ng-hide {
   display: none !important; }
@@ -64,3 +67,5 @@ ng\:form {
 
 .ng-hide-add-active, .ng-hide-remove {
   display: block !important; }
+
+/*# sourceMappingURL=Site.css.map */

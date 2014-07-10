@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Principal;
 
 namespace WikiDown.Security
 {
@@ -19,57 +20,87 @@ namespace WikiDown.Security
         public const string Root = "Root";
 
         public static readonly IReadOnlyCollection<string> LoggedInRoles =
-            new[] { ArticleAccessLevel.LoggedIn.ToString() }.ToList();
+            new[] { ArticleAccessRole.LoggedIn.ToString() }.ToList();
 
         public static readonly IReadOnlyCollection<string> EditorRoles =
-            LoggedInRoles.Concat(new[] { ArticleAccessLevel.Editor.ToString() }).ToList();
+            LoggedInRoles.Concat(new[] { ArticleAccessRole.Editor.ToString() }).ToList();
 
         public static readonly IReadOnlyCollection<string> SuperUserRoles =
-            EditorRoles.Concat(new[] { ArticleAccessLevel.SuperUser.ToString() }).ToList();
+            EditorRoles.Concat(new[] { ArticleAccessRole.SuperUser.ToString() }).ToList();
 
         public static readonly IReadOnlyCollection<string> AdminRoles =
-            SuperUserRoles.Concat(new[] { ArticleAccessLevel.Admin.ToString() }).ToList();
+            SuperUserRoles.Concat(new[] { ArticleAccessRole.Admin.ToString() }).ToList();
 
         public static readonly IReadOnlyCollection<string> RootRoles =
-            AdminRoles.Concat(new[] { ArticleAccessLevel.Root.ToString() }).ToList();
+            AdminRoles.Concat(new[] { ArticleAccessRole.Root.ToString() }).ToList();
+
+        public static ArticleAccessRole GetRole(IPrincipal principal)
+        {
+            if (principal == null)
+            {
+                return ArticleAccessRole.Anonymous;
+            }
+
+            if (principal.IsInRole(Root))
+            {
+                return ArticleAccessRole.Root;
+            }
+            if (principal.IsInRole(Admin))
+            {
+                return ArticleAccessRole.Admin;
+            }
+            if (principal.IsInRole(SuperUser))
+            {
+                return ArticleAccessRole.SuperUser;
+            }
+            if (principal.IsInRole(Editor))
+            {
+                return ArticleAccessRole.Editor;
+            }
+            if (principal.IsInRole(LoggedIn))
+            {
+                return ArticleAccessRole.LoggedIn;
+            }
+
+            return ArticleAccessRole.Anonymous;
+        }
 
         public static IReadOnlyCollection<string> GetRoles(string accessLevel)
         {
-            ArticleAccessLevel articleAccessLevel;
-            if (!Enum.TryParse(accessLevel ?? string.Empty, out articleAccessLevel))
+            ArticleAccessRole articleAccessRole;
+            if (!Enum.TryParse(accessLevel ?? string.Empty, out articleAccessRole))
             {
-                articleAccessLevel = ArticleAccessLevel.Anonymous;
+                articleAccessRole = ArticleAccessRole.Anonymous;
             }
 
-            return GetRoles(articleAccessLevel);
+            return GetRoles(articleAccessRole);
         }
-
 
         public static IReadOnlyCollection<string> GetRoles(int accessLevel)
         {
-            var articleAccessLevel = Enum.IsDefined(typeof(ArticleAccessLevel), accessLevel)
-                                         ? (ArticleAccessLevel)accessLevel
-                                         : ArticleAccessLevel.Anonymous;
+            var articleAccessRole = Enum.IsDefined(typeof(ArticleAccessRole), accessLevel)
+                                         ? (ArticleAccessRole)accessLevel
+                                         : ArticleAccessRole.Anonymous;
 
-            return GetRoles(articleAccessLevel);
+            return GetRoles(articleAccessRole);
         }
 
-        public static IReadOnlyCollection<string> GetRoles(ArticleAccessLevel? accessLevel)
+        public static IReadOnlyCollection<string> GetRoles(ArticleAccessRole? accessLevel)
         {
             switch (accessLevel)
             {
                 case null:
-                case ArticleAccessLevel.Anonymous:
+                case ArticleAccessRole.Anonymous:
                     return Enumerable.Empty<string>().ToList();
-                case ArticleAccessLevel.LoggedIn:
+                case ArticleAccessRole.LoggedIn:
                     return LoggedInRoles;
-                case ArticleAccessLevel.Editor:
+                case ArticleAccessRole.Editor:
                     return EditorRoles;
-                case ArticleAccessLevel.SuperUser:
+                case ArticleAccessRole.SuperUser:
                     return SuperUserRoles;
-                case ArticleAccessLevel.Admin:
+                case ArticleAccessRole.Admin:
                     return AdminRoles;
-                case ArticleAccessLevel.Root:
+                case ArticleAccessRole.Root:
                     return RootRoles;
                 default:
                     throw new ArgumentOutOfRangeException("accessLevel");

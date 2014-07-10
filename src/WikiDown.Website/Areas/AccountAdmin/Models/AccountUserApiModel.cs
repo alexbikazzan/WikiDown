@@ -73,19 +73,19 @@ namespace WikiDown.Website.Areas.AccountAdmin.Models
         {
             if (user.Roles.Contains(ArticleAccessHelper.Root))
             {
-                this.AccessLevel = (int)ArticleAccessLevel.Root;
+                this.AccessLevel = (int)ArticleAccessRole.Root;
             }
             else if (user.Roles.Contains(ArticleAccessHelper.Admin))
             {
-                this.AccessLevel = (int)ArticleAccessLevel.Admin;
+                this.AccessLevel = (int)ArticleAccessRole.Admin;
             }
             else if (user.Roles.Contains(ArticleAccessHelper.SuperUser))
             {
-                this.AccessLevel = (int)ArticleAccessLevel.SuperUser;
+                this.AccessLevel = (int)ArticleAccessRole.SuperUser;
             }
             else if (user.Roles.Contains(ArticleAccessHelper.Editor))
             {
-                this.AccessLevel = (int)ArticleAccessLevel.Editor;
+                this.AccessLevel = (int)ArticleAccessRole.Editor;
             }
         }
     }

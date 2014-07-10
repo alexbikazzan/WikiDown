@@ -17,9 +17,9 @@ namespace WikiDown.Website.ApiModels
                 return;
             }
 
-            this.CanRead = articleAccess.CanRead.HasValue ? (int)articleAccess.CanRead : -1;
-            this.CanEdit = articleAccess.CanEdit.HasValue ? (int)articleAccess.CanEdit : -1;
-            this.CanAdmin = articleAccess.CanAdmin.HasValue ? (int)articleAccess.CanAdmin : -1;
+            this.CanRead = (int)articleAccess.CanRead;
+            this.CanEdit = (int)articleAccess.CanEdit;
+            this.CanAdmin = (int)articleAccess.CanAdmin;
         }
 
         public int CanAdmin { get; set; }
@@ -42,11 +42,11 @@ namespace WikiDown.Website.ApiModels
             repository.SaveArticleAccess(articleAccess);
         }
 
-        private static ArticleAccessLevel TryGetArticleAccess(int intValue)
+        private static ArticleAccessRole TryGetArticleAccess(int intValue)
         {
-            return Enum.IsDefined(typeof(ArticleAccessLevel), intValue)
-                       ? (ArticleAccessLevel)intValue
-                       : ArticleAccessLevel.Anonymous;
+            return Enum.IsDefined(typeof(ArticleAccessRole), intValue)
+                       ? (ArticleAccessRole)intValue
+                       : ArticleAccessRole.Anonymous;
         }
     }
 }

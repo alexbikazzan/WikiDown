@@ -7,8 +7,12 @@
                 getPreview: {
                     url: articleRevisionsBaseUrl + 'preview/'
                 },
-                updateActive: {
-                    url: articleRevisionsBaseUrl + 'update-active/',
+                publishRevision: {
+                    url: articleRevisionsBaseUrl + 'publish/',
+                    method: 'POST'
+                },
+                revertArticleToDraft: {
+                    url: articleRevisionsBaseUrl + 'revert-to-draft/',
                     method: 'POST'
                 }
             });

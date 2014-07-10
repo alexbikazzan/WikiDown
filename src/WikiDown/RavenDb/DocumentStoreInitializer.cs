@@ -36,6 +36,8 @@ namespace WikiDown.RavenDb
 
         internal static void InitDocumentStore(IDocumentStore documentStore)
         {
+            documentStore.Conventions.SaveEnumsAsIntegers = true;
+
             IdConvensionsHelper.Register(documentStore);
 
             IndexesHelper.Create(documentStore);

@@ -9,7 +9,15 @@
     @Html.ArticleNavigation(Model)
 }
 
-<h1>@Model.PageTitle</h1>
+<div class="page-header">
+    <h1>
+        @Model.PageTitle
+        <small>
+            Info
+            <small class="glyphicon glyphicon-info-sign"></small>
+        </small>
+    </h1>
+</div>
 
 @if (hasRevisions || hasRedirects)
 {
@@ -17,8 +25,10 @@
         @if (hasRevisions)
         {
             <div id="article-revisions" class="col-sm-@colWidth ">
-                <h2>Revisions</h2>
-                
+                <h2>
+                    Revisions <small class="glyphicon glyphicon-time"></small>
+                </h2>
+
                 <ul class="list-group">
                     @foreach (var revision in Model.Revisions)
                     {
@@ -31,11 +41,13 @@
                 </ul>
             </div>
         }
-        
+
         @if (hasRedirects)
         {
             <div class="col-sm-@colWidth">
-                <h2>Redirects</h2>
+                <h2>
+                    Redirects <small class="glyphicon glyphicon-share-alt"></small>
+                </h2>
 
                 <div class="content">
                     @foreach (var redirect in Model.ArticleRedirects)
@@ -49,22 +61,24 @@
         }
     </div>
 
-    if (hasRevisions)
+    @*if (hasRevisions)
     {
         <div class="panel panel-default" hidden>
             <div class="panel-heading">
                 <h2 class="panel-title">Revision preview</h2>
             </div>
-            @*<div id="article-revision-preview-content" class="panel-body"></div>*@
+            <div id="article-revision-preview-content" class="panel-body"></div>
         </div>
-    }
+    }*@
 }
 
 @if (Model.Tags.Any())
 {
     <div class="row container">
-        <h2>Tags</h2>
-        
+        <h2>
+            Tags <small class="glyphicon glyphicon-tags"></small>
+        </h2>
+
         @foreach (var tag in Model.Tags)
         {
             <span class="label label-default">@tag</span>
@@ -72,8 +86,7 @@
     </div>
 }
 
-@helper RevisionLink(ArticleRevisionDate articleRevisionDate)
-{
+@helper RevisionLink(ArticleRevisionDate articleRevisionDate) {
     <a href="@Url.WikiArticle(Model.ArticleSlug, articleRevisionDate)">@articleRevisionDate.DateTime.ToString("yyyy-MM-dd HH:mm:ss")</a>
 }
 

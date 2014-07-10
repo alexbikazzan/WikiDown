@@ -19,9 +19,18 @@ namespace WikiDown.Website.Controllers
         {
         }
 
+        [BodyClass("wiki article index")]
+        [Route("wiki", Name = RouteNames.WikiIndex)]
+        public ActionResult Index() {
+            var articleResult = this.CurrentRepository.GetArticleResult(string.Empty);
+
+            var model = new WikiArticleViewModel(string.Empty, articleResult);
+            return this.View(model);
+        }
+
         [SeoTitle("All Articles")]
         [BodyClass("wiki list")]
-        [Route("wiki", Name = RouteNames.WikiList)]
+        [Route("list", Name = RouteNames.WikiList)]
         public ActionResult List()
         {
             var model = new WikiListViewModel(this.CurrentRepository);

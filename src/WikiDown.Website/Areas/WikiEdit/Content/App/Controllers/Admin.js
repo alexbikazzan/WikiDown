@@ -4,7 +4,7 @@
         'use strict';
 
         $scope.deleteArticle = function() {
-            articlesAdminDataApi.delete({ slug: $scope.articleSlug, permanent: $scope.deletePermanent },
+            articlesAdminDataApi.delete({ slug: $scope.articleSlug },
                 function() {
                     $scope.$state.go('edit');
                 });

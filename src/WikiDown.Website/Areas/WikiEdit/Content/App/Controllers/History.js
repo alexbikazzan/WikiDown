@@ -2,20 +2,20 @@
     '$scope', 'articleRevisionsDataApi',
     function($scope, articleRevisionsDataApi) {
         'use strict';
-
+        
         var cachedRevisionPreviews = {};
 
-        function populatePreview(revisionId) {
-            var cachedPreview = cachedRevisionPreviews[revisionId];
+        function previewRevision(revisionDate) {
+            var cachedPreview = cachedRevisionPreviews[revisionDate];
             if (cachedPreview) {
                 $scope.revisionPreview = cachedPreview;
                 return;
             }
 
-            var params = { slug: $scope.articleSlug, revisionDate: revisionId };
+            var params = { slug: $scope.articleSlug, revisionDate: revisionDate };
             $scope.revisionPreview = articleRevisionsDataApi.getPreview(params,
                 function() {
-                    cachedRevisionPreviews[revisionId] = $scope.revisionPreview;
+                    cachedRevisionPreviews[revisionDate] = $scope.revisionPreview;
                 });
         }
 
@@ -39,14 +39,22 @@
         };
 
         $scope.previewRevision = function(revision) {
-            populatePreview(revision.id);
+            previewRevision(revision.id);
         };
 
-        $scope.setActiveRevision = function(revision, $event) {
+        $scope.revertArticleToDraft = function() {
+            var params = { slug: $scope.articleSlug };
+            articleRevisionsDataApi.revertArticleToDraft(params, {},
+                function() {
+                    $scope.articleRevisions.forEach(function(x) { x.isActive = false; });
+                });
+        };
+
+        $scope.publishRevision = function(revision, $event) {
             $event.stopPropagation();
 
             var params = { slug: $scope.articleSlug, revisionDate: revision.id };
-            articleRevisionsDataApi.updateActive(params, {},
+            articleRevisionsDataApi.publishRevision(params, {},
                 function() {
                     $scope.articleRevisions.forEach(function(x) { x.isActive = false; });
 
@@ -54,17 +62,42 @@
                 });
         };
 
+        function previewActiveRevision() {
+            var activeRevision;
+            $scope.articleRevisions.some(function(x) {
+                return x.isActive ? ((activeRevision = x), true) : false;
+            });
+
+            if (activeRevision && activeRevision.id) {
+                previewRevision(activeRevision.id);
+
+                $scope.$state.go('history.revision', { revisionDate: activeRevision.id }, { location: 'replace', notify: false });
+            }
+        }
+
+        $scope.getIsAnyRevisionActive = function() {
+            return $scope.articleRevisions.some(function(x) { return x.isActive; });
+        };
+
+        var revisionDateParam = $scope.$state.params.revisionDate;
+
         $scope.articleRevisions = articleRevisionsDataApi.query(
             { slug: $scope.articleSlug },
             function() {
-                var activeRevision;
-                $scope.articleRevisions.some(function(x) {
-                    return x.isActive ? ((activeRevision = x), true) : false;
-                });
-
-                if (activeRevision) {
-                    $scope.previewRevision(activeRevision);
+                if (!revisionDateParam) {
+                    previewActiveRevision();
+                } else {
+                    previewRevision(revisionDateParam);
                 }
             });
+
+        $scope.articleRevisions.$promise.then(function() {
+            $scope.$on('$stateChangeSuccess', function(e, toState, toParams) {
+                var revisionDate = toParams.revisionDate;
+                if (revisionDate) {
+                    previewRevision(revisionDate);
+                }
+            });
+        });
     }
 ]);

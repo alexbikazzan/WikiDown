@@ -14,22 +14,21 @@ namespace WikiDown.Website.Controllers
 {
     public abstract class WikiDownControllerBase : SeoControllerBase
     {
+        private readonly IDocumentStore documentStore;
+
         protected const int UnauthorizedHttpCode = (int)HttpStatusCode.Unauthorized;
 
         private readonly Lazy<ArticleAccessManager> articleAccessManagerLazy;
-
-        private readonly Lazy<Repository> currentRepositoryLazy;
 
         private readonly Lazy<UserManager<WikiDownUser>> userManagerLazy;
 
         protected WikiDownControllerBase(IDocumentStore documentStore = null)
         {
-            documentStore = documentStore ?? MvcApplication.DocumentStore;
+            this.documentStore = documentStore ?? MvcApplication.DocumentStore;
 
             this.articleAccessManagerLazy =
-                new Lazy<ArticleAccessManager>(() => new ArticleAccessManager(this.currentRepositoryLazy.Value));
+                new Lazy<ArticleAccessManager>(() => new ArticleAccessManager(this.CurrentRepository));
 
-            this.currentRepositoryLazy = new Lazy<Repository>(() => new Repository(documentStore));
 
             this.userManagerLazy = UserManagerHelper.GetLazy(documentStore);
         }
@@ -46,7 +45,8 @@ namespace WikiDown.Website.Controllers
         {
             get
             {
-                return this.currentRepositoryLazy.Value;
+                return RepositoryRequestInstance.Get(this.Request.RequestContext, this.documentStore);
+                //return this.currentRepositoryLazy.Value;
             }
         }
 
@@ -105,7 +105,7 @@ namespace WikiDown.Website.Controllers
 
         protected override void Dispose(bool disposing)
         {
-            TryDisposeLazy(this.currentRepositoryLazy);
+            RepositoryRequestInstance.TryDispose(this.Request.RequestContext);
 
             TryDisposeLazy(this.userManagerLazy);
 
@@ -114,7 +114,7 @@ namespace WikiDown.Website.Controllers
 
         private void SetSeoValues(ArticleAccess articleAccess)
         {
-            if (articleAccess == null || articleAccess.CanRead > ArticleAccessLevel.Anonymous)
+            if (articleAccess == null || articleAccess.CanRead > ArticleAccessRole.Anonymous)
             {
                 this.Seo.MetaNoIndex = true;
             }

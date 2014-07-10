@@ -8,9 +8,9 @@ namespace WikiDown.Website
 {
     public static class HtmlHelperPartialsExtensions
     {
-        public static IHtmlString ArticleNavigation(this HtmlHelper html, WikiArticleViewModelBase model)
+        public static IHtmlString ArticleNavigation(this HtmlHelper htmlHelper, WikiArticleViewModelBase model)
         {
-            return html.Partial("_ArticleNavigation", model);
+            return htmlHelper.Partial("_ArticleNavigation", model);
         }
     }
 }

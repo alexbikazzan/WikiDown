@@ -4,10 +4,12 @@
     {
         public ArticleResult(
             Article article = null,
-            ArticleRevision articleRevision = null)
+            ArticleRevision articleRevision = null,
+            ArticleRedirect articleRedirect = null)
         {
             this.Article = article;
             this.ArticleRevision = articleRevision;
+            this.ArticleRedirect = articleRedirect;
         }
 
         public Article Article { get; internal set; }

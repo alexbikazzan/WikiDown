@@ -1,29 +1,49 @@
-﻿<h2>Revisions</h2>
+﻿<h2>
+    Revisions <small class="glyphicon glyphicon-time"></small>
+</h2>
 
-<div class="list-group">
-    <div ng-repeat="revision in articleRevisions" ng-click="previewRevision(revision)"
-          ng-class="{'list-group-item-info':revision.isActive}" class="list-group-item">
-        <div class="col-lg-9 col-md-6 col-sm-6">
-            {{revision.text}}
+<div class="panel panel-info list-group">
+    <div loading="articleRevisions"></div>
+
+    <div ng-repeat="revision in articleRevisions"
+         ng-class="{'list-group-item-info': $state.is('history.revision', { revisionDate: revision.id })}" class="list-group-item">
+        <div title="{{ revision.isActive ? 'Published' : '' }}" class="col-lg-9 col-md-6 col-sm-6">
+            <a ui-sref="history.revision({ revisionDate: revision.id })" ui-sref-opts="{location: 'replace'}" class=" btn btn-link">
+                {{revision.text}}
+            </a>
+            <span ng-show="revision.isActive" class="label label-success">
+                <i class="glyphicon glyphicon-ok"></i> Published
+            </span>
         </div>
         <div class="col-lg-3 col-md-6 col-sm-6 text-right">
-            <button ng-click="editRevision(revision, $event)" class="btn btn-default">Edit</button>
-            <button ng-click="setActiveRevision(revision, $event)" class="btn btn-primary">Set Active</button>
+            <a ui-sref="edit.revision({ revisionDate: revision.id })" class="btn btn-default">Edit</a>
+            <button ng-click="publishRevision(revision, $event)" ng-disabled="revision.isActive" class="btn btn-success">Publish</button>
             <button ng-click="deleteRevision(revision, $event)" class="btn btn-danger">Delete</button>
         </div>
         <div class="clearfix"></div>
     </div>
+    <div class="panel-footer text-right">
+        <button ng-click="revertArticleToDraft()" ng-disabled="!getIsAnyRevisionActive()" class="btn btn-warning">
+            Revert to draft
+        </button>
+    </div>
 </div>
 
-<h2>Preview</h2>
+<h2>
+    Preview <small class="glyphicon glyphicon-zoom-in"></small>
+</h2>
 
-<div class="panel panel-default">
+<div class="panel panel-primary">
     <div class="panel-body">
-        <div ng-show="revisionPreview.htmlContent" ng-bind-html="revisionPreview.htmlContent"></div>
+        <div loading="revisionPreview"></div>
 
-        <div ng-hide="revisionPreview.htmlContent" class="small">Click on revision to preview</div>
+        <div ng-show="('history.revision' | isState) && revisionPreview.htmlContent"
+             ng-bind-html="revisionPreview.htmlContent"></div>
+
+        <div ng-show="'history' | isState" class="small">Click on revision to preview</div>
     </div>
-    <div ng-show="revisionPreview.htmlContent" class="panel-footer">
-        <button ng-show="revisionPreview.htmlContent" ng-click="revisionPreview = undefined" class="btn btn-link">Close</button>
+
+    <div ng-show="'history.revision' | isState" class="panel-footer">
+        <a ui-sref="history" class="btn btn-link">Close</a>
     </div>
 </div>

@@ -4,17 +4,19 @@
     @Html.ArticleNavigation(Model)
 }
 
-<h1>@Model.PageTitle</h1>
-
-@if (Model.ArticleRedirectFrom.HasValue && Model.ShouldRedirect)
-{
-    <div class="breadcrumb">
-        redirected from:
-        <em>
-            <a href="@Url.WikiArticle(Model.ArticleRedirectFrom, redirect: false)">@Model.ArticleRedirectFrom.Title</a>
-        </em>
-    </div>
-}
+<div class="page-header">
+    <h1>@Model.PageTitle</h1>
+    
+    @if (Model.ArticleRedirectFrom.HasValue && Model.ShouldRedirect)
+    {
+        <div class="breadcrumb text-info">
+            redirected from:
+            <em>
+                <a href="@Url.WikiArticle(Model.ArticleRedirectFrom, redirect: false)">@Model.ArticleRedirectFrom.Title</a>
+            </em>
+        </div>
+    }
+</div>
 
 @if (Model.ArticleRevisionDate.HasValue)
 {
@@ -26,7 +28,7 @@
 
 <div class="clearfix"></div>
 
-<article id="content" class="container">
+<article id="content">
     @if (Model.HasArticle)
     {
         @Html.Raw(Model.HtmlContent)
