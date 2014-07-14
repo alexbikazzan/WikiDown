@@ -54,7 +54,8 @@ namespace WikiDown.Website.Areas.Assets.Controllers
         {
             var model = new AssetsWikiDownJsViewModel(
                 ConverterHooksConfig.Default.PreConversionHooks,
-                ConverterHooksConfig.Default.PostConversionHooks);
+                ConverterHooksConfig.Default.PostConversionHooks,
+                ConverterHooksConfig.Default.ServerSideHooks);
 
             this.Response.ContentType = JavaScriptContentType;
             return this.View(model);

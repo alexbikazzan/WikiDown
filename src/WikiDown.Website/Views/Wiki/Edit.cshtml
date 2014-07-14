@@ -2,8 +2,7 @@
 @{
     ViewBag.NgApp = "WikiEdit";
     
-    string isEditMode = (!Model.IsCreateMode).ToString().ToLowerInvariant();
-    ViewBag.NgInit = string.Format("articleSlug = '{0}'; isEditMode = {1};", Model.ArticleSlug, isEditMode);
+    ViewBag.NgInit = string.Format("articleSlug = '{0}';", Model.ArticleSlug);
 }
 
 @section Navbar {
@@ -12,14 +11,14 @@
 
 <h1>
     @Model.PageTitle
-    <small ng-cloak>
-        {{isEditMode ? 'Edit' : 'Create'}}
+    <small>
+        Edit:
         <small class="glyphicon glyphicon-pencil"></small>
     </small>
     
 </h1>
 
-<ul class="nav nav-tabs" role="tablist" ng-hide="isCreateMode" ng-cloak>
+<ul class="nav nav-tabs" role="tablist">
     <li ng-class="{'active': ('edit' | includedByState)}">
         <a ui-sref="edit">Edit</a>
     </li>
@@ -42,7 +41,6 @@
     @Html.StylesheetConditional("//cdnjs.cloudflare.com/ajax/libs/alertify.js/0.3.11/alertify.core")
     @Html.StylesheetConditional("//cdnjs.cloudflare.com/ajax/libs/alertify.js/0.3.11/alertify.bootstrap")
     @Html.StylesheetConditional("//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.1.0/css/font-awesome")
-    @*@Html.StylesheetConditional("//cdnjs.cloudflare.com/ajax/libs/angular-busy/4.0.2/angular-busy")*@
     @*@Html.StylesheetConditional("//cdnjs.cloudflare.com/ajax/libs/select2/3.5.0/select2")*@
 }
 
@@ -52,7 +50,6 @@
     @Html.JavascriptConditional("//cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.2.10/angular-ui-router")
     
     @Html.JavascriptConditional("//cdnjs.cloudflare.com/ajax/libs/alertify.js/0.3.11/alertify")
-    @*@Html.JavascriptConditional("//cdnjs.cloudflare.com/ajax/libs/angular-busy/4.0.2/angular-busy")*@
     @*@Html.JavascriptConditional("//cdnjs.cloudflare.com/ajax/libs/select2/3.5.0/select2")*@
 
     @Html.Javascript("~/assets/wikidown/index.js")

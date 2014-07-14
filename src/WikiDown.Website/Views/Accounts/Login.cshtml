@@ -1,5 +1,7 @@
 ﻿@model AuthLoginViewModel
 
+@* TODO: http://getbootstrap.com/examples/signin/ *@
+
 <h1>Login</h1>
 
 @using (Html.BeginRouteForm(RouteNames.Login))
@@ -9,6 +11,12 @@
     </div>
     <div class="form-group">
         @Html.TextBoxFor(x => x.Password, new { type = "password" })
+    </div>
+
+    <div class="checkbox">
+        <label>
+            @Html.CheckBoxFor(x => x.IsPersistent) Remember me
+        </label>
     </div>
 
     <div class="form-group">
@@ -21,4 +29,6 @@
             @Html.ValidationMessage("model")
         </div>
     }
+
+    @Html.AntiForgeryToken()
 }

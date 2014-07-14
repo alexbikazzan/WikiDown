@@ -1,7 +1,7 @@
 ﻿@model WikiArticleInfoViewModel
 @{
     bool hasRevisions = Model.Revisions.Any();
-    bool hasRedirects = Model.ArticleRedirects.Any();
+    bool hasRedirects = Model.Redirects.Any();
     int colWidth = (hasRevisions && hasRedirects) ? 6 : 12;
 }
 
@@ -32,10 +32,17 @@
                 <ul class="list-group">
                     @foreach (var revision in Model.Revisions)
                     {
-                        <li class="list-group-item @(Model.ActiveArticleRevisionId == revision.Key ? "list-group-item-info" : null)">
+                        <li class="list-group-item @(revision.IsActive ? "list-group-item-info" : null)">
                             <div class="btn btn-link">
-                                @RevisionLink(revision.Value)
+                                @RevisionLink(revision.Date, revision.DateFormatted)
                             </div>
+                            
+                            @if (!string.IsNullOrWhiteSpace(revision.UserName))
+                            {
+                                <small>
+                                    <i class="glyphicon glyphicon-user"></i> @revision.UserName
+                                </small>
+                            }
                         </li>
                     }
                 </ul>
@@ -50,7 +57,7 @@
                 </h2>
 
                 <div class="content">
-                    @foreach (var redirect in Model.ArticleRedirects)
+                    @foreach (var redirect in Model.Redirects)
                     {
                         <div class="redirect">
                             <a href="@Url.WikiArticle(redirect.Key, redirect: false)">@redirect.Value</a>
@@ -86,8 +93,10 @@
     </div>
 }
 
-@helper RevisionLink(ArticleRevisionDate articleRevisionDate) {
-    <a href="@Url.WikiArticle(Model.ArticleSlug, articleRevisionDate)">@articleRevisionDate.DateTime.ToString("yyyy-MM-dd HH:mm:ss")</a>
+@helper RevisionLink(ArticleRevisionDate articleRevisionDate, string dateFormatted) {
+    <a href="@Url.WikiArticle(Model.ArticleSlug, articleRevisionDate)" class="utc-time">
+        @dateFormatted
+    </a>
 }
 
 @section Js {

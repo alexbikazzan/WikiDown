@@ -3,68 +3,88 @@
     
     ViewBag.NgApp = "AccountAdmin";
     ViewBag.NgController = "AccountAdminController";
+
+    bool isCurrentUserRoot = (this.User.Identity.Name == WikiDown.Security.ArticleAccessHelper.RootAccountName);
+
+    string col1Classes = "col-lg-2 col-md-3 col-sm-6 col-xs-6";
+    string col2Classes = "col-lg-3 col-md-3 col-sm-6 col-xs-6";
+    string col3Classes = "col-lg-2 col-md-3 col-sm-6 col-xs-6";
+    string col4Classes = "col-lg-3 col-md-3 col-sm-6 col-xs-6";
+    string col5Classes = "col-lg-2";
 }
 
-<table class="table" ng-show="accounts && accounts.length">
-    <thead>
-        <tr>
-            <td>Username</td>
-            <td>Email</td>
-            <td>Role</td>
-            <td>Password</td>
-            <td></td>
-        </tr>
-    </thead>
-    <tbody>
-        <tr ng-repeat="account in accounts">
-            <td>{{account.userName}}</td>
-            <td>
+<div class="row panel panel-info" ng-show="accounts && accounts.length">
+    <div class="panel-heading hidden-sm hidden-xs">
+        <label class="@col1Classes">Username</label>
+        <label class="@col2Classes">Email</label>
+        <label class="@col3Classes">Role</label>
+        <label class="@col4Classes">Password</label>
+        <div class="clearfix"></div>
+    </div>
+
+    <div class="container">
+        <div ng-repeat="account in accounts" class="row list-group-item">
+            <div class="@col1Classes form-group">
+                <label class="hidden-lg hidden-md">Username</label>
+                <div class="form-control-static">{{account.userName}}</div>
+            </div>
+            <div class="@col2Classes form-group">
+                <label class="hidden-lg hidden-md">Email</label>
                 <input type="email" ng-model="account.email" class="form-control" />
-            </td>
-            <td>
-                <select ng-model="account.accessLevel" ng-options="role.id as role.text for role in roleOptions"
-                        ng-disabled="account.userName === '@WikiDown.Security.ArticleAccessManager.RootAccountName'"
-                        class="form-control">
-                </select>
-            </td>
-            <td>
+            </div>
+            <div class="@col3Classes form-group">
+                <label class="hidden-lg hidden-md">Role</label>
+                <select ng-model="account.accessLevel"
+                        ng-options="role.id as role.text for role in roleOptions | filter:roleFilter(account)"
+                        ng-disabled="account.isRoot"
+                        class="form-control"></select>
+            </div>
+            <div class="@col4Classes form-group">
+                <label class="hidden-lg hidden-md">Password</label>
                 <input type="password" ng-model="account.password" class="form-control" />
-            </td>
-            <td>
-                <button ng-click="saveAccount(account)" ng-disabled="!account.userName" class="btn btn-primary">Save</button>
-                <button ng-click="deleteAccount(account)" class="btn btn-danger">Delete</button>
-            </td>
-        </tr>
-    </tbody>
-    <tfoot class="bg-info">
-        <tr>
-            <td colspan="4">Add Account</td>
-        </tr>
-        <tr>
-            <td>
-                <input type="text" ng-model="addAccount.userName" class="form-control" />
-            </td>
-            <td>
-                <input type="email" ng-model="addAccount.email" class="form-control" />
-            </td>
-            <td>
-                <select ng-model="addAccount.accessLevel" ng-options="role.id as role.text for role in roleOptions" class="form-control">
-                    <option value="">-- Choose a role --</option>
-                </select>
-            </td>
-            <td>
-                <input type="password" ng-model="addAccount.password" class="form-control" />
-            </td>
-            <td>
-                <button ng-click="saveAccount(addAccount, true)"
-                        ng-disabled="!addAccount.userName || !addAccount.password || !addAccount.role"
-                        class="btn btn-primary">
-                    Save
-                </button>
-            </td>
-        </tr>
-    </tfoot>
-</table>
+            </div>
+            <div class="@col5Classes form-group text-right">
+                <button ng-click="saveAccount(account)" ng-disabled="!account.userName && @(!isCurrentUserRoot)"
+                         class="btn btn-primary">Save</button>
+                <button ng-click="deleteAccount(account)" ng-disabled="account.isRoot" class="btn btn-danger">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row panel panel-default">
+    <div class="panel-heading bg-info">
+        <label>Add Account</label>
+    </div>
+    <div class="panel-body list-group-item bg-info">
+        <div class="col-lg-3 col-md-3 col-sm-6 col-xs-6 form-group">
+            <label>Username</label>
+            <input type="text" ng-model="addAccount.userName" class="form-control" />
+        </div>
+        <div class="@col2Classes form-group">
+            <label>Email</label>
+            <input type="email" ng-model="addAccount.email" class="form-control" />
+        </div>
+        <div class="@col3Classes form-group">
+            <label>Role</label>
+            <select ng-model="addAccount.accessLevel" ng-options="role.id as role.text for role in roleOptions" class="form-control">
+                @*<option value="">-- Role --</option>*@
+            </select>
+        </div>
+        <div class="@col4Classes form-group">
+            <label>Password</label>
+            <input type="password" ng-model="addAccount.password" class="form-control" />
+        </div>
+        <div class="col-lg-1 form-group text-right">
+            <label class="hidden-md hidden-sm hidden-xs">&nbsp;</label>
+            <button ng-click="saveAccount(addAccount, true)"
+                    ng-disabled="!addAccount.userName || !addAccount.password || !addAccount.accessLevel"
+                    class="btn btn-primary">
+                Save
+            </button>
+        </div>
+    </div>
+</div>
 
 @section Js {
     @Html.Partial("_AngularScripts")

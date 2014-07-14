@@ -21,10 +21,9 @@ namespace WikiDown.Website.Controllers
 
         [BodyClass("wiki article index")]
         [Route("wiki", Name = RouteNames.WikiIndex)]
-        public ActionResult Index() {
-            var articleResult = this.CurrentRepository.GetArticleResult(string.Empty);
-
-            var model = new WikiArticleViewModel(string.Empty, articleResult);
+        public ActionResult Index()
+        {
+            var model = new WikiArticleViewModel(this.Request.RequestContext, string.Empty);
             return this.View(model);
         }
 
@@ -37,18 +36,14 @@ namespace WikiDown.Website.Controllers
             return this.View(model);
         }
 
-        [BodyClass("wiki article")]
         [EnsureSlug(RouteName = RouteNames.WikiArticle)]
+        [BodyClass("wiki article")]
         [Route("wiki/{slug}/{revisionDate?}", Name = RouteNames.WikiArticle)]
         public ActionResult Article(string slug, ArticleRevisionDate revisionDate = null, bool redirect = true)
         {
-            this.EnsureCanReadArticle(slug, this.User);
+            var model = new WikiArticleViewModel(this.Request.RequestContext, slug, revisionDate, redirect);
+            this.Seo.CanonicalUrl = this.GetArticleCanonicalUrl(model);
 
-            var articleResult = this.CurrentRepository.GetArticleResult(slug, revisionDate);
-
-            this.Seo.CanonicalUrl = this.GetArticleCanonicalUrl(articleResult);
-
-            var model = new WikiArticleViewModel(slug, articleResult, revisionDate, redirect);
             return this.View(model);
         }
 
@@ -59,9 +54,7 @@ namespace WikiDown.Website.Controllers
         [Route("edit/{slug}/{revisionDate?}", Name = RouteNames.WikiArticleEdit)]
         public ActionResult Edit(string slug, ArticleRevisionDate revisionDate = null)
         {
-            this.EnsureCanEditArticle(slug, this.User);
-
-            var model = new WikiArticleEditViewModel(this.CurrentRepository, slug, revisionDate);
+            var model = new WikiArticleEditViewModel(this.Request.RequestContext, slug, revisionDate);
             return this.View(model);
         }
 
@@ -70,11 +63,9 @@ namespace WikiDown.Website.Controllers
         [Route("info/{slug}", Name = RouteNames.WikiArticleInfo)]
         public ActionResult Info(string slug)
         {
-            this.EnsureCanReadArticle(slug, this.User);
-
             try
             {
-                var model = new WikiArticleInfoViewModel(this.CurrentRepository, slug);
+                var model = new WikiArticleInfoViewModel(this.Request.RequestContext, slug, this.UserManager);
                 return this.View(model);
             }
             catch (ArgumentOutOfRangeException ex)
@@ -96,17 +87,17 @@ namespace WikiDown.Website.Controllers
             return this.Redirect(url => url.WikiArticle(search));
         }
 
-        private string GetArticleCanonicalUrl(ArticleResult articleResult)
+        private string GetArticleCanonicalUrl(WikiArticleViewModel model)
         {
             string canonicalUrl = null;
 
-            if (articleResult.HasRedirect)
+            if (model.ShouldRedirect)
             {
-                canonicalUrl = this.Url.WikiArticle(articleResult.ArticleRedirect.RedirectToArticleSlug);
+                canonicalUrl = this.Url.WikiArticle(model.ArticleRedirectTo);
             }
-            else if (articleResult.HasArticle)
+            else if (model.HasArticle)
             {
-                canonicalUrl = this.Url.WikiArticle(articleResult.Article.Id);
+                canonicalUrl = this.Url.WikiArticle(model.ArticleId);
             }
 
             return canonicalUrl;

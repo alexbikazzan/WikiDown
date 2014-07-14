@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
+using System.Net;
+using System.Security.Principal;
 using System.Threading.Tasks;
+using System.Web.Http;
 
 using Microsoft.AspNet.Identity;
 using WikiDown.Security;
@@ -19,24 +21,37 @@ namespace WikiDown.Website.Areas.AccountAdmin.Models
             this.Email = user.Email;
             this.UserName = user.UserName;
 
-            this.SetRole(user);
+            this.IsRoot = (user.UserName == ArticleAccessHelper.RootAccountName);
+            this.AccessLevel = (int)ArticleAccessHelper.GetAccessLevel(user.Roles);
         }
 
         public int AccessLevel { get; set; }
 
         public string Email { get; set; }
 
+        public bool IsRoot { get; set; }
+
         public string Password { get; set; }
 
         public string UserName { get; set; }
 
-        public async Task Save(UserManager<WikiDownUser> userManager)
+        public async Task<WikiDownUser> Save(IPrincipal principal, UserManager<WikiDownUser> userManager)
         {
-            var roles = this.GetRoles();
-
             var user = await userManager.FindByNameAsync(this.UserName);
+
+            var roles = this.GetRoles(principal, user);
+
             if (user != null)
             {
+                if (user.UserName == principal.Identity.Name)
+                {
+                    var userAccessLevel = ArticleAccessHelper.GetAccessLevel(user.Roles);
+                    if (userAccessLevel < ArticleAccessLevel.Admin)
+                    {
+                        throw new HttpResponseException(HttpStatusCode.BadRequest);
+                    }
+                }
+
                 user.SetRoles(roles);
                 user.SetEmail(this.Email);
 
@@ -56,37 +71,24 @@ namespace WikiDown.Website.Areas.AccountAdmin.Models
                 await userManager.CreateAsync(user, this.Password);
             }
 
-            this.Password = null;
+            return user;
         }
 
-        public IEnumerable<string> GetRoles()
+        private IEnumerable<string> GetRoles(IPrincipal principal, WikiDownUser user)
         {
-            if (this.UserName == ArticleAccessManager.RootAccountName)
+            var userRoles = ArticleAccessHelper.GetRoles(this.AccessLevel);
+
+            if (user != null)
             {
-                return ArticleAccessHelper.RootRoles;
+                var userAccessLevel = ArticleAccessHelper.GetAccessLevel(user.Roles);
+                var principalAccessLevel = principal.GetAccessLevel();
+                if (userAccessLevel > principalAccessLevel)
+                {
+                    throw new HttpResponseException(HttpStatusCode.Forbidden);
+                }
             }
 
-            return ArticleAccessHelper.GetRoles(this.AccessLevel);
-        }
-
-        private void SetRole(WikiDownUser user)
-        {
-            if (user.Roles.Contains(ArticleAccessHelper.Root))
-            {
-                this.AccessLevel = (int)ArticleAccessRole.Root;
-            }
-            else if (user.Roles.Contains(ArticleAccessHelper.Admin))
-            {
-                this.AccessLevel = (int)ArticleAccessRole.Admin;
-            }
-            else if (user.Roles.Contains(ArticleAccessHelper.SuperUser))
-            {
-                this.AccessLevel = (int)ArticleAccessRole.SuperUser;
-            }
-            else if (user.Roles.Contains(ArticleAccessHelper.Editor))
-            {
-                this.AccessLevel = (int)ArticleAccessRole.Editor;
-            }
+            return userRoles;
         }
     }
 }

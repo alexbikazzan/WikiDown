@@ -3,7 +3,7 @@ using System.Configuration;
 
 namespace WikiDown.Website
 {
-    public static class AppSetting
+    public static class AppSettings
     {
         private const string AppSettingPrefix = "wikidown";
 

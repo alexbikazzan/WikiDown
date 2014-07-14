@@ -1,42 +1,36 @@
-﻿using System.Security.Principal;
+﻿using Raven.Imports.Newtonsoft.Json;
 
 namespace WikiDown.Security
 {
     public class ArticleAccess
     {
+        public ArticleAccess(string articleId)
+        {
+            this.ArticleId = articleId;
+        }
+
+        [JsonConstructor]
+        private ArticleAccess()
+        {
+        }
+
         public string ArticleId { get; set; }
 
-        public ArticleAccessRole CanRead { get; set; }
+        public ArticleAccessLevel CanRead { get; set; }
 
-        public ArticleAccessRole CanEdit { get; set; }
+        public ArticleAccessLevel CanEdit { get; set; }
 
-        public ArticleAccessRole CanAdmin { get; set; }
+        public ArticleAccessLevel CanAdmin { get; set; }
 
         public string Id { get; set; }
 
-        //public bool GetCanRead(IPrincipal principal)
-        //{
-        //    return ArticleAccessManager.GetIsInRole(this.CanRead, principal);
-        //}
-
-        //public bool GetCanEdit(IPrincipal principal)
-        //{
-        //    return ArticleAccessManager.GetIsInRole(this.CanEdit, principal);
-        //}
-
-        //public bool GetCanAdmin(IPrincipal principal)
-        //{
-        //    return ArticleAccessManager.GetIsInRole(this.CanAdmin, principal);
-        //}
-
         public static ArticleAccess Default(ArticleId articleId)
         {
-            return new ArticleAccess
+            return new ArticleAccess(articleId.Id)
                        {
-                           ArticleId = articleId.Id,
-                           CanAdmin = ArticleAccessRole.Admin,
-                           CanEdit = ArticleAccessRole.Editor,
-                           CanRead = ArticleAccessRole.Anonymous
+                           CanAdmin = ArticleAccessLevel.Admin,
+                           CanEdit = ArticleAccessLevel.Editor,
+                           CanRead = ArticleAccessLevel.Anonymous
                        };
         }
     }

@@ -21,9 +21,16 @@ namespace WikiDown.Website.Areas.AccountAdmin.Controllers.Api
         [Route("")]
         public async Task<IReadOnlyList<AccountUserApiModel>> GetUserList()
         {
+            var currentUserAccessLevel = this.User.GetAccessLevel();
+            
             var users = await this.UserManager.Users.ToListAsync();
 
-            var accountUsers = users.Select(x => new AccountUserApiModel(x));
+            var accountUsers = from user in users
+                               let userAccessLevel = ArticleAccessHelper.GetAccessLevel(user.Roles)
+                               where
+                                   userAccessLevel <= currentUserAccessLevel || user.UserName == this.User.Identity.Name
+                               orderby user.UserName
+                               select new AccountUserApiModel(user);
 
             return accountUsers.ToList();
         }
@@ -32,15 +39,19 @@ namespace WikiDown.Website.Areas.AccountAdmin.Controllers.Api
         [Route("")]
         public async Task<AccountUserApiModel> SaveUser([FromBody] AccountUserApiModel formData)
         {
-            // TODO: Ensure lower-auth users cannot upgrade to admin/root
-            // TODO: Ensure lower-auth users cannot change higher-auth user's settings
             if (formData == null)
             {
                 throw new ArgumentNullException("formData");
             }
 
-            await formData.Save(this.UserManager);
-            return formData;
+            if (formData.UserName == ArticleAccessHelper.RootAccountName
+                && this.User.Identity.Name != ArticleAccessHelper.RootAccountName)
+            {
+                throw new HttpResponseException(HttpStatusCode.Forbidden);
+            }
+
+            var savedUser = await formData.Save(this.User, this.UserManager);
+            return new AccountUserApiModel(savedUser);
         }
 
         [HttpDelete]
@@ -51,11 +62,19 @@ namespace WikiDown.Website.Areas.AccountAdmin.Controllers.Api
 
             if (user.UserName == this.User.Identity.Name)
             {
-                throw new ArgumentOutOfRangeException("username", "Cannot delete own account.");
+                throw new HttpResponseException(HttpStatusCode.BadRequest);
             }
-            if (user.Roles.Contains(ArticleAccessHelper.Root) && !this.User.IsInRole(ArticleAccessHelper.Root))
+            if (user.UserName == ArticleAccessHelper.RootAccountName)
             {
-                throw new ArgumentOutOfRangeException("username", "Non-root-user cannot delete root-user.");
+                throw new HttpResponseException(HttpStatusCode.Forbidden);
+            }
+
+            var currentUserAccessLevel = this.User.GetAccessLevel();
+            var userAccessLevel = ArticleAccessHelper.GetAccessLevel(user.Roles);
+
+            if (userAccessLevel > currentUserAccessLevel)
+            {
+                throw new HttpResponseException(HttpStatusCode.Forbidden);
             }
 
             await this.UserManager.DeleteAsync(user);

@@ -53,12 +53,12 @@ namespace WikiDown.Website
         {
             var urlHelper = new UrlHelper(filterContext.RequestContext);
 
-            var articleIdNotEnsuredException = exception as ArticleIdNotEnsuredException;
-            if (articleIdNotEnsuredException != null)
-            {
-                string articleInfotUrl = urlHelper.WikiArticle(articleIdNotEnsuredException.EnsuredSlug);
-                return new RedirectResult(articleInfotUrl);
-            }
+            //var articleIdNotEnsuredException = exception as ArticleIdNotEnsuredException;
+            //if (articleIdNotEnsuredException != null)
+            //{
+            //    string articleInfotUrl = urlHelper.WikiArticle(articleIdNotEnsuredException.EnsuredSlug);
+            //    return new RedirectResult(articleInfotUrl);
+            //}
 
             return null;
         }

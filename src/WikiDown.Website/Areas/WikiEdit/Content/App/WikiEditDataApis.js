@@ -4,6 +4,9 @@
         '$resource', 'articleRevisionsBaseUrl',
         function($resource, articleRevisionsBaseUrl) {
             return $resource(articleRevisionsBaseUrl, {}, {
+                getLatest: {
+                    url: articleRevisionsBaseUrl + 'latest/'
+                },
                 getPreview: {
                     url: articleRevisionsBaseUrl + 'preview/'
                 },

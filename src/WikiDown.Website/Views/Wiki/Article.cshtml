@@ -21,7 +21,8 @@
 @if (Model.ArticleRevisionDate.HasValue)
 {
     <div id="revision-info" class="article-meta">
-        Revision from: @Model.ArticleRevisionDate.Value.ToString("yyyy-MM-dd HH:mm:ss")
+        Revision from:
+        <span class="utc-time">@Model.ArticleRevisionDate.Value.ToString("yyyy-MM-dd HH:mm:ss")</span>
         - <a href="@Url.WikiArticle(Model.ArticleSlug)">Go to latest</a>
     </div>
 }

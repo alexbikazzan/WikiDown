@@ -12,9 +12,9 @@ namespace WikiDown.Website
     {
         public const string DefaultArticleIdParamName = "slug";
 
-        public static bool GetIsAuthorized(
+        public static void EnsureIsAuthorized(
             string articleIdParamName,
-            AuthorizeType type,
+            ArticleAccessType accessType,
             RequestContext requestContext,
             IDictionary<string, object> actionArguments)
         {
@@ -23,12 +23,12 @@ namespace WikiDown.Website
             var documentStore = DocumentStoreAppInstance.Get(requestContext.HttpContext.Application);
             var repository = RepositoryRequestInstance.Get(requestContext, documentStore);
 
-            return GetIsAuthorizedInternal(slugValue, repository, type, requestContext.HttpContext.User);
+            EnsureIsAuthorizedInternal(slugValue, repository, accessType, requestContext.HttpContext.User);
         }
 
-        public static bool GetIsAuthorized(
+        public static void EnsureIsAuthorized(
             string articleIdParamName,
-            AuthorizeType type,
+            ArticleAccessType accessType,
             HttpRequestContext requestContext,
             IDictionary<string, object> actionArguments)
         {
@@ -36,35 +36,23 @@ namespace WikiDown.Website
 
             var repository = RepositoryRequestInstance.Get(requestContext);
 
-            return GetIsAuthorizedInternal(slugValue, repository, type, requestContext.Principal);
+            EnsureIsAuthorizedInternal(slugValue, repository, accessType, requestContext.Principal);
         }
 
-        private static bool GetIsAuthorizedInternal(
+        private static void EnsureIsAuthorizedInternal(
             string slugValue,
             Repository repository,
-            AuthorizeType type,
+            ArticleAccessType accessType,
             IPrincipal principal)
         {
             var articleId = new ArticleId(slugValue ?? string.Empty);
-            var articleAccess = (articleId.HasValue) ? repository.GetArticleAccess(articleId) : null;
-            if (articleAccess == null)
+            var article = (articleId.HasValue) ? repository.GetArticle(articleId) : null;
+            if (article == null)
             {
-                return true;
+                return;
             }
 
-            throw new NotImplementedException();
-
-            switch (type)
-            {
-                case AuthorizeType.CanRead:
-                    break;
-                case AuthorizeType.CanEdit:
-                    break;
-                case AuthorizeType.CanAdmin:
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException("type");
-            }
+            article.EnsureCanAccess(principal, accessType);
         }
 
         private static string GetSlugValue(string articleIdParamName, IDictionary<string, object> actionArguments)

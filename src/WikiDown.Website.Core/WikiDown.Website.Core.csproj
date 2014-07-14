@@ -127,16 +127,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ApiModels\ArticlesMetaApiModel.cs" />
-    <Compile Include="ApiModels\ArticlesAdminApiModel.cs" />
-    <Compile Include="ApiModels\ArticleRevisionListItem.cs" />
-    <Compile Include="ApiModels\ArticleRevisionApiModel.cs" />
     <Compile Include="ApiModels\IdTextApiModel.cs" />
-    <Compile Include="AppSetting.cs" />
+    <Compile Include="AppSettings.cs" />
+    <Compile Include="ArticleNotFoundException.cs" />
     <Compile Include="AuthorizeArticleApiAttribute.cs" />
     <Compile Include="AuthorizeArticleAttribute.cs" />
     <Compile Include="AuthorizeArticleHelper.cs" />
-    <Compile Include="AuthorizeType.cs" />
     <Compile Include="DocumentStoreAppInstance.cs" />
     <Compile Include="EnsureSlugAttribute.cs" />
     <Compile Include="ModelBinding\ArticleIdModelBinder.cs" />

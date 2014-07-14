@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Principal;
 
 namespace WikiDown.Website.ViewModels
 {
@@ -14,15 +13,20 @@ namespace WikiDown.Website.ViewModels
                 throw new ArgumentNullException("repository");
             }
 
-            var articles = repository.GetArticleList();
-            this.Articles = articles.Select(x => new KeyValuePair<string, string>(x.Slug, x.Title)).ToList();
+            //var articles = repository.GetArticleList();
+            //this.Articles = articles.Select(x => new KeyValuePair<string, string>(x.Slug, x.Title)).ToList();
 
-            var drafts = repository.GetArticleDrafts();
+            var drafts = repository.GetArticleDraftsList();
             this.Drafts = drafts.Select(x => new KeyValuePair<string, string>(x.Slug, x.Title)).ToList();
+
+            var changedArticles = repository.GetArticleRevisionsLatestChangesList();
+            this.LatestChangedArticles = changedArticles.ToList();
         }
 
-        public IReadOnlyCollection<KeyValuePair<string, string>> Articles { get; set; }
+        //public IReadOnlyCollection<KeyValuePair<string, string>> Articles { get; set; }
 
         public IReadOnlyCollection<KeyValuePair<string, string>> Drafts { get; set; }
+
+        public IReadOnlyCollection<ArticleRevisionItem> LatestChangedArticles { get; set; }
     }
 }

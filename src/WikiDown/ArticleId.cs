@@ -89,6 +89,13 @@ namespace WikiDown
             return this.Id ?? string.Empty;
         }
 
+        public static bool GetIsEnsured(ArticleId articleId)
+        {
+            string ensuredSlug = articleId.Slug;
+
+            return (articleId.OriginalSlug == ensuredSlug);
+        }
+
         public static implicit operator ArticleId(string articleId)
         {
             return new ArticleId(articleId ?? string.Empty);

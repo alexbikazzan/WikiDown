@@ -17,6 +17,11 @@ window.WikiDown.postConversions = window.WikiDown.postConversions || [];
     @ConverterHook(hook, "postConversions")
 }
 
+@foreach (var hook in Model.ServerSideHooks)
+{
+    @ConverterHook(hook, "postConversions")
+}
+
 @helper ConverterHook(AssetsWikiDownJsViewModel.ConverterHookItem hook, string arrayName)
 {
 <text>

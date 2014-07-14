@@ -1,27 +1,23 @@
 ﻿using System;
-using System.Net;
-using System.Web.Http;
 using System.Web.Http.Controllers;
 using System.Web.Http.Filters;
 
+using WikiDown.Security;
+
 namespace WikiDown.Website
 {
+    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class, Inherited = true, AllowMultiple = true)]
     public class AuthorizeArticleApiAttribute : ActionFilterAttribute
     {
-        private readonly string articleIdParamName;
+        private readonly ArticleAccessType accessType;
 
-        private readonly AuthorizeType type;
-
-        public AuthorizeArticleApiAttribute(AuthorizeType type)
-            : this(type, AuthorizeArticleHelper.DefaultArticleIdParamName)
+        public AuthorizeArticleApiAttribute(ArticleAccessType accessType)
         {
+            this.accessType = accessType;
+            this.ParamName = AuthorizeArticleAttribute.DefaultArticleIdParamName;
         }
 
-        public AuthorizeArticleApiAttribute(AuthorizeType type, string articleIdParamName)
-        {
-            this.type = type;
-            this.articleIdParamName = articleIdParamName;
-        }
+        public string ParamName { get; set; }
 
         public override void OnActionExecuting(HttpActionContext actionContext)
         {
@@ -30,15 +26,11 @@ namespace WikiDown.Website
                 throw new ArgumentNullException("actionContext");
             }
 
-            bool isAuthorized = AuthorizeArticleHelper.GetIsAuthorized(
-                this.articleIdParamName,
-                this.type,
+            AuthorizeArticleHelper.EnsureIsAuthorized(
+                this.ParamName,
+                this.accessType,
                 actionContext.RequestContext,
                 actionContext.ActionArguments);
-            if (!isAuthorized)
-            {
-                throw new HttpResponseException(HttpStatusCode.Forbidden);
-            }
         }
     }
 }

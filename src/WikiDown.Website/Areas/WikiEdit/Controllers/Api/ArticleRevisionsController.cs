@@ -5,28 +5,23 @@ using System.Web.Http;
 
 using WikiDown.Markdown;
 using WikiDown.Security;
-using WikiDown.Website.ApiModels;
+using WikiDown.Website.Areas.WikiEdit.Models;
 using WikiDown.Website.Controllers.Api;
 
 namespace WikiDown.Website.Areas.WikiEdit.Controllers.Api
 {
     [Authorize(Roles = ArticleAccessHelper.Editor)]
+    [AuthorizeArticle(ArticleAccessType.CanEdit)]
     [RoutePrefix("api/article-revisions/{slug}")]
     public class ArticleRevisionsController : WikiDownApiControllerBase
     {
         [HttpGet]
         [Route("")]
-        public IReadOnlyCollection<ArticleRevisionListItem> ListRevisions([FromUri] ArticleId slug)
+        public IReadOnlyCollection<ArticleRevisionListItemApiModel> ListRevisions([FromUri] ArticleId slug)
         {
-            var article = this.CurrentRepository.GetArticle(slug);
-            var revisionDateTimes = this.CurrentRepository.GetArticleRevisionList(slug).Select(x => x.DateTime);
+            var articleRevisions = this.CurrentRepository.GetArticleRevisionsList(slug);
 
-            var model = from revision in revisionDateTimes
-                        let revisionId = IdUtility.CreateArticleRevisionId(slug, revision)
-                        let isActive = article.ActiveRevisionId == revisionId
-                        select new ArticleRevisionListItem(revision, isActive);
-
-            return model.ToList();
+            return articleRevisions.Select(x => new ArticleRevisionListItemApiModel(x)).ToList();
         }
 
         [HttpGet]
@@ -35,7 +30,16 @@ namespace WikiDown.Website.Areas.WikiEdit.Controllers.Api
         {
             var articleRevision = this.GetEnsuredArticleRevision(slug, revisionDate);
 
-            return new ArticleRevisionApiModel(articleRevision);
+            return new ArticleRevisionApiModel(slug, articleRevision);
+        }
+
+        [HttpGet]
+        [Route("latest")]
+        public ArticleRevisionApiModel GetLatestRevision([FromUri] ArticleId slug)
+        {
+            var articleRevision = this.CurrentRepository.GetArticleRevisionLatest(slug);
+
+            return new ArticleRevisionApiModel(slug, articleRevision);
         }
 
         [HttpGet]
@@ -88,11 +92,17 @@ namespace WikiDown.Website.Areas.WikiEdit.Controllers.Api
             [FromBody] ArticleRevisionApiModel formData,
             [FromUri] bool publish = false)
         {
-            var articleRevision = new ArticleRevision(slug, formData.MarkdownContent, formData.EditSummary);
+            var userName = this.User.Identity.Name;
+
+            var articleRevision = new ArticleRevision(
+                slug,
+                principal: this.User,
+                markdownContent: formData.MarkdownContent,
+                editSummary: formData.EditSummary);
 
             this.CurrentRepository.SaveArticleRevision(slug, articleRevision, publish);
 
-            return new ArticleRevisionApiModel(articleRevision);
+            return new ArticleRevisionApiModel(slug, articleRevision);
         }
 
         private ArticleRevision GetEnsuredArticleRevision(ArticleId slug, ArticleRevisionDate articleRevisionDate)

@@ -56,17 +56,23 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Article.cs" />
+    <Compile Include="ArticleRevisionItem.cs" />
     <Compile Include="IdUtility.cs" />
+    <Compile Include="Markdown\TocServerSideHook.cs" />
     <Compile Include="RavenDb\Indexes\ArticleRedirectsIndex.cs" />
+    <Compile Include="RavenDb\Indexes\ArticleRevisionsChangedIndex.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="RavenDb\Indexes\ArticleRevisionsIndex.cs" />
     <Compile Include="Security\ArticleAccess.cs" />
+    <Compile Include="Security\ArticleAccessException.cs" />
     <Compile Include="Security\ArticleAccessHelper.cs" />
-    <Compile Include="Security\ArticleAccessManager.cs" />
-    <Compile Include="Security\RepositorySecurityExtensions.cs" />
+    <Compile Include="Security\ArticleAccessType.cs" />
+    <Compile Include="Security\ArticleExtensions.cs" />
+    <Compile Include="Security\PrincipalExtensions.cs" />
     <Compile Include="Security\SecurityIdUtility.cs" />
-    <Compile Include="Security\ArticleAccessRole.cs" />
+    <Compile Include="Security\ArticleAccessLevel.cs" />
     <Compile Include="ArticleId.cs" />
-    <Compile Include="ArticleIdNotEnsuredException.cs" />
     <Compile Include="ArticleRedirect.cs" />
     <Compile Include="ArticleResult.cs" />
     <Compile Include="ArticleRevision.cs" />
@@ -77,7 +83,7 @@
     <Compile Include="Markdown\ConverterHookType.cs" />
     <Compile Include="RavenDb\IdConvensionsHelper.cs" />
     <Compile Include="RavenDb\IndexesHelper.cs" />
-    <Compile Include="RavenDb\Indexes\ArticlesListIndex.cs" />
+    <Compile Include="RavenDb\Indexes\ArticlesIndex.cs" />
     <Compile Include="RavenDb\Indexes\SearchArticlesIndex.cs" />
     <Compile Include="Markdown\MarkdownService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

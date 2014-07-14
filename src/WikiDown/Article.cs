@@ -3,16 +3,17 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
+using Raven.Imports.Newtonsoft.Json;
+using WikiDown.Security;
+
 namespace WikiDown
 {
     [DebuggerDisplay("Id={Id}, Title={Title}")]
     public class Article
     {
-        public Article()
-        {
-        }
+        private ArticleAccess articleAccess;
 
-        public Article(ArticleId articleId, IEnumerable<string> tags = null)
+        public Article(ArticleId articleId, IEnumerable<string> tags = null, ArticleAccess articleAccess = null)
         {
             if (articleId == null)
             {
@@ -21,19 +22,29 @@ namespace WikiDown
 
             this.Title = articleId.Title;
             this.Tags = tags ?? Enumerable.Empty<string>();
+            this.ArticleAccess = articleAccess ?? ArticleAccess.Default(articleId);
+        }
 
-            this.CreatedAt = DateTime.UtcNow;
+        [JsonConstructor]
+        private Article()
+        {
         }
 
         public string ActiveRevisionId { get; set; }
 
-        public DateTime CreatedAt { get; set; }
-
-        public string CreatedByUserId { get; set; }
+        public ArticleAccess ArticleAccess
+        {
+            get
+            {
+                return this.articleAccess ?? ArticleAccess.Default(this.Id);
+            }
+            set
+            {
+                this.articleAccess = value;
+            }
+        }
 
         public string Id { get; set; }
-
-        public bool IsHidden { get; set; }
 
         public IEnumerable<string> Tags { get; set; }
 

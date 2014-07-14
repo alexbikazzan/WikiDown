@@ -15,12 +15,17 @@ namespace WikiDown.Website.Controllers
         [Route("login", Name = RouteNames.Login)]
         public ActionResult Login(string returnUrl)
         {
+            if (this.User.Identity.IsAuthenticated)
+            {
+                return this.RedirectToReturnUrl(returnUrl);
+            }
+
             var model = new AuthLoginViewModel();
             return this.View(model);
         }
 
         [HttpPost]
-        //[ValidateAntiForgeryToken]
+        [ValidateAntiForgeryToken]
         [ValidateInput(false)]
         [Route("login")]
         public async Task<ActionResult> Login(AuthLoginViewModel model, string returnUrl)
@@ -30,8 +35,8 @@ namespace WikiDown.Website.Controllers
                 var user = await this.UserManager.FindAsync(model.Username, model.Password);
                 if (user != null)
                 {
-                    this.SignInAsync(user, true /*isPersistent*/);
-                    return this.RedirectToLocal(returnUrl);
+                    this.SignInAsync(user, model.IsPersistent);
+                    return this.RedirectToReturnUrl(returnUrl);
                 }
 
                 this.ModelState.AddModelError("model", "Invalid username or password.");
@@ -51,7 +56,7 @@ namespace WikiDown.Website.Controllers
             return this.Redirect(redirectUrl);
         }
 
-        private ActionResult RedirectToLocal(string returnUrl)
+        private ActionResult RedirectToReturnUrl(string returnUrl)
         {
             if (Url.IsLocalUrl(returnUrl))
             {

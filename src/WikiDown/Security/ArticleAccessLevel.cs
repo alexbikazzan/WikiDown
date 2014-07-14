@@ -1,6 +1,6 @@
 ﻿namespace WikiDown.Security
 {
-    public enum ArticleAccessRole
+    public enum ArticleAccessLevel
     {
         Anonymous = 0,
 

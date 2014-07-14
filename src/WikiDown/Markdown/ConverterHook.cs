@@ -40,7 +40,7 @@ namespace WikiDown.Markdown
 
         public ConverterHookType Type { get; private set; }
 
-        public string Apply(string input)
+        public virtual string Apply(string input)
         {
             string replacedText = this.regex.Replace(input, this.RegexReplace);
             return replacedText;

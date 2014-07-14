@@ -5,11 +5,15 @@ namespace WikiDown
 {
     public class ArticleRevisionDate
     {
+        public const string FormattedDateTimeFormat = "yyyy-MM-dd HH:mm:ss";
+
+        public const string IdDateTimeFormat = "yyyyMMdd-HHmmss-fffffff";
+
+        public static ArticleRevisionDate Empty = new ArticleRevisionDate((DateTime?)null);
+
         private const DateTimeStyles DateTimeStyle = DateTimeStyles.None;
 
         private static readonly IFormatProvider FormatProvider = CultureInfo.InvariantCulture;
-
-        public static ArticleRevisionDate Empty = new ArticleRevisionDate((DateTime?)null);
 
         public ArticleRevisionDate(DateTime? dateTime)
         {
@@ -21,13 +25,19 @@ namespace WikiDown
         {
         }
 
-        public string Formatted
+        public string DateTimeId
         {
             get
             {
-                return (this.DateTime > DateTime.MinValue)
-                           ? this.DateTime.ToString(ArticleRevision.IdDateTimeFormat)
-                           : null;
+                return (this.DateTime > DateTime.MinValue) ? this.DateTime.ToString(IdDateTimeFormat) : null;
+            }
+        }
+
+        public string DateTimeFormatted
+        {
+            get
+            {
+                return (this.DateTime > DateTime.MinValue) ? this.DateTime.ToString(FormattedDateTimeFormat) : null;
             }
         }
 
@@ -43,7 +53,7 @@ namespace WikiDown
 
         public override string ToString()
         {
-            return this.Formatted ?? string.Empty;
+            return this.DateTimeId ?? string.Empty;
         }
 
         private static DateTime? TryParse(string dateTime)
@@ -71,12 +81,7 @@ namespace WikiDown
 
         private static bool TryParseExact(string s, out DateTime result)
         {
-            return DateTime.TryParseExact(
-                s,
-                ArticleRevision.IdDateTimeFormat,
-                FormatProvider,
-                DateTimeStyle,
-                out result);
+            return DateTime.TryParseExact(s, IdDateTimeFormat, FormatProvider, DateTimeStyle, out result);
         }
 
         public static implicit operator ArticleRevisionDate(DateTime? dateTime)

@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 
+using Raven.Abstractions.Indexing;
 using Raven.Client.Indexes;
 
 namespace WikiDown.RavenDb.Indexes
@@ -10,10 +11,24 @@ namespace WikiDown.RavenDb.Indexes
         {
             this.AddMap<Article>(
                 articles => from article in articles
-                            where !article.IsHidden
-                            select new Result { Content = new object[] { article.Title, article.ActiveRevisionId } });
+                            where !string.IsNullOrEmpty(article.ActiveRevisionId)
+                            select new Result { Content = new object[] { article.Title } });
 
-            this.Index(x => x.Content, Raven.Abstractions.Indexing.FieldIndexing.Analyzed);
+            this.AddMap<Article>(
+                articles => from article in articles
+                            where !string.IsNullOrEmpty(article.ActiveRevisionId)
+                            from tag in article.Tags
+                            select new Result { Content = new object[] { tag } });
+
+            this.AddMap<ArticleRevision>(
+                revisions =>
+                from revision in revisions select new Result { Content = new object[] { revision.MarkdownContent } });
+
+            this.AddMap<ArticleRedirect>(
+                redirects =>
+                from redirect in redirects select new Result { Content = new object[] { redirect.OriginalArticleSlug } });
+
+            this.Index(x => x.Content, FieldIndexing.Analyzed);
         }
 
         public class Result
@@ -21,30 +36,4 @@ namespace WikiDown.RavenDb.Indexes
             public object[] Content { get; set; }
         }
     }
-
-    //public class SearchBlogPosts : AbstractMultiMapIndexCreationTask<SearchBlogPosts.Result>
-    //{
-    //    public SearchBlogPosts()
-    //    {
-    //        this.AddMap<BlogPost>(
-    //            blogPosts =>
-    //            from post in blogPosts
-    //            where !post.IsDeleted
-    //            select new Result { Content = new object[] { post.Title, post.Content, } });
-
-    //        this.AddMap<BlogPost>(
-    //            blogPosts =>
-    //            from post in blogPosts
-    //            where !post.IsDeleted
-    //            from tag in post.Tags
-    //            select new Result { Content = new object[] { tag } });
-
-    //        this.Index(x => x.Content, Raven.Abstractions.Indexing.FieldIndexing.Analyzed);
-    //    }
-
-    //    public class Result
-    //    {
-    //        public object[] Content { get; set; }
-    //    }
-    //}
 }

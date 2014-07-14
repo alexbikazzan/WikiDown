@@ -1,13 +1,12 @@
-﻿@using WikiDown.Security
-@model WikiArticleViewModelBase
+﻿@model WikiArticleViewModelBase
 
 <ul class="nav navbar-nav">
     @NavTab("Article", Url.WikiArticle(Model.DisplayArticleId, Model.ArticleRevisionDate),
         WikiArticleViewModelBase.HeaderTab.Article, glyph: "glyphicon-file")
     @NavTab("Info", Url.WikiArticleInfo(Model.DisplayArticleId),
         WikiArticleViewModelBase.HeaderTab.Info, glyph: "glyphicon-info-sign")
-
-    @if (User.IsInRole(ArticleAccessHelper.Editor))
+    
+    @if (Model.CanEditArticle)
     {
         @NavTab("Edit", Url.WikiArticleEdit(Model.DisplayArticleId, Model.ArticleRevisionDate),
             WikiArticleViewModelBase.HeaderTab.Edit, glyph: "glyphicon-pencil")

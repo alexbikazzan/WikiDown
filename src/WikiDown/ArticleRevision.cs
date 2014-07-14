@@ -1,32 +1,51 @@
 ﻿using System;
+using System.Security.Principal;
+
+using Raven.Imports.Newtonsoft.Json;
 
 namespace WikiDown
 {
     public class ArticleRevision
     {
-        public const string IdDateTimeFormat = "yyyyMMdd-HHmmss-fffffff";
-
-        public const string ReadableDateTimeFormat = "yyyy-MM-dd HH:mm:ss";
-
-        public ArticleRevision()
+        public ArticleRevision(
+            ArticleId articleId,
+            IPrincipal principal,
+            string markdownContent,
+            string editSummary = null)
         {
+            if (articleId == null)
+            {
+                throw new ArgumentNullException("articleId");
+            }
+            if (principal == null)
+            {
+                throw new ArgumentNullException("principal");
+            }
+
+            this.ArticleId = articleId.Id;
+            this.CreatedByUserName = principal.Identity.Name;
+            this.EditSummary = editSummary;
+            this.MarkdownContent = markdownContent;
+
+            this.CreatedAt = DateTime.UtcNow;
         }
 
-        public ArticleRevision(ArticleId articleId, string markdownContent, string editSummary = null)
+        [JsonConstructor]
+        private ArticleRevision()
         {
-            this.ArticleId = articleId.Id;
-            this.MarkdownContent = markdownContent;
-            this.EditSummary = editSummary;
-            this.CreatedAt = DateTime.UtcNow;
         }
 
         public string ArticleId { get; set; }
 
         public DateTime CreatedAt { get; set; }
 
+        public string CreatedByUserName { get; set; }
+
         public string EditSummary { get; set; }
 
         public string Id { get; set; }
+
+        public DateTime? LastPublishedAt { get; set; }
 
         public string MarkdownContent { get; set; }
     }

@@ -46,10 +46,10 @@ namespace WikiDown.Website.Controllers.Api
 
         private static IdTextApiModel GetIdText(string roleName)
         {
-            ArticleAccessRole accessLevel;
+            ArticleAccessLevel accessLevel;
             if (!Enum.TryParse(roleName, out accessLevel))
             {
-                accessLevel = ArticleAccessRole.Anonymous;
+                accessLevel = ArticleAccessLevel.Anonymous;
             }
 
             var accessLevelValue = (int)accessLevel;

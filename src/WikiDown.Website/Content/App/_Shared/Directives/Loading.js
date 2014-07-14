@@ -10,7 +10,7 @@
             template: '<i ng-show="isLoading" class="fa fa-spinner fa-spin"></i>',
             link: function(scope) {
                 scope.$watch('loadingItem', function(val) {
-                    if (typeof val === 'undefined') {
+                    if (typeof scope.loadingItem === 'undefined' || typeof val === 'undefined') {
                         return;
                     }
                     if (typeof val === 'boolean') {
@@ -39,7 +39,8 @@
                 }
 
                 scope.$watch('loadingItem.$promise', function(val) {
-                    if (!val || (scope.loadingItem && typeof scope.loadingItem.$resolved !== 'undefined')) {
+                    if (typeof scope.loadingItem === 'undefined' || !val ||
+                    (scope.loadingItem && typeof scope.loadingItem.$resolved !== 'undefined')) {
                         return;
                     }
 
@@ -47,7 +48,7 @@
                 });
 
                 scope.$watch('loadingItem.$resolved', function(val) {
-                    if (typeof val !== 'boolean') {
+                    if (typeof scope.loadingItem === 'undefined' || typeof val !== 'boolean') {
                         return;
                     }
 

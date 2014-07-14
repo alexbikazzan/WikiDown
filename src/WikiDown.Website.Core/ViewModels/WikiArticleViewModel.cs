@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.Web.Routing;
 
 using WikiDown.Markdown;
 
@@ -7,18 +7,15 @@ namespace WikiDown.Website.ViewModels
     public class WikiArticleViewModel : WikiArticleViewModelBase
     {
         public WikiArticleViewModel(
+            RequestContext requestContext,
             ArticleId articleId,
-            ArticleResult articleResult,
             ArticleRevisionDate articleRevisionDate = null,
             bool shouldRedirect = false)
-            : base(articleId, articleRevisionDate, HeaderTab.Article)
+            : base(requestContext, articleId, articleRevisionDate, HeaderTab.Article)
         {
-            if (articleResult == null)
-            {
-                throw new ArgumentNullException("articleResult");
-            }
-
             this.ShouldRedirect = shouldRedirect;
+
+            var articleResult = CurrentRepository.GetArticleResult(articleId, articleRevisionDate);
 
             this.ArticleRedirectFrom = articleResult.ArticleRedirectFromSlug;
             this.ArticleRedirectTo = articleResult.ArticleRedirectToSlug;

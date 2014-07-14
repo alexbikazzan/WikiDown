@@ -26,7 +26,8 @@
 
         link: "Hyperlink <a> Ctrl+L",
         linkdescription: "enter link description here",
-        linkdialog: "<p><b>Insert Hyperlink</b></p><p>http://example.com/ \"optional title\"</p>",
+        linkdialog: "<p><b>Insert Hyperlink</b></p><p>http://example.com/ \"optional title\"</p>"
+        + "<p>Leave empty to link to word inside wiki</p>",
 
         quote: "Blockquote <blockquote> Ctrl+Q",
         quoteexample: "Blockquote",
@@ -36,7 +37,7 @@
 
         image: "Image <img> Ctrl+G",
         imagedescription: "enter image description here",
-        imagedialog: "<p><b>Insert Image</b></p><p>http://example.com/images/diagram.jpg \"optional title\"<br><br>Need <a href='http://www.google.com/search?q=free+image+hosting' target='_blank'>free image hosting?</a></p>",
+        imagedialog: "<p><b>Insert Image</b></p><p>http://example.com/images/diagram.jpg \"optional title\"",
 
         olist: "Numbered List <ol> Ctrl+O",
         ulist: "Bulleted List <ul> Ctrl+U",
@@ -65,7 +66,8 @@
     // The default text that appears in the dialog input box when entering
     // links.
     var imageDefaultText = "http://";
-    var linkDefaultText = "http://";
+    // CHANGED
+    var linkDefaultText = ''; //"http://";
 
     // -------------------------------------------------------------------
     //  END OF YOUR CHANGES
@@ -1096,8 +1098,11 @@
             else {
                 // Fixes common pasting errors.
                 text = text.replace(/^http:\/\/(https?|ftp):\/\//, '$1://');
-                if (!/^(?:https?|ftp):\/\//.test(text))
+
+                // CHANGED
+                if (!/^(?:https?|ftp):\/\//.test(text) && /^([^\.]+)\.([^\.])+$/.test(text)) {
                     text = 'http://' + text;
+                }
             }
 
             dialog.parentNode.removeChild(dialog);
@@ -1731,6 +1736,18 @@
             // The function to be executed when you enter a link and press OK or Cancel.
             // Marks up the link and adds the ref.
             var linkEnteredCallback = function (link) {
+                // CHANGED
+                link = link || chunk.selection;
+
+                if (!/^(?:https?|ftp):\/\//.test(link)) {
+                    link = link.replace(' ', '_');
+                    if (!/^\//.test(link)) {
+                        link = '/' + link;
+                    }
+                    if (!/^\/wiki/.test(link)) {
+                        link = '/wiki' + link;
+                    }
+                }
 
                 background.parentNode.removeChild(background);
 

@@ -1,28 +1,24 @@
 ﻿using System;
-using System.Net;
-using System.Web;
 using System.Web.Mvc;
+
+using WikiDown.Security;
 
 namespace WikiDown.Website
 {
+    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class, Inherited = true, AllowMultiple = true)]
     public class AuthorizeArticleAttribute : ActionFilterAttribute
     {
-        private const int ForbiddenStatusCode = (int)HttpStatusCode.Forbidden;
+        internal const string DefaultArticleIdParamName = "slug";
 
-        private readonly string articleIdParamName;
+        private readonly ArticleAccessType accessType;
 
-        private readonly AuthorizeType type;
-
-        public AuthorizeArticleAttribute(AuthorizeType type)
-            : this(type, AuthorizeArticleHelper.DefaultArticleIdParamName)
+        public AuthorizeArticleAttribute(ArticleAccessType accessType)
         {
+            this.accessType = accessType;
+            this.ParamName = DefaultArticleIdParamName;
         }
 
-        public AuthorizeArticleAttribute(AuthorizeType type, string articleIdParamName)
-        {
-            this.type = type;
-            this.articleIdParamName = articleIdParamName;
-        }
+        public string ParamName { get; set; }
 
         public override void OnActionExecuting(ActionExecutingContext filterContext)
         {
@@ -31,15 +27,11 @@ namespace WikiDown.Website
                 throw new ArgumentNullException("filterContext");
             }
 
-            bool isAuthorized = AuthorizeArticleHelper.GetIsAuthorized(
-                this.articleIdParamName,
-                this.type,
+            AuthorizeArticleHelper.EnsureIsAuthorized(
+                this.ParamName,
+                this.accessType,
                 filterContext.RequestContext,
                 filterContext.ActionParameters);
-            if (!isAuthorized)
-            {
-                throw new HttpException(ForbiddenStatusCode, "Forbidden");
-            }
         }
     }
 }

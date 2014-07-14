@@ -177,6 +177,10 @@
     <Compile Include="Areas\Assets\AssetsAreaRegistration.cs" />
     <Compile Include="Areas\Assets\Models\AssetsWikiDownJsViewModel.cs" />
     <Compile Include="Areas\WikiEdit\Controllers\Api\ArticlesMetaController.cs" />
+    <Compile Include="Areas\WikiEdit\Models\ArticleRevisionApiModel.cs" />
+    <Compile Include="Areas\WikiEdit\Models\ArticleRevisionListItemApiModel.cs" />
+    <Compile Include="Areas\WikiEdit\Models\ArticleAdminApiModel.cs" />
+    <Compile Include="Controllers\Api\WikiController.cs" />
     <Compile Include="Controllers\Api\MetaController.cs" />
     <Compile Include="Areas\AccountAdmin\Controllers\Api\AccountAdminController.cs" />
     <Compile Include="Controllers\Api\WikiDownApiControllerBase.cs" />
@@ -201,19 +205,20 @@
     <Content Include="Areas\WikiEdit\Content\App\Controllers\Admin.js" />
     <Content Include="Areas\WikiEdit\Content\App\Directives\WmdEditor.js" />
     <Content Include="Content\App\_Shared\DataApis.js" />
+    <Content Include="Content\App\_Shared\Filters\LocalUtcTime.js" />
     <Content Include="Content\App\_Shared\Directives\Loading.js" />
     <Content Include="Content\App\_Shared\Services\Notifications.js" />
     <Content Include="Content\App\_Shared\_WikiDown.js" />
     <Content Include="Areas\AccountAdmin\Views\web.config" />
     <Content Include="Areas\Assets\Views\web.config" />
     <Content Include="Areas\WikiEdit\Views\web.config" />
+    <None Include="Content\Libraries\pagedown\Markdown.Editor.bak" />
     <Content Include="Content\Site.css.map">
       <DependentUpon>Site.css</DependentUpon>
     </Content>
     <None Include="Content\_References.js" />
     <Content Include="Areas\WikiEdit\Content\App\Controllers\Edit.js" />
     <None Include="Content\App\_References.js" />
-    <Content Include="Areas\WikiEdit\Content\App\Directives\TagsInput.js" />
     <Content Include="Areas\WikiEdit\Content\App\Services\WikiDown.js" />
     <Content Include="Areas\WikiEdit\Content\App\WikiEditDataApis.js" />
     <Content Include="Areas\WikiEdit\Content\App\WikiEditApp.js" />
@@ -246,6 +251,7 @@
     <Content Include="Areas\AccountAdmin\Views\AccountAdmin\Index.cshtml" />
     <Content Include="Views\Shared\_AngularScripts.cshtml" />
     <Content Include="Areas\WikiEdit\Views\WikiEditPartials\History.cshtml" />
+    <Content Include="Views\Shared\_HeaderNavbar.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\Site.scss">

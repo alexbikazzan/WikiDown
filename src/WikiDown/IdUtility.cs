@@ -84,7 +84,7 @@ namespace WikiDown
                 throw new ArgumentOutOfRangeException("articleRevisionDate");
             }
 
-            string createdAtFormatted = articleRevisionDate.ToString(ArticleRevision.IdDateTimeFormat);
+            string createdAtFormatted = articleRevisionDate.ToString(ArticleRevisionDate.IdDateTimeFormat);
             return String.Format("{0}/{1}", articleId.Id, createdAtFormatted);
         }
     }

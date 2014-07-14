@@ -1,6 +1,6 @@
-﻿namespace WikiDown.Website
+﻿namespace WikiDown.Security
 {
-    public enum AuthorizeType
+    public enum ArticleAccessType
     {
         CanRead,
 

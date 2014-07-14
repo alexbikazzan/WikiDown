@@ -2,7 +2,7 @@
     '$scope', 'articleRevisionsDataApi',
     function($scope, articleRevisionsDataApi) {
         'use strict';
-        
+
         var cachedRevisionPreviews = {};
 
         function previewRevision(revisionDate) {
@@ -47,6 +47,8 @@
             articleRevisionsDataApi.revertArticleToDraft(params, {},
                 function() {
                     $scope.articleRevisions.forEach(function(x) { x.isActive = false; });
+
+                    $scope.$state.go('history');
                 });
         };
 
@@ -59,6 +61,8 @@
                     $scope.articleRevisions.forEach(function(x) { x.isActive = false; });
 
                     revision.isActive = true;
+
+                    $scope.$state.go('history.revision', { revisionDate: revision.id });
                 });
         };
 
