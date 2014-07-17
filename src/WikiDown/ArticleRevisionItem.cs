@@ -8,7 +8,15 @@ namespace WikiDown
     {
         public string ArticleId { get; set; }
 
-        public string ArticleTitle { get; set; }
+        public string ArticleSlug { get; set; }
+
+        public string ArticleTitle
+        {
+            get
+            {
+                return !string.IsNullOrWhiteSpace(this.ArticleSlug) ? ArticleSlugUtility.Decode(this.ArticleSlug) : null;
+            }
+        }
 
         public ArticleAccessLevel CanReadRole { get; set; }
 

@@ -3,12 +3,15 @@
                               + "(articleSaving && articleSaving.$resolved === false)";
 }
 
-@* TODO: Markdown-help in overlay *@
+@*
+    TODO: Markdown-help in overlay
+    http://stackoverflow.com/editing-help
+*@
 
 <div id="wmd-container" class="form-group">
     <small ng-show="articleRevision.dateId" class="pull-right">
         Revision:
-        <a ui-sref="history.revision({ revisionDate: articleRevision.dateId })" utc-time="articleRevision.dateFormatted">
+        <a ui-sref="history.preview({ revisionDate: articleRevision.dateId })" utc-time="articleRevision.dateFormatted">
             {{articleRevision.dateFormatted | localUtcTime}}
         </a>
     </small>

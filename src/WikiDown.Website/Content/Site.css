@@ -5,14 +5,14 @@ html {
 
 body {
   /* Margin bottom by footer height */
-  margin-bottom: 69px; }
+  margin-bottom: 88px; }
 
 .footer {
   position: absolute;
   bottom: 0;
   width: 100%;
   /* Set the fixed height of the footer here */
-  height: 69px;
+  height: 68px;
   background-color: #f5f5f5;
   margin-top: 2em; }
 
@@ -50,9 +50,58 @@ body {
     max-height: 265px;
     max-height: 85vh; } }
 
+/* Autocomplete */
+.autocomplete-suggestions {
+  background-color: #fff;
+  border: 1px solid #ccc; }
+  .autocomplete-suggestions .autocomplete-suggestion {
+    white-space: nowrap;
+    overflow: hidden; }
+    .autocomplete-suggestions .autocomplete-suggestion a {
+      color: #000;
+      display: inline-block;
+      padding: 0.15em 0.5em;
+      text-decoration: none;
+      width: 100%; }
+    .autocomplete-suggestions .autocomplete-suggestion small {
+      /*padding: 0.2em 0.5em;*/
+      width: 100%; }
+  .autocomplete-suggestions .autocomplete-suggestion.contains-query {
+    border-top: 1px solid #ccc; }
+    .autocomplete-suggestions .autocomplete-suggestion.contains-query a {
+      font-style: italic; }
+
 /* Site */
 #wmd-container {
   margin-top: 20px; }
+
+a.external-link .glyphicon {
+  padding-left: 0.5em; }
+
+.toc ol {
+  list-style: none;
+  /*font: 11px arial;*/
+  margin: 0px 0px 0px 10px;
+  padding: 0;
+  counter-reset: num; }
+  .toc ol li:before {
+    content: counter(num) '. ';
+    counter-increment: num; }
+  .toc ol ol li:before {
+    content: counters(num, '.') ' '; }
+
+a.no-article {
+  border-bottom: 1px dashed #a94442;
+  color: #a94442; }
+  a.no-article:hover, a.no-article:active {
+    text-decoration: none; }
+
+.revisions-diff ins {
+  background-color: #cfc;
+  text-decoration: none; }
+.revisions-diff del {
+  color: #999;
+  background-color: #FEC8C8; }
 
 /* AngularJS */
 [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak, .ng-hide {

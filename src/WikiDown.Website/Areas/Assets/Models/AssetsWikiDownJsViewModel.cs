@@ -8,16 +8,14 @@ namespace WikiDown.Website.Areas.Assets.Models
 {
     public class AssetsWikiDownJsViewModel
     {
-        public AssetsWikiDownJsViewModel(
-            IEnumerable<ConverterHook> preConversionHooks,
-            IEnumerable<ConverterHook> postConversionHooks,
-            IEnumerable<ConverterHook> serverSideHooks)
+        public AssetsWikiDownJsViewModel(ConverterHooksConfig converterHooksConfig)
         {
-            this.PreConversionHooks = preConversionHooks.Select(ConverterHookItem.ForPreConversion).ToList();
-            this.PostConversionHooks = postConversionHooks.Select(ConverterHookItem.ForPostConversion).ToList();
-            this.ServerSideHooks =
-                serverSideHooks.Where(
-                    x => !string.IsNullOrWhiteSpace(x.RegexPattern) && !string.IsNullOrWhiteSpace(x.RegexReplace))
+            this.PreConversionHooks =
+                converterHooksConfig.PreConversionHooks.OfType<RegexReplaceConverterHook>()
+                    .Select(ConverterHookItem.ForPreConversion)
+                    .ToList();
+            this.PostConversionHooks =
+                converterHooksConfig.PostConversionHooks.OfType<RegexReplaceConverterHook>()
                     .Select(ConverterHookItem.ForPostConversion)
                     .ToList();
         }
@@ -26,11 +24,9 @@ namespace WikiDown.Website.Areas.Assets.Models
 
         public IReadOnlyCollection<ConverterHookItem> PostConversionHooks { get; private set; }
 
-        public IReadOnlyCollection<ConverterHookItem> ServerSideHooks { get; private set; }
-
         public class ConverterHookItem
         {
-            private ConverterHookItem(ConverterHook hook, string arrayName)
+            private ConverterHookItem(RegexReplaceConverterHook hook, string arrayName)
             {
                 this.ArrayName = arrayName;
 
@@ -47,12 +43,12 @@ namespace WikiDown.Website.Areas.Assets.Models
 
             public IHtmlString RegexReplace { get; private set; }
 
-            public static ConverterHookItem ForPreConversion(ConverterHook hook)
+            public static ConverterHookItem ForPreConversion(RegexReplaceConverterHook hook)
             {
                 return new ConverterHookItem(hook, "preConversions");
             }
 
-            public static ConverterHookItem ForPostConversion(ConverterHook hook)
+            public static ConverterHookItem ForPostConversion(RegexReplaceConverterHook hook)
             {
                 return new ConverterHookItem(hook, "postConversions");
             }

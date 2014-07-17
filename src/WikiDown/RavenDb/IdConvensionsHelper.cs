@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using Raven.Client;
 using Raven.Client.Connection;
 using Raven.Client.Connection.Async;
-using WikiDown.Security;
 
 namespace WikiDown.RavenDb
 {
@@ -17,8 +16,6 @@ namespace WikiDown.RavenDb
             RegisterConvention<ArticleRedirect>(documentStore, IdUtility.CreateArticleRedirectId);
 
             RegisterConvention<ArticleRevision>(documentStore, IdUtility.CreateArticleRevisionId);
-
-            RegisterConvention<ArticleAccess>(documentStore, SecurityIdUtility.GetArticleAccessId);
         }
 
         private static void RegisterConvention<TEntity>(

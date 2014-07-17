@@ -15,13 +15,7 @@ namespace WikiDown.Website.Areas.WikiEdit.Controllers.Api
         [HttpGet]
         public ArticleAdminApiModel GetArticle([FromUri] ArticleId slug)
         {
-            var article = this.CurrentRepository.GetArticle(slug);
-            if (article == null)
-            {
-                throw new HttpResponseException(HttpStatusCode.NotFound);
-            }
-
-            return new ArticleAdminApiModel(article);
+            return new ArticleAdminApiModel(slug, this.CurrentRepository);
         }
 
         [HttpPost]

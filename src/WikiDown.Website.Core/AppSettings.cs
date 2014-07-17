@@ -9,6 +9,28 @@ namespace WikiDown.Website
 
         private const string AppSettingFormat = "{0}:{1}";
 
+        private static readonly Lazy<string> SiteHeaderLazy =
+            new Lazy<string>(() => GetAppSetting("SiteHeader") ?? "WikiDown");
+
+        private static readonly Lazy<string> SiteHeaderTitleLazy =
+            new Lazy<string>(() => GetAppSetting("SiteHeaderTitle"));
+
+        public static string SiteHeader
+        {
+            get
+            {
+                return SiteHeaderLazy.Value;
+            }
+        }
+
+        public static string SiteHeaderTitle
+        {
+            get
+            {
+                return SiteHeaderTitleLazy.Value;
+            }
+        }
+
         public static string RootPassword
         {
             get

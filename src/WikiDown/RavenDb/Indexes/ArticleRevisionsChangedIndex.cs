@@ -15,7 +15,7 @@ namespace WikiDown.RavenDb.Indexes
                                                {
                                                    rev.ActiveRevisionId,
                                                    rev.ArticleId,
-                                                   rev.ArticleTitle,
+                                                   rev.ArticleSlug,
                                                    rev.CanReadRole,
                                                    rev.CreatedAt,
                                                    rev.CreatedByUserName,

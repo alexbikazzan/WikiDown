@@ -1,75 +1,97 @@
-﻿<h2>
-    Revisions <small class="glyphicon glyphicon-time"></small>
-</h2>
+﻿<div class="col-lg-4 col-md-5">
+    <h2>
+        Revisions <small class="glyphicon glyphicon-time"></small>
+    </h2>
+    <div class="panel panel-info">
+        <div loading="articleRevisions"></div>
 
-<div class="panel panel-info list-group">
-    <div loading="articleRevisions"></div>
-    
-    <div ng-repeat="revision in articleRevisions"
-         ng-class="{'list-group-item-info': $state.is('history.revision', { revisionDate: revision.id })}"
-         class="list-group-item">
-        <div title="{{ revision.isActive ? 'Published' : '' }}"
-             class="col-lg-2 col-md-3 col-sm-12">
-            <a ui-sref="history.revision({ revisionDate: revision.id })" ui-sref-opts="{location: 'replace'}" class="btn btn-link">
-                {{revision.text | localUtcTime}}
-            </a>
+        <div ng-repeat="revision in articleRevisions"
+             @*ng-class="{'list-group-item-info': $state.is('history.preview', { revisionDate: revision.id })}*@
+             class="list-group-item">
+            <div title="{{ revision.isActive ? 'Published' : '' }}" class="list-group-item-heading">
+                <strong>{{revision.text | localUtcTime}}</strong>
+
+                <span ng-show="revision.createdByUserName">
+                    &nbsp;
+                    <span title="Created by" class="label label-default" title="Created by">
+                        <i class="glyphicon glyphicon-user"></i> {{revision.createdByUserName}}
+                    </span>
+                    &nbsp;
+                </span>
+                <span ng-show="revision.lastPublishedAt" class="label label-info">
+                    <i class="glyphicon glyphicon-file"></i> Published {{revision.lastPublishedAt | localUtcTime}}
+                </span>
+                <span ng-hide="revision.lastPublishedAt" class="label label-warning">
+                    <i class="glyphicon glyphicon-file"></i> Draft
+                </span>
+            </div>
+            
+            <div class="list-group-item-text row">
+                <div class="col-lg-12 col-md-12 col-sm-6 col-xs-12 list-group-item-heading text-left">
+                    <a ui-sref="edit.revision({ revisionDate: revision.id })" class="btn btn-primary btn-sm">
+                        <small class="glyphicon glyphicon-pencil"></small>
+                        Edit
+                    </a>
+                    <button ng-click="publishRevision(revision, $event)"
+                            ng-disabled="revision.isActive" class="btn btn-success btn-sm">
+                        <small ng-class="{'glyphicon-globe': revision.isActive, 'glyphicon-play': !revision.isActive }"
+                               class="glyphicon"></small>
+                        {{revision.isActive ? 'Published' : 'Publish'}}
+                    </button>
+                    <button ng-click="deleteRevision(revision, $event)" class="btn btn-danger btn-sm">
+                        <small class="glyphicon glyphicon-trash"></small>
+                        Delete
+                    </button>
+                </div>
+
+                <div class="col-lg-12 col-md-12 col-sm-6 col-xs-12 list-group-item-heading">
+                    <a ui-sref="history.preview({ revisionDate: revision.id })" ui-sref-opts="{location: 'replace'}"
+                       ui-sref-active="active" class="btn btn-default btn-sm">
+                        <i class="glyphicon glyphicon-zoom-in"></i>
+                        Preview
+                    </a>
+                    
+                    <label class="small">Compare:</label>
+                    <a ng-href="{{ getDiffLatestRevisionUrl(revision) }}" ng-disabled="!getDiffLatestRevisionUrl(revision)"
+                       ui-sref-active="active" class="btn btn-default btn-sm" title="Compare with latest">
+                        <i class="glyphicon glyphicon-fast-backward"></i> Latest
+                    </a>
+                    <a ng-href="{{ getDiffPreviousRevisionUrl(revision) }}" ng-disabled="!getDiffPreviousRevisionUrl(revision)"
+                       ng-class="" class="btn btn-default btn-sm" title="Compare with previous">
+                        <i class="glyphicon glyphicon-arrow-down"></i> Prev
+                    </a>
+                </div>
+            </div>
+
+            <div ng-show="revision.createdByUserName || revision.editSummary" class="list-group-item-text">
+                {{ (revision.createdByUserName && revision.editSummary) ? '&nbsp;' : '' }}
+                <em ng-show="revision.editSummary" title="Edit-summary" class="small">
+                    <i class="glyphicon glyphicon-paperclip"></i> {{revision.editSummary}}
+                </em>
+            </div>
+
+            @*<div class="clearfix"></div>*@
         </div>
-        
-        <div class="col-lg-5 col-md-9 col-sm-12">
-            <span ng-show="revision.isActive" class="label label-success">
-                <i class="glyphicon glyphicon-ok"></i> Is Published
-            </span>
-            <span ng-show="revision.isActive">&nbsp;</span>
 
-            <span ng-show="revision.lastPublishedAt" class="label label-info">
-                <i class="glyphicon glyphicon-file"></i> Last published: {{revision.lastPublishedAt | localUtcTime}}
-            </span>
-            <span ng-hide="revision.lastPublishedAt" class="label label-warning">
-                <i class="glyphicon glyphicon-file"></i> Draft
-            </span>
+        <div class="panel-footer text-right">
+            <button ng-click="revertArticleToDraft()" ng-disabled="!getIsAnyRevisionActive()" class="btn btn-warning">
+                <i class="glyphicon glyphicon-remove"></i>
+                Revert article to draft
+            </button>
         </div>
-        
-        <div class="col-lg-5 text-right">
-            <a ui-sref="edit.revision({ revisionDate: revision.id })" class="btn btn-default">Edit</a>
-            <button ng-click="publishRevision(revision, $event)" ng-disabled="revision.isActive" class="btn btn-success">Publish</button>
-            <button ng-click="deleteRevision(revision, $event)" class="btn btn-danger">Delete</button>
-        </div>
-
-        <div ng-show="revision.createdByUserName || revision.editSummary" class="col-md-12">
-            <small ng-show="revision.createdByUserName" title="Created by">
-                <i class="glyphicon glyphicon-user"></i> {{revision.createdByUserName}}
-            </small>
-            {{ (revision.createdByUserName && revision.editSummary) ? '&nbsp;' : '' }}
-            <small ng-show="revision.editSummary" title="Edit-summary">
-                <i class="glyphicon glyphicon-paperclip"></i> {{revision.editSummary}}
-            </small>
-        </div>
-
-        <div class="clearfix"></div>
-    </div>
-
-    <div class="panel-footer text-right">
-        <button ng-click="revertArticleToDraft()" ng-disabled="!getIsAnyRevisionActive()" class="btn btn-warning">
-            Revert article to draft
-        </button>
     </div>
 </div>
 
-<h2>
-    Preview <small class="glyphicon glyphicon-zoom-in"></small>
-</h2>
+<div class="col-lg-8 col-md-7">
+    <div ui-view></div>
 
-<div class="panel panel-primary">
-    <div class="panel-body">
-        <div loading="revisionPreview"></div>
+    <div ng-show="'history' | isState">
+        <h2>
+            <em>Preview and compare</em>
+        </h2>
 
-        <div ng-show="('history.revision' | isState) && revisionPreview.htmlContent"
-             ng-bind-html="revisionPreview.htmlContent"></div>
-
-        <div ng-show="'history' | isState" class="small">Click on revision to preview</div>
-    </div>
-
-    <div ng-show="'history.revision' | isState" class="panel-footer">
-        <a ui-sref="history" class="btn btn-link">Close</a>
+        <div class="well bg-info">
+            Preview or diff revisions in list.
+        </div>
     </div>
 </div>

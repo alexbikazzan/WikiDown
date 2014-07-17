@@ -1,6 +1,6 @@
 ﻿/* Sticky Footer */
 
-$footer-height: 69px;
+$footer-height: 68px;
 
 html {
     position: relative;
@@ -8,7 +8,7 @@ html {
 }
 body {
     /* Margin bottom by footer height */
-    margin-bottom: $footer-height;
+    margin-bottom: $footer-height + 20;
 }
 .footer {
     position: absolute;
@@ -71,14 +71,83 @@ $wmd-buttons-height: 35px;
     }
 }
 
+/* Autocomplete */
+.autocomplete-suggestions {
+    background-color: #fff;
+    border: 1px solid #ccc;
+
+    .autocomplete-suggestion {
+        white-space: nowrap;
+        overflow: hidden;
+
+        a {
+            color: #000;
+            display: inline-block;
+            padding: 0.15em 0.5em;
+            text-decoration: none;
+            width: 100%;
+        }
+
+        small {            
+            /*padding: 0.2em 0.5em;*/
+            width: 100%;
+        }
+    }
+    .autocomplete-suggestion.contains-query {
+        border-top: 1px solid #ccc;
+        
+        a {
+            font-style: italic;
+        }
+    }
+}
+
 /* Site */
 
 #wmd-container {
     margin-top: 20px;
 }
 
-a.external-link {
+a.external-link .glyphicon {
+    padding-left: 0.5em;
+}
 
+.toc ol {
+    list-style: none; 
+    /*font: 11px arial;*/ 
+    margin: 0px 0px 0px 10px; 
+    padding: 0;
+    counter-reset: num;
+
+    li:before {
+        content: counter(num) '. ';
+        counter-increment: num;
+    }
+
+    ol li:before {
+        content: counters(num, '.') ' ';
+    }
+}
+
+a.no-article {
+    border-bottom: 1px dashed #a94442;
+    color: #a94442;
+
+    &:hover, &:active {
+        text-decoration: none;
+    }
+}
+
+.revisions-diff {
+    ins {
+        background-color: #cfc;
+        text-decoration: none;
+    } 
+
+    del {
+        color: #999;
+        background-color:#FEC8C8;
+    }
 }
 
 /* AngularJS */

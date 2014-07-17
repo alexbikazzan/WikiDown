@@ -3,10 +3,14 @@ using System.Security.Principal;
 
 using Raven.Imports.Newtonsoft.Json;
 
+using WikiDown.Markdown;
+
 namespace WikiDown
 {
     public class ArticleRevision
     {
+        private string textContent;
+
         public ArticleRevision(
             ArticleId articleId,
             IPrincipal principal,
@@ -26,6 +30,7 @@ namespace WikiDown
             this.CreatedByUserName = principal.Identity.Name;
             this.EditSummary = editSummary;
             this.MarkdownContent = markdownContent;
+            this.TextContent = MarkdownService.MakeTextFlat(this.MarkdownContent);
 
             this.CreatedAt = DateTime.UtcNow;
         }
@@ -48,5 +53,7 @@ namespace WikiDown
         public DateTime? LastPublishedAt { get; set; }
 
         public string MarkdownContent { get; set; }
+
+        public string TextContent { get; set; }
     }
 }

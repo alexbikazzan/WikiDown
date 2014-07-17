@@ -52,10 +52,7 @@ namespace WikiDown.Website.Areas.Assets.Controllers
         [Route("wikidown/index.js")]
         public ActionResult WikiDownJs()
         {
-            var model = new AssetsWikiDownJsViewModel(
-                ConverterHooksConfig.Default.PreConversionHooks,
-                ConverterHooksConfig.Default.PostConversionHooks,
-                ConverterHooksConfig.Default.ServerSideHooks);
+            var model = new AssetsWikiDownJsViewModel(ConverterHooksConfig.Default);
 
             this.Response.ContentType = JavaScriptContentType;
             return this.View(model);

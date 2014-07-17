@@ -1,0 +1,19 @@
+﻿<h2>
+    <small class="glyphicon glyphicon-zoom-in"></small>
+    Preview:
+    <small>
+        <code>{{revisionPreview.text | localUtcTime}}</code>
+    </small>
+</h2>
+
+<div class="panel panel-primary">
+    <div loading="revisionPreview"></div>
+
+    <div ng-show="revisionPreview.htmlContent" class="panel-body">
+        <div ng-bind-html="revisionPreview.htmlContent"></div>
+    </div>
+
+    <div class="panel-footer">
+        <button ng-click="closeRevision()" class="btn btn-link">Close</button>
+    </div>
+</div>

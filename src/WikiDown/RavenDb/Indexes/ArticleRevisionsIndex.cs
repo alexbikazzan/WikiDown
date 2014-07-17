@@ -18,7 +18,7 @@ namespace WikiDown.RavenDb.Indexes
                                         new
                                             {
                                                 ArticleId = revision.ArticleId,
-                                                ArticleTitle = article.Title,
+                                                ArticleSlug = article.Slug,
                                                 ActiveRevisionId = article.ActiveRevisionId,
                                                 CanReadRole = (int)article.ArticleAccess.CanRead,
                                                 CreatedAt = revision.CreatedAt,
@@ -27,7 +27,7 @@ namespace WikiDown.RavenDb.Indexes
                                                 IsActive = activeRevisionId == revision.Id
                                             };
 
-            this.Index(x => x.ArticleTitle, FieldIndexing.Analyzed);
+            this.Index(x => x.ArticleSlug, FieldIndexing.Analyzed);
             this.Index(x => x.CanReadRole, FieldIndexing.Analyzed);
             this.Index(x => x.IsActive, FieldIndexing.Analyzed);
 
@@ -40,7 +40,7 @@ namespace WikiDown.RavenDb.Indexes
 
             public string ArticleId { get; set; }
 
-            public string ArticleTitle { get; set; }
+            public string ArticleSlug { get; set; }
 
             public int CanReadRole { get; set; }
 

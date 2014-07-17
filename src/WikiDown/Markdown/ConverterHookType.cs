@@ -4,8 +4,6 @@
     {
         PreConversion,
 
-        PostConversion,
-
-        ServerSide
+        PostConversion
     }
 }

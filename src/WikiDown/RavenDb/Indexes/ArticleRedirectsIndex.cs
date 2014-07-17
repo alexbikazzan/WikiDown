@@ -11,9 +11,10 @@ namespace WikiDown.RavenDb.Indexes
         {
             this.Map =
                 redirects =>
-                    from redirect in redirects select new {redirect.OriginalArticleSlug, redirect.RedirectToArticleSlug};
+                from redirect in redirects
+                select new { redirect.RedirectFromArticleSlug, redirect.RedirectToArticleSlug };
 
-            this.Index(x => x.OriginalArticleSlug, FieldIndexing.Analyzed);
+            this.Index(x => x.RedirectFromArticleSlug, FieldIndexing.Analyzed);
             this.Index(x => x.RedirectToArticleSlug, FieldIndexing.Analyzed);
         }
     }

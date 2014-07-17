@@ -41,28 +41,30 @@
             scope: {
                 model: '=ngModel'
             },
-            require: '?ngModel',
-            link: function(scope, element, attrs, ngModel) {
-                function updateMarkdownContent(markdownContent) {
-                    scope.model = markdownContent;
-
+            require: '^ngModel',
+            link: function(scope, element, attrs) {
+                function updateMarkdownContent() {
                     $timeout(function() {
                         editor.refreshPreview();
                     }, 100);
                 }
 
                 function onEditorPreviewRefresh() {
-                    var elementValue = element.val();
-                    
-                    if (scope.model !== elementValue && elementValue) {
-                        scope.model = elementValue;
-                    }
+                    $timeout(function() {
+                        var elementValue = element.val();
 
-                    $rootScope.$broadcast('wmdPreviewRefresh');
+                        if (elementValue !== scope.model) {
+                            scope.model = elementValue;
+                        }
+                    });
                 }
 
+                scope.$watch('model', function(val) {
+                    updateMarkdownContent(val);
+                });
+
                 $rootScope.$on('markdownEditorContentChange', function(e, content) {
-                    updateMarkdownContent(content);
+                    scope.model = content;
                 });
 
                 var converter = Markdown.getSanitizingConverter();
@@ -72,7 +74,6 @@
                 editor.hooks.chain('onPreviewRefresh', onEditorPreviewRefresh);
 
                 editor.run();
-                //editor.refreshPreview();
             }
         };
     }

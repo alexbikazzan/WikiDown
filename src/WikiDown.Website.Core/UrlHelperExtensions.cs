@@ -86,7 +86,7 @@ namespace WikiDown.Website
 
         public static string WikiSearch(this UrlHelper urlHelper, string search)
         {
-            return urlHelper.RouteUrl(RouteNames.WikiSearch, new { search });
+            return urlHelper.RouteUrl(RouteNames.WikiSearch, new { q = search });
         }
     }
 }

@@ -24,7 +24,7 @@ namespace WikiDown.Website.Controllers
         public ActionResult Index()
         {
             var model = new WikiArticleViewModel(this.Request.RequestContext, string.Empty);
-            return this.View(model);
+            return this.View("Article", model);
         }
 
         [SeoTitle("All Articles")]
@@ -80,11 +80,12 @@ namespace WikiDown.Website.Controllers
             }
         }
 
-        [HttpPost]
+        [HttpGet]
         [Route("search", Name = RouteNames.WikiSearch)]
-        public ActionResult Search(string search)
+        public ActionResult Search(string q)
         {
-            return this.Redirect(url => url.WikiArticle(search));
+            var model = new WikiSearchViewModel(this.Request.RequestContext, q);
+            return this.View(model);
         }
 
         private string GetArticleCanonicalUrl(WikiArticleViewModel model)

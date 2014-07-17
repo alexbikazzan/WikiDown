@@ -45,6 +45,13 @@
     <Reference Include="EcmaScript.NET">
       <HintPath>..\..\packages\YUICompressor.NET.2.0.0.0\lib\NET20\EcmaScript.NET.dll</HintPath>
     </Reference>
+    <Reference Include="HtmlAgilityPack, Version=1.4.6.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\HtmlAgilityPack.1.4.6\lib\Net45\HtmlAgilityPack.dll</HintPath>
+    </Reference>
+    <Reference Include="HtmlDiff">
+      <HintPath>..\..\packages\htmldiff.net.1.1\lib\net35\HtmlDiff.dll</HintPath>
+    </Reference>
     <Reference Include="Iesi.Collections">
       <HintPath>..\..\packages\YUICompressor.NET.2.0.0.0\lib\NET20\Iesi.Collections.dll</HintPath>
     </Reference>
@@ -127,6 +134,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ApiModels\ArticleRevisionDiffApiModel.cs" />
     <Compile Include="ApiModels\IdTextApiModel.cs" />
     <Compile Include="AppSettings.cs" />
     <Compile Include="ArticleNotFoundException.cs" />
@@ -160,10 +168,12 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="ViewModels\WikiArticleInfoViewModel.cs" />
+    <Compile Include="ViewModels\WikiSearchViewModel.cs" />
     <Compile Include="ViewModels\WikiArticleViewModel.cs" />
     <Compile Include="ViewModels\WikiArticleViewModelBase.cs" />
     <Compile Include="ViewModels\WikiListViewModel.cs" />
     <Compile Include="WikiDownWebViewPage.cs" />
+    <Compile Include="WikiDownArticleHtmlString.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\WikiDown\WikiDown.csproj">

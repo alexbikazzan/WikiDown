@@ -33,6 +33,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="HtmlAgilityPack">
+      <HintPath>..\..\packages\HtmlAgilityPack.1.4.6\lib\Net45\HtmlAgilityPack.dll</HintPath>
+    </Reference>
     <Reference Include="MarkdownSharp">
       <HintPath>..\..\packages\MarkdownSharp.1.13.0.0\lib\35\MarkdownSharp.dll</HintPath>
     </Reference>
@@ -57,8 +60,13 @@
   <ItemGroup>
     <Compile Include="Article.cs" />
     <Compile Include="ArticleRevisionItem.cs" />
+    <Compile Include="ArticleSearchResult.cs" />
+    <Compile Include="ArticleSearchResultItem.cs" />
     <Compile Include="IdUtility.cs" />
-    <Compile Include="Markdown\TocServerSideHook.cs" />
+    <Compile Include="Markdown\HeadingsConverterHook.cs" />
+    <Compile Include="Markdown\IConverterHook.cs" />
+    <Compile Include="Markdown\ServerSideConverterHook.cs" />
+    <Compile Include="Markdown\TocConverterHook.cs" />
     <Compile Include="RavenDb\Indexes\ArticleRedirectsIndex.cs" />
     <Compile Include="RavenDb\Indexes\ArticleRevisionsChangedIndex.cs">
       <SubType>Code</SubType>
@@ -70,7 +78,6 @@
     <Compile Include="Security\ArticleAccessType.cs" />
     <Compile Include="Security\ArticleExtensions.cs" />
     <Compile Include="Security\PrincipalExtensions.cs" />
-    <Compile Include="Security\SecurityIdUtility.cs" />
     <Compile Include="Security\ArticleAccessLevel.cs" />
     <Compile Include="ArticleId.cs" />
     <Compile Include="ArticleRedirect.cs" />
@@ -78,7 +85,7 @@
     <Compile Include="ArticleRevision.cs" />
     <Compile Include="ArticleRevisionDate.cs" />
     <Compile Include="ArticleSlugUtility.cs" />
-    <Compile Include="Markdown\ConverterHook.cs" />
+    <Compile Include="Markdown\RegexReplaceConverterHook.cs" />
     <Compile Include="Markdown\ConverterHooksConfig.cs" />
     <Compile Include="Markdown\ConverterHookType.cs" />
     <Compile Include="RavenDb\IdConvensionsHelper.cs" />

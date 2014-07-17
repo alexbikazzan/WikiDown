@@ -24,10 +24,15 @@
                     templateUrl: wikiPartialsUrlBase + 'history/',
                     controller: 'HistoryController'
                 })
-                .state('history.revision', {
-                    url: '{revisionDate}/',
-                    templateUrl: wikiPartialsUrlBase + 'history/',
-                    controller: 'HistoryController'
+                .state('history.preview', {
+                    url: 'preview/{revisionDate}/',
+                    templateUrl: wikiPartialsUrlBase + 'historypreview/',
+                    controller: 'HistoryPreviewController'
+                })
+                .state('history.diff', {
+                    url: 'diff/{oldRevisionDate}/{newRevisionDate}/',
+                    templateUrl: wikiPartialsUrlBase + 'historydiff/',
+                    controller: 'HistoryDiffController'
                 })
                 .state('meta', {
                     url: '/meta/',

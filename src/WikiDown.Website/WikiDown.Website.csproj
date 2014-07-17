@@ -180,6 +180,7 @@
     <Compile Include="Areas\WikiEdit\Models\ArticleRevisionApiModel.cs" />
     <Compile Include="Areas\WikiEdit\Models\ArticleRevisionListItemApiModel.cs" />
     <Compile Include="Areas\WikiEdit\Models\ArticleAdminApiModel.cs" />
+    <Compile Include="Controllers\Api\DevelopmentController.cs" />
     <Compile Include="Controllers\Api\WikiController.cs" />
     <Compile Include="Controllers\Api\MetaController.cs" />
     <Compile Include="Areas\AccountAdmin\Controllers\Api\AccountAdminController.cs" />
@@ -201,6 +202,8 @@
     <Content Include="Areas\AccountAdmin\Content\App\AccountAdminApp.js" />
     <Content Include="Areas\AccountAdmin\Content\App\AccountAdminDataApis.js" />
     <Content Include="Areas\WikiEdit\Content\App\Controllers\History.js" />
+    <Content Include="Areas\WikiEdit\Content\App\Controllers\HistoryPreview.js" />
+    <Content Include="Areas\WikiEdit\Content\App\Controllers\HistoryDiff.js" />
     <Content Include="Areas\WikiEdit\Content\App\Controllers\Meta.js" />
     <Content Include="Areas\WikiEdit\Content\App\Controllers\Admin.js" />
     <Content Include="Areas\WikiEdit\Content\App\Directives\WmdEditor.js" />
@@ -212,6 +215,8 @@
     <Content Include="Areas\AccountAdmin\Views\web.config" />
     <Content Include="Areas\Assets\Views\web.config" />
     <Content Include="Areas\WikiEdit\Views\web.config" />
+    <Content Include="Areas\WikiEdit\Views\WikiEditPartials\HistoryDiff.cshtml" />
+    <Content Include="Areas\WikiEdit\Views\WikiEditPartials\HistoryPreview.cshtml" />
     <None Include="Content\Libraries\pagedown\Markdown.Editor.bak" />
     <Content Include="Content\Site.css.map">
       <DependentUpon>Site.css</DependentUpon>
@@ -252,6 +257,7 @@
     <Content Include="Views\Shared\_AngularScripts.cshtml" />
     <Content Include="Areas\WikiEdit\Views\WikiEditPartials\History.cshtml" />
     <Content Include="Views\Shared\_HeaderNavbar.cshtml" />
+    <Content Include="Views\Wiki\Search.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\Site.scss">

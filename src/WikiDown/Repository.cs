@@ -3,9 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Principal;
 
+using Raven.Abstractions.Data;
 using Raven.Client;
 using Raven.Client.Indexes;
 using Raven.Client.Linq;
+
+using WikiDown.Markdown;
 using WikiDown.RavenDb.Indexes;
 using WikiDown.Security;
 
@@ -118,6 +121,23 @@ namespace WikiDown
             return (articleId != null && articleId.HasValue) ? this.CurrentSession.Load<Article>(articleId.Id) : null;
         }
 
+        public ArticleId GetArticleExists(ArticleId articleId)
+        {
+            var article = this.GetArticle(articleId);
+            if (article != null)
+            {
+                return article.Id;
+            }
+
+            var redirect = this.GetArticleRedirect(articleId);
+            if (redirect != null)
+            {
+                return redirect.RedirectToArticleSlug;
+            }
+
+            return null;
+        }
+
         public IReadOnlyCollection<ArticleId> GetArticleDraftsList()
         {
             if (string.IsNullOrWhiteSpace(this.principalId))
@@ -168,9 +188,10 @@ namespace WikiDown
 
             var result = (from redirect in this.CurrentSession.Query<ArticleRedirect, ArticleRedirectsIndex>()
                           where redirect.RedirectToArticleSlug == redirectToArticleId.Slug
+                          orderby redirect.RedirectFromArticleSlug
                           select redirect).As<ArticleRedirect>().ToList();
 
-            return result.Select(x => new ArticleId(x.OriginalArticleSlug)).ToList();
+            return result.Select(x => new ArticleId(x.RedirectFromArticleSlug)).ToList();
         }
 
         public IReadOnlyCollection<ArticleRevisionItem> GetArticleRevisionsLatestChangesList()
@@ -192,7 +213,9 @@ namespace WikiDown
 
             var query = this.GetArticleRevisionsQuery<ArticleRevisionsIndex>(articleId);
 
-            var result = query.AsProjection<ArticleRevisionItem>();
+            var result =
+                query.Customize(x => x.WaitForNonStaleResults(TimeSpan.FromSeconds(15)))
+                    .AsProjection<ArticleRevisionItem>();
             return result.ToList();
         }
 
@@ -401,22 +424,107 @@ namespace WikiDown
             return normalizedTags;
         }
 
-        public dynamic SearchArticles(string searchTerm)
+        public IReadOnlyCollection<ArticleSearchResultItem> SearchArticleTitles(string searchTerm)
         {
-            throw new NotImplementedException();
+            searchTerm = (searchTerm ?? string.Empty).Trim();
+            var queryResult = this.GetArticlesSearchQueryBase(searchTerm, isFullSearch: false);
+
+            return GetArticlesSearchResults(queryResult, searchTerm).ToList();
+        }
+
+        public ArticleSearchResult SearchArticles(string searchTerm)
+        {
+            searchTerm = (searchTerm ?? string.Empty).Trim();
+
+            var queryResult = this.GetArticlesSearchQueryBase(searchTerm, isFullSearch: true);
+            var results = GetArticlesSearchResults(queryResult, searchTerm).ToList();
+
+            var suggestionResults = !results.Any() ? queryResult.Suggest() : null;
+            var suggestions = (suggestionResults != null) ? suggestionResults.Suggestions : null;
+
+            return new ArticleSearchResult(results, suggestions);
         }
 
         public void Dispose()
         {
             if (this.currentSessionLazy.IsValueCreated && this.currentSessionLazy.Value != null)
             {
+                this.CurrentSession.SaveChanges();
+
                 this.currentSessionLazy.Value.Dispose();
             }
 
             if (this.currentAsyncSessionLazy.IsValueCreated && this.currentAsyncSessionLazy.Value != null)
             {
+                var saveTask = this.currentAsyncSessionLazy.Value.SaveChangesAsync();
+                saveTask.Wait();
+
                 this.currentAsyncSessionLazy.Value.Dispose();
             }
+        }
+
+        private IRavenQueryable<ArticleRevisionsIndex.Result> GetArticleRevisionsQuery<TIndexCreator>(
+            ArticleId articleId = null) where TIndexCreator : AbstractIndexCreationTask, new()
+        {
+            var query = from revision in this.CurrentSession.Query<ArticleRevisionsIndex.Result, TIndexCreator>()
+                        where (revision.LastPublishedAt != null || revision.CreatedByUserName == this.principalId)
+                        orderby revision.CreatedAt descending
+                        select revision;
+
+            if (articleId != null && articleId.HasValue)
+            {
+                query = query.Where(x => x.ArticleId == articleId.Id);
+            }
+
+            return query;
+        }
+
+        private IRavenQueryable<ArticlesIndex.Result> GetArticlesQueryBase()
+        {
+            return from article in this.CurrentSession.Query<ArticlesIndex.Result, ArticlesIndex>()
+                   where this.principalAccessLevel.Value >= article.CanReadAccess
+                   orderby article.ArticleSlug
+                   select article;
+        }
+
+        private IQueryable<ArticleSearchResultItem> GetArticlesSearchQueryBase(string searchTerm, bool isFullSearch)
+        {
+            var searchTermWildcard = searchTerm.TrimEnd('*').Trim() + '*';
+
+            var query = this.CurrentSession.Query<SearchArticlesIndex.Result, SearchArticlesIndex>()
+                .Search(x => x.Slug, searchTermWildcard, escapeQueryOptions: EscapeQueryOptions.AllowPostfixWildcard);
+
+            if (isFullSearch)
+            {
+                query =
+                    query.Customize(
+                        x =>
+                        x.Highlight("TextContent", SearchArticlesIndex.HighlightFragmentLength, 1, "Highlightings")
+                            .SetHighlighterTags("<mark>", "</mark>"))
+                        .Search(x => x.TextContent, searchTerm, 0.75M)
+                        .Search(x => x.Tags, searchTerm, 0.5M);
+            }
+
+            query = query.Where(x => this.principalAccessLevel.Value >= x.CanReadAccess);
+            return query.As<ArticleSearchResultItem>();
+        }
+
+        private static IEnumerable<ArticleSearchResultItem> GetArticlesSearchResults(
+            IEnumerable<ArticleSearchResultItem> query,
+            string searchTerm)
+        {
+            var result =
+                query.GroupBy(x => x.RedirectToSlug ?? x.Slug)
+                    .Select(x => x.First())
+                    .OrderByDescending(
+                        x =>
+                        (x.RedirectToSlug ?? x.Slug ?? string.Empty).StartsWith(
+                            searchTerm,
+                            StringComparison.InvariantCultureIgnoreCase));
+
+            var test = result.ToList();
+
+            return result.ToList();
         }
 
         private IDocumentSession GetMaxRequestsSession()
@@ -438,32 +546,8 @@ namespace WikiDown
 
         private bool GetRedirectExistsAsArticle(ArticleRedirect articleRedirect)
         {
-            var article = this.GetArticle(articleRedirect.RedirectToArticleSlug);
+            var article = this.GetArticle(articleRedirect.RedirectFromArticleSlug);
             return (article != null);
-        }
-
-        private IRavenQueryable<ArticlesIndex.Result> GetArticlesQueryBase()
-        {
-            return from article in this.CurrentSession.Query<ArticlesIndex.Result, ArticlesIndex>()
-                   where principalAccessLevel.Value >= article.CanReadAccess
-                   orderby article.ArticleTitle
-                   select article;
-        }
-
-        private IRavenQueryable<ArticleRevisionsIndex.Result> GetArticleRevisionsQuery<TIndexCreator>(
-            ArticleId articleId = null) where TIndexCreator : AbstractIndexCreationTask, new()
-        {
-            var query = from revision in this.CurrentSession.Query<ArticleRevisionsIndex.Result, TIndexCreator>()
-                        where (revision.LastPublishedAt != null || revision.CreatedByUserName == this.principalId)
-                        orderby revision.CreatedAt descending
-                        select revision;
-
-            if (articleId != null && articleId.HasValue)
-            {
-                query = query.Where(x => x.ArticleId == articleId.Id);
-            }
-
-            return query;
         }
 
         private void RemoveArticleRedirect(Article article)
@@ -491,8 +575,7 @@ namespace WikiDown
                 return redirects;
             }
 
-            var articleRedirectIds =
-                redirects.Select(x => IdUtility.CreateArticleRedirectId(x.OriginalArticleSlug)).ToList();
+            var articleRedirectIds = redirects.Select(IdUtility.CreateArticleRedirectId).ToList();
 
             var storedRedirects = this.CurrentSession.Load<ArticleRedirect>(articleRedirectIds);
 
@@ -512,19 +595,19 @@ namespace WikiDown
                 ensuredRedirects.Add(redirect);
             }
 
-            var ensuredOriginalArticleSlugs = ensuredRedirects.Select(x => x.OriginalArticleSlug).ToList();
+            var ensuredOriginalArticleSlugs = ensuredRedirects.Select(x => x.RedirectFromArticleSlug).ToList();
 
             var deletedRedirects =
                 this.CurrentSession.Query<ArticleRedirect, ArticleRedirectsIndex>()
                     .Where(
                         x =>
                         x.RedirectToArticleSlug == redirectToArticleId.Slug
-                        && !x.OriginalArticleSlug.In(ensuredOriginalArticleSlugs))
+                        && !x.RedirectFromArticleSlug.In(ensuredOriginalArticleSlugs))
                     .ToList();
 
             deletedRedirects.ForEach(x => this.CurrentSession.Delete(x));
 
-            return ensuredRedirects;
+            return ensuredRedirects.OrderBy(x => x.RedirectFromArticleSlug).ToList();
         }
 
         private void SaveArticleRevisionInternal(Article article, ArticleRevision articleRevision, bool publishRevision)
@@ -573,6 +656,63 @@ namespace WikiDown
             using (var session = this.GetMaxRequestsSession())
             {
                 return session.Query<ArticleRevision>().Take(int.MaxValue).ToList();
+            }
+        }
+
+        public IReadOnlyCollection<Article> DebugSaveAllArticles()
+        {
+            using (var session = this.GetMaxRequestsSession())
+            {
+                var articles = session.Query<Article>().Take(int.MaxValue).ToList();
+
+                foreach (var article in articles)
+                {
+                    session.Store(article);
+                }
+
+                session.SaveChanges();
+                return articles;
+            }
+        }
+
+        public IReadOnlyCollection<ArticleRevision> DebugSaveAllArticleRevisions()
+        {
+            using (var session = this.GetMaxRequestsSession())
+            {
+                var query =
+                    session.Query<ArticleRevisionsIndex.Result, ArticleRevisionsIndex>()
+                        .Where(x => x.IsActive)
+                        .Take(int.MaxValue);
+
+                var articleRevisions = query.As<ArticleRevision>().ToList();
+
+                foreach (var revision in articleRevisions)
+                {
+                    revision.TextContent = MarkdownService.MakeTextFlat(revision.MarkdownContent);
+
+                    session.Store(revision);
+                }
+
+                session.SaveChanges();
+                return articleRevisions;
+            }
+        }
+
+        public IReadOnlyCollection<ArticleRedirect> DebugSaveAllArticleRedirects()
+        {
+            using (var session = this.GetMaxRequestsSession())
+            {
+                var query = session.Query<ArticleRedirect, ArticleRedirectsIndex>().Take(int.MaxValue);
+
+                var articleRevisions = query.ToList();
+
+                foreach (var revision in articleRevisions)
+                {
+                    session.Store(revision);
+                }
+
+                session.SaveChanges();
+                return articleRevisions;
             }
         }
 #endif

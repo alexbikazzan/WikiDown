@@ -20,9 +20,10 @@ namespace WikiDown
                 throw new ArgumentNullException("articleId");
             }
 
-            this.Title = articleId.Title;
+            this.Slug = articleId.Slug;
+
             this.Tags = tags ?? Enumerable.Empty<string>();
-            this.ArticleAccess = articleAccess ?? ArticleAccess.Default(articleId);
+            this.ArticleAccess = articleAccess ?? ArticleAccess.Default();
         }
 
         [JsonConstructor]
@@ -36,7 +37,7 @@ namespace WikiDown
         {
             get
             {
-                return this.articleAccess ?? ArticleAccess.Default(this.Id);
+                return this.articleAccess ?? ArticleAccess.Default();
             }
             set
             {
@@ -46,8 +47,16 @@ namespace WikiDown
 
         public string Id { get; set; }
 
+        public string Slug { get; set; }
+
         public IEnumerable<string> Tags { get; set; }
 
-        public string Title { get; private set; }
+        public string Title
+        {
+            get
+            {
+                return (this.Slug != null) ? ArticleSlugUtility.Decode(this.Slug) : null;
+            }
+        }
     }
 }

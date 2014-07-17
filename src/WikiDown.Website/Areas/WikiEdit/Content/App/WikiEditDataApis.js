@@ -1,9 +1,19 @@
 ﻿angular.module('WikiEdit')
+    .value('articlesBaseUrl', '/api/articles/')
+    .factory('articlesDataApi', [
+        '$resource', 'articlesBaseUrl',
+        function ($resource, articlesBaseUrl) {
+            return $resource(articlesBaseUrl, {}, {});
+        }
+    ])
     .value('articleRevisionsBaseUrl', '/api/article-revisions/:slug/:revisionDate/')
     .factory('articleRevisionsDataApi', [
         '$resource', 'articleRevisionsBaseUrl',
         function($resource, articleRevisionsBaseUrl) {
             return $resource(articleRevisionsBaseUrl, {}, {
+                getDiff: {
+                    url: articleRevisionsBaseUrl + 'diff/:oldRevisionDate/:newRevisionDate/'
+                },
                 getLatest: {
                     url: articleRevisionsBaseUrl + 'latest/'
                 },
@@ -43,11 +53,13 @@
                 },
                 saveArticleRedirects: {
                     url: articlesMetaBaseUrl + 'redirects/',
-                    method: 'POST'
+                    method: 'POST',
+                    isArray: true
                 },
                 saveArticleTags: {
                     url: articlesMetaBaseUrl + 'tags/',
-                    method: 'POST'
+                    method: 'POST',
+                    isArray: true
                 }
             });
         }

@@ -3,21 +3,22 @@
     function($scope, articleRevisionsDataApi) {
         'use strict';
 
-        var cachedRevisionPreviews = {};
+        function previewActiveRevision() {
+            var activeRevision;
+            $scope.articleRevisions.some(function(x) {
+                return x.isActive ? ((activeRevision = x), true) : false;
+            });
 
-        function previewRevision(revisionDate) {
-            var cachedPreview = cachedRevisionPreviews[revisionDate];
-            if (cachedPreview) {
-                $scope.revisionPreview = cachedPreview;
-                return;
+            if (activeRevision && activeRevision.id) {
+                $scope.$state.go('history.preview', { revisionDate: activeRevision.id }, { location: 'replace', notify: false });
             }
-
-            var params = { slug: $scope.articleSlug, revisionDate: revisionDate };
-            $scope.revisionPreview = articleRevisionsDataApi.getPreview(params,
-                function() {
-                    cachedRevisionPreviews[revisionDate] = $scope.revisionPreview;
-                });
         }
+
+        $scope.closeRevision = function() {
+            $scope.revisionDiff = undefined;
+            $scope.revisionPreview = undefined;
+            $scope.$state.go('history');
+        };
 
         $scope.deleteRevision = function(revision, $event) {
             $event.stopPropagation();
@@ -36,10 +37,6 @@
             $event.stopPropagation();
 
             $scope.$state.go('edit.revision', { revisionDate: revision.id });
-        };
-
-        $scope.previewRevision = function(revision) {
-            previewRevision(revision.id);
         };
 
         $scope.revertArticleToDraft = function() {
@@ -62,46 +59,67 @@
 
                     revision.isActive = true;
 
-                    $scope.$state.go('history.revision', { revisionDate: revision.id });
+                    $scope.$state.go('history.preview', { revisionDate: revision.id });
                 });
         };
 
-        function previewActiveRevision() {
+        $scope.getPreviewRevisionText = function() {
             var activeRevision;
             $scope.articleRevisions.some(function(x) {
-                return x.isActive ? ((activeRevision = x), true) : false;
+                return x.id === revisionDateParam ? ((activeRevision = x), true) : false;
             });
 
-            if (activeRevision && activeRevision.id) {
-                previewRevision(activeRevision.id);
-
-                $scope.$state.go('history.revision', { revisionDate: activeRevision.id }, { location: 'replace', notify: false });
-            }
-        }
+            return activeRevision ? activeRevision.text : undefined;
+        };
 
         $scope.getIsAnyRevisionActive = function() {
             return $scope.articleRevisions.some(function(x) { return x.isActive; });
         };
 
-        var revisionDateParam = $scope.$state.params.revisionDate;
+        $scope.getIsRevisionFirst = function(revision) {
+            return $scope.articleRevisions.length && ($scope.articleRevisions[0] === revision);
+        };
+
+        $scope.getIsRevisionLast = function(revision) {
+            return $scope.articleRevisions.length && ($scope.articleRevisions[$scope.articleRevisions.length - 1] === revision);
+        };
+
+        $scope.getDiffLatestRevisionUrl = function(revision) {
+            if (!revision || !$scope.articleRevisions.length) {
+                return;
+            }
+
+            var latest = $scope.articleRevisions[0];
+            if (latest !== revision) {
+                return $scope.$state.href('history.diff', {
+                    oldRevisionDate: revision.id,
+                    newRevisionDate: latest.id,
+                });
+            }
+        }
+
+        $scope.getDiffPreviousRevisionUrl = function(revision) {
+            if (!revision || !$scope.articleRevisions.length) {
+                return;
+            }
+
+            var revisionIndex = $scope.articleRevisions.indexOf(revision),
+                previous = (revisionIndex >= 0) ? $scope.articleRevisions[revisionIndex + 1] : undefined;
+
+            if (previous && previous !== revision) {
+                return $scope.$state.href('history.diff', {
+                    oldRevisionDate: previous.id,
+                    newRevisionDate: revision.id,
+                });
+            }
+        }
 
         $scope.articleRevisions = articleRevisionsDataApi.query(
             { slug: $scope.articleSlug },
             function() {
-                if (!revisionDateParam) {
+                if ($scope.$state.is('history')) {
                     previewActiveRevision();
-                } else {
-                    previewRevision(revisionDateParam);
                 }
             });
-
-        $scope.articleRevisions.$promise.then(function() {
-            $scope.$on('$stateChangeSuccess', function(e, toState, toParams) {
-                var revisionDate = toParams.revisionDate;
-                if (revisionDate) {
-                    previewRevision(revisionDate);
-                }
-            });
-        });
     }
 ]);

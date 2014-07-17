@@ -1,20 +1,30 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace WikiDown.Markdown
 {
-    public class ConverterHook
+    public class RegexReplaceConverterHook : IConverterHook
     {
         private readonly Regex regex;
 
-        public ConverterHook(
+        public RegexReplaceConverterHook(
             string regexPattern,
             string regexReplace,
             ConverterHookType type,
             bool ignoreCase = true,
             bool multiline = true)
         {
+            if (regexPattern == null)
+            {
+                throw new ArgumentNullException("regexPattern");
+            }
+            if (regexReplace == null)
+            {
+                throw new ArgumentNullException("regexReplace");
+            }
+
             this.RegexPattern = regexPattern;
             this.RegexReplace = regexReplace;
             this.Type = type;

@@ -32,7 +32,19 @@
 <article id="content">
     @if (Model.HasArticle)
     {
-        @Html.Raw(Model.HtmlContent)
+        @Model.HtmlContent
+
+        if (Model.ArticleTags.Any())
+        {
+            <footer class="panel">
+                <small class="glyphicon glyphicon-tags"></small>
+                &nbsp;
+                @foreach (var tag in Model.ArticleTags)
+                {
+                    <span class="label label-default">@tag</span>
+                }
+            </footer>
+        }
     }
     else
     {

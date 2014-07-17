@@ -28,6 +28,18 @@ namespace WikiDown.Website.Areas.WikiEdit.Controllers
         }
 
         [Authorize(Roles = ArticleAccessHelper.Editor)]
+        public ActionResult HistoryDiff()
+        {
+            return this.View();
+        }
+
+        [Authorize(Roles = ArticleAccessHelper.Editor)]
+        public ActionResult HistoryPreview()
+        {
+            return this.View();
+        }
+
+        [Authorize(Roles = ArticleAccessHelper.Editor)]
         public ActionResult Meta()
         {
             return this.View();

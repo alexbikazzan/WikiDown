@@ -17,42 +17,38 @@
             return (arr && arr.join) ? arr.join('; ') : undefined;
         }
 
-        $scope.saveArticleTags = function() {
-            var tags = splitArray($scope.articleTags);
+        function populateArticleRedirects(redirects) {
+            $scope.articleRedirects = joinArray(redirects);
+        }
 
-            articlesMetaDataApi.saveArticleTags(
-                { slug: $scope.articleSlug },
-                tags);
-        };
+        function populateArticleTags(tags) {
+            $scope.articleTags = joinArray(tags);
+        }
 
         $scope.saveArticleRedirects = function() {
             var redirects = splitArray($scope.articleRedirects);
 
-            articlesMetaDataApi.saveArticleRedirects(
+            $scope.articleRedirectsSaving = articlesMetaDataApi.saveArticleRedirects(
                 { slug: $scope.articleSlug },
-                redirects);
+                redirects,
+                populateArticleRedirects);
         };
 
-        $scope.saveArticleMeta = function() {
-            articlesMetaDataApi.save(
+        $scope.saveArticleTags = function() {
+            var tags = splitArray($scope.articleTags);
+
+            $scope.articleTagsSaving = articlesMetaDataApi.saveArticleTags(
                 { slug: $scope.articleSlug },
-                $scope.articleMeta);
+                tags,
+                populateArticleTags);
         };
 
-        articlesMetaDataApi.getArticleTags(
+        $scope.articleRedirectsLoading = articlesMetaDataApi.getArticleRedirects(
             { slug: $scope.articleSlug },
-            function(result) {
-                var resultText = joinArray(result);
-                $scope.articleTags = resultText;
-            });
+            populateArticleRedirects);
 
-        articlesMetaDataApi.getArticleRedirects(
+        $scope.articleTagsLoading = articlesMetaDataApi.getArticleTags(
             { slug: $scope.articleSlug },
-            function(result) {
-                var resultText = joinArray(result);
-                $scope.articleRedirects = resultText;
-            });
-
-        $scope.articleMeta = articlesMetaDataApi.get({ slug: $scope.articleSlug });
+            populateArticleTags);
     }
 ]);

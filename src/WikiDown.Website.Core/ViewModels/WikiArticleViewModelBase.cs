@@ -51,12 +51,18 @@ namespace WikiDown.Website.ViewModels
 
         public string ArticleSlug
         {
-            get { return this.ArticleId.HasValue ? this.ArticleId.Slug : null; }
+            get
+            {
+                return this.ArticleId.HasValue ? this.ArticleId.Slug : null;
+            }
         }
 
         public string ArticleTitle
         {
-            get { return this.DisplayArticleId.HasValue ? this.DisplayArticleId.Title : this.ArticleId.Title; }
+            get
+            {
+                return this.DisplayArticleId.HasValue ? this.DisplayArticleId.Title : this.ArticleId.Title;
+            }
         }
 
         public bool CanEditArticle { get; set; }
@@ -65,7 +71,10 @@ namespace WikiDown.Website.ViewModels
 
         public virtual string PageTitle
         {
-            get { return this.ArticleTitle; }
+            get
+            {
+                return this.ArticleTitle;
+            }
         }
 
         public virtual void PopulateSeo(SeoHelper seoHelper)

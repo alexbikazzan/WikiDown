@@ -1736,22 +1736,25 @@
             // The function to be executed when you enter a link and press OK or Cancel.
             // Marks up the link and adds the ref.
             var linkEnteredCallback = function (link) {
-                // CHANGED
-                link = link || chunk.selection;
-
-                if (!/^(?:https?|ftp):\/\//.test(link)) {
-                    link = link.replace(' ', '_');
-                    if (!/^\//.test(link)) {
-                        link = '/' + link;
-                    }
-                    if (!/^\/wiki/.test(link)) {
-                        link = '/wiki' + link;
-                    }
-                }
 
                 background.parentNode.removeChild(background);
 
-                if (link !== null) {
+                if (!isImage && !link && chunk.selection) {
+                    var selection = chunk.selection.charAt(0).toUpperCase() + chunk.selection.slice(1);
+
+                    chunk.startTag = "[";
+                    chunk.endTag = "](" + selection + ")";
+                } else if (link !== null) {
+                    if (link && !/^(?:https?|ftp):\/\//.test(link)) {
+                        link = link.replace(' ', '_');
+                        if (!/^\//.test(link)) {
+                            link = '/' + link;
+                        }
+                        if (!/^\/wiki/.test(link)) {
+                            link = '/wiki' + link;
+                        }
+                    }
+                    
                     // (                          $1
                     //     [^\\]                  anything that's not a backslash
                     //     (?:\\\\)*              an even number (this includes zero) of backslashes
@@ -1781,12 +1784,12 @@
                     if (!chunk.selection) {
                         if (isImage) {
                             chunk.selection = that.getString("imagedescription");
-                        }
-                        else {
+                        } else {
                             chunk.selection = that.getString("linkdescription");
                         }
                     }
                 }
+
                 postProcessing();
             };
 

@@ -1,4 +1,7 @@
-﻿using System.Web.Routing;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Routing;
 
 using WikiDown.Markdown;
 
@@ -6,6 +9,8 @@ namespace WikiDown.Website.ViewModels
 {
     public class WikiArticleViewModel : WikiArticleViewModelBase
     {
+        private static readonly IReadOnlyCollection<string> EmptyCollection = new List<string>(0);
+
         public WikiArticleViewModel(
             RequestContext requestContext,
             ArticleId articleId,
@@ -14,6 +19,9 @@ namespace WikiDown.Website.ViewModels
             : base(requestContext, articleId, articleRevisionDate, HeaderTab.Article)
         {
             this.ShouldRedirect = shouldRedirect;
+
+            this.HtmlContent = new HtmlString(string.Empty);
+            this.ArticleTags = EmptyCollection;
 
             var articleResult = CurrentRepository.GetArticleResult(articleId, articleRevisionDate);
 
@@ -25,6 +33,10 @@ namespace WikiDown.Website.ViewModels
                 return;
             }
 
+            this.ArticleTags = (articleResult.HasArticle && articleResult.Article.Tags != null)
+                                   ? articleResult.Article.Tags.ToList()
+                                   : this.ArticleTags;
+
             this.DisplayArticleId = articleResult.HasArticle ? articleResult.Article.Id : this.DisplayArticleId;
 
             if (!articleResult.HasArticle || articleResult.ArticleRevision == null)
@@ -32,19 +44,20 @@ namespace WikiDown.Website.ViewModels
                 return;
             }
 
-            string markdown = articleResult.ArticleRevision.MarkdownContent;
-            this.HtmlContent = MarkdownService.MakeHtml(markdown);
-
             this.HasArticle = true;
+
+            this.HtmlContent = new WikiDownArticleHtmlString(articleResult, this.CurrentRepository);
         }
 
         public bool HasArticle { get; set; }
 
-        public string HtmlContent { get; set; }
+        public IHtmlString HtmlContent { get; set; }
 
         public ArticleId ArticleRedirectFrom { get; set; }
 
         public ArticleId ArticleRedirectTo { get; set; }
+
+        public IReadOnlyCollection<string> ArticleTags { get; set; }
 
         public bool ShouldRedirect { get; set; }
 

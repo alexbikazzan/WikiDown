@@ -6,14 +6,22 @@
     <div class="panel-body">
         <div class="form-group">
             <label for="article-tags" class="sr-only">Tags</label>
-            <input id="article-tags" type="text" ng-model="articleTags" class="form-control" />
+            <input id="article-tags" type="text"
+                   ng-model="articleTags" ng-disabled="articleTagsLoading && !articleTagsLoading.$resolved"
+                   class="form-control" />
 
             <span class="help-block">Semi-colon seperated</span>
         </div>
     </div>
 
     <div class="panel-footer">
-        <button ng-click="saveArticleTags()" class="btn btn-primary">Save</button>
+        <button ng-click="saveArticleTags()"
+                ng-disabled="(articleTagsLoading && !articleTagsLoading.$resolved) ||
+                (articleTagsSaving && !articleTagsSaving.$resolved)"
+                class="btn btn-primary">
+            Save
+        </button>
+        <span loading="articleTagsSaving"></span>
     </div>
 </div>
 
@@ -25,18 +33,26 @@
     <div class="panel-body">
         <div class="form-group">
             <label for="article-redirects" class="sr-only">Redirect titles</label>
-            <input id="article-redirects" type="text" ng-model="articleRedirects" class="form-control" />
+            <input id="article-redirects" type="text"
+                   ng-model="articleRedirects" ng-disabled="articleRedirectsLoading && !articleRedirectsLoading.$resolved"
+                   class="form-control" />
 
             <span class="help-block">Semi-colon seperated</span>
         </div>
     </div>
     
     <div class="panel-footer">
-        <button ng-click="saveArticleRedirects()" class="btn btn-primary">Save</button>
+        <button ng-click="saveArticleRedirects()"
+                ng-disabled="(articleRedirectsLoading && !articleRedirectsLoading.$resolved) || 
+                (articleRedirectsSaving && !articleRedirectsSaving.$resolved)"
+                class="btn btn-primary">
+            Save
+        </button>
+        <span loading="articleRedirectsSaving"></span>
     </div>
 </div>
 
-<h2>
+@*<h2>
     Meta <small class="glyphicon glyphicon-share"></small>
 </h2>
 
@@ -54,4 +70,4 @@
     <div class="panel-footer">
         <button ng-click="saveArticleMeta()" class="btn btn-primary">Save</button>
     </div>
-</div>
+</div>*@

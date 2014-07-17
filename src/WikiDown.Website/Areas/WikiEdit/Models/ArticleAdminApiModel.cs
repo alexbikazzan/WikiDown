@@ -10,16 +10,15 @@ namespace WikiDown.Website.Areas.WikiEdit.Models
         {
         }
 
-        public ArticleAdminApiModel(Article article)
+        public ArticleAdminApiModel(ArticleId articleId, Repository repository)
         {
-            if (article == null)
-            {
-                return;
-            }
+            var article = repository.GetArticle(articleId);
 
-            this.CanRead = (int)article.ArticleAccess.CanRead;
-            this.CanEdit = (int)article.ArticleAccess.CanEdit;
-            this.CanAdmin = (int)article.ArticleAccess.CanAdmin;
+            var articleAccess = (article != null) ? article.ArticleAccess : ArticleAccess.Default();
+
+            this.CanRead = (int)articleAccess.CanRead;
+            this.CanEdit = (int)articleAccess.CanEdit;
+            this.CanAdmin = (int)articleAccess.CanAdmin;
         }
 
         public int CanAdmin { get; set; }
@@ -30,7 +29,7 @@ namespace WikiDown.Website.Areas.WikiEdit.Models
 
         public void Save(ArticleId articleId, Repository repository)
         {
-            var article = repository.GetArticle(articleId);
+            var article = repository.GetArticle(articleId) ?? new Article(articleId);
 
             var canAdmin = TryGetArticleAccess(this.CanAdmin);
             var canEdit = TryGetArticleAccess(this.CanEdit);

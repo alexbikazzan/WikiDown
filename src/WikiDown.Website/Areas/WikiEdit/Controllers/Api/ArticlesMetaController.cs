@@ -22,16 +22,6 @@ namespace WikiDown.Website.Areas.WikiEdit.Controllers.Api
             return redirects.ToList();
         }
 
-        [HttpPost]
-        [Route("redirects")]
-        public IReadOnlyCollection<string> SaveRedirects([FromUri] ArticleId slug, [FromBody] IEnumerable<string> redirects)
-        {
-            var articleRedirects = GetFilteredList(redirects).ToArray();
-
-            var savedRedirects = this.CurrentRepository.SaveArticleRedirects(slug, articleRedirects);
-            return savedRedirects.Select(x => x.RedirectToArticleSlug).ToList();
-        }
-
         [HttpGet]
         [Route("tags")]
         public IReadOnlyCollection<string> GetTags([FromUri] ArticleId slug)
@@ -41,6 +31,17 @@ namespace WikiDown.Website.Areas.WikiEdit.Controllers.Api
             var tags = article.Tags ?? Enumerable.Empty<string>();
 
             return tags.ToList();
+        }
+
+        [HttpPost]
+        [Route("redirects")]
+        public IReadOnlyCollection<string> SaveRedirects(
+            [FromUri] ArticleId slug,
+            [FromBody] IEnumerable<string> redirects)
+        {
+            var savedRedirects = this.CurrentRepository.SaveArticleRedirects(slug, redirects);
+
+            return savedRedirects.Select(x => x.RedirectFromArticleSlug).ToList();
         }
 
         [HttpPost]
@@ -61,15 +62,6 @@ namespace WikiDown.Website.Areas.WikiEdit.Controllers.Api
             }
 
             return article;
-        }
-
-        private static IEnumerable<string> GetFilteredList(IEnumerable<string> values)
-        {
-            return
-                (values ?? Enumerable.Empty<string>()).Select(x => (x ?? string.Empty).Trim())
-                    .Where(x => !string.IsNullOrWhiteSpace(x))
-                    .Distinct()
-                    .ToList();
         }
     }
 }

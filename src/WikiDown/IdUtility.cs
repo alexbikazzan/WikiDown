@@ -15,7 +15,7 @@ namespace WikiDown
                 throw new ArgumentNullException("article");
             }
 
-            var articleId = new ArticleId(article.Title);
+            var articleId = new ArticleId(article.Slug);
             return CreateArticleId(articleId);
         }
 
@@ -36,7 +36,7 @@ namespace WikiDown
                 throw new ArgumentNullException("articleRedirect");
             }
 
-            return CreateArticleRedirectId(articleRedirect.OriginalArticleSlug);
+            return CreateArticleRedirectId(articleRedirect.RedirectFromArticleSlug);
         }
 
         public static string CreateArticleRedirectId(ArticleId originalArticleId)

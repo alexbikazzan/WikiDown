@@ -6,7 +6,7 @@
         function onSaveRevisionSuccess(result) {
             var revisionDate = result ? result.dateId : undefined;
 
-            $scope.$state.go('history.revision', { revisionDate: revisionDate });
+            $scope.$state.go('history.preview', { revisionDate: revisionDate });
         }
 
         function updateMarkdownContent(content) {

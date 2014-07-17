@@ -1,0 +1,19 @@
+﻿<h2>
+    <small class="glyphicon glyphicon-th-list"></small>
+    Diff:
+    <small>
+        <code>{{revisionDiff.newText | localUtcTime}}</code> - <code>{{revisionDiff.oldText | localUtcTime}}</code>
+    </small>
+</h2>
+
+<div class="panel panel-primary">
+    <div loading="revisionDiff"></div>
+
+    <div ng-show="revisionDiff.htmlDiff" class="panel-body">
+        <div ng-bind-html="revisionDiff.htmlDiff" class="revisions-diff"></div>
+    </div>
+
+    <div class="panel-footer">
+        <button ng-click="closeRevision()" class="btn btn-link">Close</button>
+    </div>
+</div>

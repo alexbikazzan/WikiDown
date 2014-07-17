@@ -5,6 +5,7 @@ using System.Web.Http;
 
 using WikiDown.Markdown;
 using WikiDown.Security;
+using WikiDown.Website.ApiModels;
 using WikiDown.Website.Areas.WikiEdit.Models;
 using WikiDown.Website.Controllers.Api;
 
@@ -34,6 +35,16 @@ namespace WikiDown.Website.Areas.WikiEdit.Controllers.Api
         }
 
         [HttpGet]
+        [Route("diff/{oldRevisionDate}/{newRevisionDate}")]
+        public ArticleRevisionDiffApiModel GetDiff([FromUri] ArticleId slug, 
+            [FromUri] ArticleRevisionDate oldRevisionDate,
+            [FromUri] ArticleRevisionDate newRevisionDate)
+        {
+            var model = new ArticleRevisionDiffApiModel(slug, oldRevisionDate, newRevisionDate, this.CurrentRepository);
+            return model;
+        }
+        
+        [HttpGet]
         [Route("latest")]
         public ArticleRevisionApiModel GetLatestRevision([FromUri] ArticleId slug)
         {
@@ -48,8 +59,10 @@ namespace WikiDown.Website.Areas.WikiEdit.Controllers.Api
         {
             var articleRevision = this.GetEnsuredArticleRevision(slug, revisionDate);
 
-            var htmlContent = MarkdownService.MakeHtml(articleRevision.MarkdownContent);
-            return new { htmlContent };
+            var text = articleRevision.CreatedAt.ToString(ArticleRevisionDate.FormattedDateTimeFormat);
+            var htmlContent = MarkdownService.MakeTextHtmlLinebreaks(articleRevision.MarkdownContent);
+
+            return new { text, htmlContent };
         }
 
         [HttpDelete]
@@ -64,14 +77,21 @@ namespace WikiDown.Website.Areas.WikiEdit.Controllers.Api
         }
 
         [HttpPost]
-        [Route("{revisionDate}/publish")]
-        public void PublishRevision([FromUri] ArticleId slug, [FromUri] ArticleRevisionDate revisionDate)
+        [Route("")]
+        public ArticleRevisionApiModel SaveRevision(
+            [FromUri] ArticleId slug,
+            [FromBody] ArticleRevisionApiModel formData,
+            [FromUri] bool publish = false)
         {
-            bool setSuccess = this.CurrentRepository.PublishArticleRevision(slug, revisionDate);
-            if (!setSuccess)
-            {
-                throw new HttpResponseException(HttpStatusCode.NotFound);
-            }
+            var articleRevision = new ArticleRevision(
+                slug,
+                principal: this.User,
+                markdownContent: formData.MarkdownContent,
+                editSummary: formData.EditSummary);
+
+            this.CurrentRepository.SaveArticleRevision(slug, articleRevision, publish);
+
+            return new ArticleRevisionApiModel(slug, articleRevision);
         }
 
         [HttpPost]
@@ -86,23 +106,14 @@ namespace WikiDown.Website.Areas.WikiEdit.Controllers.Api
         }
 
         [HttpPost]
-        [Route("")]
-        public ArticleRevisionApiModel SaveRevision(
-            [FromUri] ArticleId slug,
-            [FromBody] ArticleRevisionApiModel formData,
-            [FromUri] bool publish = false)
+        [Route("{revisionDate}/publish")]
+        public void PublishRevision([FromUri] ArticleId slug, [FromUri] ArticleRevisionDate revisionDate)
         {
-            var userName = this.User.Identity.Name;
-
-            var articleRevision = new ArticleRevision(
-                slug,
-                principal: this.User,
-                markdownContent: formData.MarkdownContent,
-                editSummary: formData.EditSummary);
-
-            this.CurrentRepository.SaveArticleRevision(slug, articleRevision, publish);
-
-            return new ArticleRevisionApiModel(slug, articleRevision);
+            bool setSuccess = this.CurrentRepository.PublishArticleRevision(slug, revisionDate);
+            if (!setSuccess)
+            {
+                throw new HttpResponseException(HttpStatusCode.NotFound);
+            }
         }
 
         private ArticleRevision GetEnsuredArticleRevision(ArticleId slug, ArticleRevisionDate articleRevisionDate)

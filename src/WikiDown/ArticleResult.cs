@@ -30,7 +30,7 @@
         {
             get
             {
-                return (this.ArticleRedirect != null) ? this.ArticleRedirect.OriginalArticleSlug : null;
+                return (this.ArticleRedirect != null) ? this.ArticleRedirect.RedirectFromArticleSlug : null;
             }
         }
 

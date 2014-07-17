@@ -6,23 +6,24 @@ namespace WikiDown.Markdown
 {
     public class ConverterHooksConfig
     {
-        private static readonly Lazy<List<ConverterHook>> DefaultConverterHooksLazy;
+        private static readonly Lazy<IReadOnlyCollection<IConverterHook>> DefaultConverterHooksLazy;
+
+        private readonly List<IConverterHook> converterHooks;
 
         static ConverterHooksConfig()
         {
-            DefaultConverterHooksLazy = new Lazy<List<ConverterHook>>(() => GetDefaultConverterHooks().ToList());
+            DefaultConverterHooksLazy =
+                new Lazy<IReadOnlyCollection<IConverterHook>>(() => GetDefaultConverterHooks().ToList());
         }
 
-        private readonly List<ConverterHook> converterHooks;
-
-        public ConverterHooksConfig(IEnumerable<ConverterHook> converterHooks = null)
+        public ConverterHooksConfig(IEnumerable<RegexReplaceConverterHook> converterHooks = null)
         {
-            converterHooks = converterHooks ?? Enumerable.Empty<ConverterHook>();
+            converterHooks = converterHooks ?? Enumerable.Empty<RegexReplaceConverterHook>();
 
             this.converterHooks = DefaultConverterHooks.Concat(converterHooks).ToList();
         }
 
-        public static IReadOnlyCollection<ConverterHook> DefaultConverterHooks
+        public static IReadOnlyCollection<IConverterHook> DefaultConverterHooks
         {
             get
             {
@@ -30,7 +31,33 @@ namespace WikiDown.Markdown
             }
         }
 
-        public void Register(ConverterHook converterHook)
+        public IReadOnlyCollection<IConverterHook> PreConversionHooks
+        {
+            get
+            {
+                return this.converterHooks.Where(x => x.Type == ConverterHookType.PreConversion).ToList();
+            }
+        }
+
+        public IReadOnlyCollection<IConverterHook> PostConversionHooks
+        {
+            get
+            {
+                return this.converterHooks.Where(x => x.Type == ConverterHookType.PostConversion).ToList();
+            }
+        }
+
+        public string ApplyPreConversions(string markdown)
+        {
+            return this.PreConversionHooks.Aggregate(markdown, (current, hook) => hook.Apply(current));
+        }
+
+        public string ApplyPostConversions(string html)
+        {
+            return this.PostConversionHooks.Aggregate(html, (current, hook) => hook.Apply(current));
+        }
+
+        public void Register(RegexReplaceConverterHook converterHook)
         {
             this.converterHooks.Add(converterHook);
         }
@@ -41,7 +68,7 @@ namespace WikiDown.Markdown
             bool ignoreCase = true,
             bool multiline = true)
         {
-            var converterHook = new ConverterHook(
+            var converterHook = new RegexReplaceConverterHook(
                 regexPattern,
                 regexReplace,
                 ConverterHookType.PreConversion,
@@ -57,7 +84,7 @@ namespace WikiDown.Markdown
             bool ignoreCase = true,
             bool multiline = true)
         {
-            var converterHook = new ConverterHook(
+            var converterHook = new RegexReplaceConverterHook(
                 regexPattern,
                 regexReplace,
                 ConverterHookType.PostConversion,
@@ -67,53 +94,23 @@ namespace WikiDown.Markdown
             this.Register(converterHook);
         }
 
-        public IReadOnlyCollection<ConverterHook> PreConversionHooks
-        {
-            get
-            {
-                return this.converterHooks.Where(x => x.Type == ConverterHookType.PreConversion).ToList();
-            }
-        }
-
-        public IReadOnlyCollection<ConverterHook> PostConversionHooks
-        {
-            get
-            {
-                return this.converterHooks.Where(x => x.Type == ConverterHookType.PostConversion).ToList();
-            }
-        }
-
-        public IReadOnlyCollection<ConverterHook> ServerSideHooks
-        {
-            get
-            {
-                return this.converterHooks.Where(x => x.Type == ConverterHookType.ServerSide).ToList();
-            }
-        }
-
-        public string ApplyPreConversions(string markdown)
-        {
-            return this.PreConversionHooks.Aggregate(markdown, (current, hook) => hook.Apply(current));
-        }
-
-        public string ApplyPostConversions(string html)
-        {
-            return this.PostConversionHooks.Aggregate(html, (current, hook) => hook.Apply(current));
-        }
-
-        public string ApplyServerSide(string html)
-        {
-            return this.ServerSideHooks.Aggregate(html, (current, hook) => hook.Apply(current));
-        }
-
-        private static IEnumerable<ConverterHook> GetDefaultConverterHooks()
+        private static IEnumerable<IConverterHook> GetDefaultConverterHooks()
         {
             // https://help.github.com/articles/github-flavored-markdown
 
-            var strikeThrough = new ConverterHook(@"~~(.*)~~", "<del>$1</del>", ConverterHookType.PreConversion);
+            var strikeThrough = new RegexReplaceConverterHook(
+                @"~~(.*)~~",
+                "<del>$1</del>",
+                ConverterHookType.PreConversion);
             yield return strikeThrough;
 
-            var wikiLinks = new ConverterHook(
+            var shortWikiLinks = new RegexReplaceConverterHook(
+                @"(?:\[([^\]]+)\]\(([^\)]+)\))",
+                @"<a href=""/wiki/$2/"">$1</a>",
+                ConverterHookType.PreConversion);
+            yield return shortWikiLinks;
+
+            var wikiLinks = new RegexReplaceConverterHook(
                 @"^<a([^>]+)href=""(\/[^""]+)""([^>]*)>([^<]*)<\/a>$",
                 @"<a$1href=""/wiki$2""$3>$4</a>",
                 ConverterHookType.PreConversion);
@@ -123,16 +120,19 @@ namespace WikiDown.Markdown
             {
                 string pattern = string.Format(@"^<h{0}([^>]*)>([^<]*)<\/h{0}>$", i);
                 string replace = string.Format("<h{0}$1>$2</h{0}>", i + 1);
-                yield return new ConverterHook(pattern, replace, ConverterHookType.PostConversion);
+                yield return new RegexReplaceConverterHook(pattern, replace, ConverterHookType.PostConversion);
             }
 
-            var externalLinks = new ConverterHook(
-                @"<a((?:[^>]*)href=""(?:https?|ftp):\/\/(?:[^""]*)""[^>]*)>([^<]*)<\/a>",
-                @"<a$1 class=""external-link"">$2</a> <small class=""glyphicon glyphicon-globe""></small>",
-                ConverterHookType.PostConversion);
+            var externalLinks =
+                new RegexReplaceConverterHook(
+                    @"<a((?:[^>]*)href=""(?:https?|ftp):\/\/(?:[^""]*)""[^>]*)>([^<]*)<\/a>",
+                    @"<a$1 class=""external-link"">$2<small class=""glyphicon glyphicon-globe""></small></a>",
+                    ConverterHookType.PostConversion);
             yield return externalLinks;
 
-            yield return new TocServerSideHook();
+            yield return new HeadingsConverterHook();
+
+            yield return new TocConverterHook();
         }
 
         #region Singleton

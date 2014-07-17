@@ -4,14 +4,14 @@ using Raven.Imports.Newtonsoft.Json;
 
 namespace WikiDown
 {
-    [DebuggerDisplay("Id={Id}, Original={OriginalArticleSlug}, RedirectTo={RedirectToArticleSlug}")]
+    [DebuggerDisplay("Id={Id}, RedirectFrom={RedirectFromArticleSlug}, RedirectTo={RedirectToArticleSlug}")]
     public class ArticleRedirect
     {
 
-        public ArticleRedirect(ArticleId originalArticleId, ArticleId redirectToArticleSlug)
+        public ArticleRedirect(ArticleId redirectFromArticleId, ArticleId redirectToArticleId)
         {
-            this.OriginalArticleSlug = originalArticleId.Slug;
-            this.RedirectToArticleSlug = redirectToArticleSlug.Slug;
+            this.RedirectFromArticleSlug = redirectFromArticleId.Slug;
+            this.RedirectToArticleSlug = redirectToArticleId.Slug;
         }
 
         [JsonConstructor]
@@ -19,9 +19,9 @@ namespace WikiDown
         {
         }
 
-        public string OriginalArticleSlug { get; set; }
-
         public string Id { get; set; }
+
+        public string RedirectFromArticleSlug { get; set; }
 
         public string RedirectToArticleSlug { get; set; }
     }

@@ -1,5 +1,4 @@
-﻿@using WikiDown.Security
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <!--[if lt IE 7]>      <html class="no-js lt-ie10 lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
 <!--[if IE 7]>         <html class="no-js lt-ie10 lt-ie9 lt-ie8"> <![endif]-->
 <!--[if IE 8]>         <html class="no-js lt-ie10 lt-ie9"> <![endif]-->
@@ -29,9 +28,7 @@
         <meta name="msapplication-TileColor" content="#ffffff" />
         <meta name="msapplication-TileImage" content="~/apple-touch-icon-144x144-precomposed.png" />
 
-        @*@Html.StylesheetConditional("//cdnjs.cloudflare.com/ajax/libs/normalize/3.0.1/normalize")*@
         @Html.StylesheetConditional("//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.2.0/css/bootstrap")
-        @*@Html.StylesheetConditional("//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.2.0/css/bootstrap-theme")*@
 
         @RenderSection("Css", @<text>@Html.BundledCss("site")</text>)
 
@@ -56,10 +53,31 @@
             <header>
                 <nav class="navbar navbar-default" role="navigation">
                     <div class="container-fluid">
-                        @Html.Partial("_HeaderNavbar")
+                        <div class="navbar-header">
+                            @if (!string.IsNullOrWhiteSpace(AppSettings.SiteHeader))
+                            {
+                                <a class="navbar-brand" href="@Url.Empty()" title="@AppSettings.SiteHeaderTitle">
+                                    @AppSettings.SiteHeader
+                                </a>
+                            }
 
-                        <div class="navbar-header container-fluid">
-                            @RenderSection("Navbar", false)
+                            <button type="button" class="navbar-toggle"
+                                    data-toggle="collapse" data-target="#navbar-collapse-content">
+                                <span class="sr-only">Toggle navigation</span>
+                                <span class="icon-bar"></span>
+                                <span class="icon-bar"></span>
+                                <span class="icon-bar"></span>
+                            </button>
+                        </div>
+
+                        <div class="collapse navbar-collapse" id="navbar-collapse-content">
+                            <div class="navbar-right">
+                                @Html.Partial("_HeaderNavbar")
+                            </div>
+
+                            <div class="navbar-left">
+                                @RenderSection("Navbar", false)
+                            </div>
                         </div>
                     </div>
                 </nav>
@@ -72,8 +90,8 @@
 
         <footer class="footer container">
             <div class="panel panel-info">
-                <div class="panel-body small text-info text-right">
-                    WikiDown - created by <a href="http://twitter.com/sebnilsson">Seb Nilsson</a>
+                <div class="panel-body text-muted text-right small">
+                    Powered by WikiDown - created by <a href="http://twitter.com/sebnilsson">Seb Nilsson</a>
                 </div>
             </div>
         </footer>
@@ -83,6 +101,7 @@
         @Html.JavascriptConditional("//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery")
         @Html.JavascriptConditional("//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.2.0/js/bootstrap")
         @Html.JavascriptConditional("//cdnjs.cloudflare.com/ajax/libs/moment.js/2.7.0/moment")
+        @Html.Javascript("//cdnjs.cloudflare.com/ajax/libs/jquery.devbridge-autocomplete/1.2.7/jquery.devbridge-autocomplete.min.js")
 
         @RenderSection("Js", @<text>@Html.BundledJs("site")</text>)
     </body>

@@ -4,7 +4,7 @@
         'use strict';
 
         $scope.deleteArticle = function() {
-            articlesAdminDataApi.delete({ slug: $scope.articleSlug },
+            $scope.articleAccessDeleting = articlesAdminDataApi.delete({ slug: $scope.articleSlug },
                 function() {
                     $scope.$state.go('edit');
                 });
@@ -22,7 +22,7 @@
         };
 
         $scope.saveArticleAccess = function() {
-            articlesAdminDataApi.save(
+            $scope.articleAccessSaving = articlesAdminDataApi.save(
                 { slug: $scope.articleSlug },
                 $scope.articleAccess);
         };

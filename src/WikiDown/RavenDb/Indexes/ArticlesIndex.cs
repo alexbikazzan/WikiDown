@@ -14,7 +14,7 @@ namespace WikiDown.RavenDb.Indexes
                                        new
                                            {
                                                ArticleId = article.Id,
-                                               ArticleTitle = article.Title,
+                                               ArticleSlug = article.Slug,
                                                ActiveRevisionId = article.ActiveRevisionId,
                                                CanReadAccess = article.ArticleAccess.CanRead
                                            };
@@ -28,7 +28,7 @@ namespace WikiDown.RavenDb.Indexes
 
             public string ArticleId { get; set; }
 
-            public string ArticleTitle { get; set; }
+            public string ArticleSlug { get; set; }
 
             public int CanReadAccess { get; set; }
         }
