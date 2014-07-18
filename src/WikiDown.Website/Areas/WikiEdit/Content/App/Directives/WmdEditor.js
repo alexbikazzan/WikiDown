@@ -43,12 +43,6 @@
             },
             require: '^ngModel',
             link: function(scope, element, attrs) {
-                function updateMarkdownContent() {
-                    $timeout(function() {
-                        editor.refreshPreview();
-                    }, 100);
-                }
-
                 function onEditorPreviewRefresh() {
                     $timeout(function() {
                         var elementValue = element.val();
@@ -57,6 +51,14 @@
                             scope.model = elementValue;
                         }
                     });
+
+                    $rootScope.$broadcast('onWmdPreviewRefresh');
+                }
+
+                function updateMarkdownContent() {
+                    $timeout(function() {
+                        editor.refreshPreview();
+                    }, 100);
                 }
 
                 scope.$watch('model', function(val) {

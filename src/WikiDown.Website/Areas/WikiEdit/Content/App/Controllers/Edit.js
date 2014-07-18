@@ -4,8 +4,9 @@
         'use strict';
 
         function onSaveRevisionSuccess(result) {
-            var revisionDate = result ? result.dateId : undefined;
+            $scope.$broadcast('formDataSaved');
 
+            var revisionDate = result ? result.dateId : undefined;
             $scope.$state.go('history.preview', { revisionDate: revisionDate });
         }
 
@@ -28,6 +29,7 @@
             { slug: $scope.articleSlug, revisionDate: revisionDateParam },
             function() {
                 updateMarkdownContent($scope.articleRevision.markdownContent);
+                $scope.$broadcast('editRevisionLoaded');
             });
     }
 ]);

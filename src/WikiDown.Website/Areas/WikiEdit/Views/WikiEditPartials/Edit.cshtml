@@ -8,35 +8,40 @@
     http://stackoverflow.com/editing-help
 *@
 
-<div id="wmd-container" class="form-group">
-    <small ng-show="articleRevision.dateId" class="pull-right">
-        Revision:
-        <a ui-sref="history.preview({ revisionDate: articleRevision.dateId })" utc-time="articleRevision.dateFormatted">
-            {{articleRevision.dateFormatted | localUtcTime}}
-        </a>
-    </small>
-    <div ng-show="articleRevision.dateId" class="clearfix"></div>
-    
-    <div id="wmd-panel">
+<div id="wmd-editor-wrapper" class="col-lg-6 col-md-6 col-sm-12 form-group" scroll-to-on="editRevisionLoaded">
+    <form id="wmd-panel" dirty-form-unload-confirm dirty-form-reset-on="formDataSaved">
         <div id="wmd-button-bar"></div>
         <textarea id="wmd-input" ng-model="articleRevision.markdownContent" ng-disabled="@ngDisabled"
                   wmd-editor class="form-control"></textarea>
+    </form>
+</div>
+
+<div id="wmd-preview-wrapper" class="col-lg-6 col-md-6 col-sm-12">
+    <h2 class="visible-sm visible-xs">Preview</h2>
+
+    <div ng-show="articleRevision.dateId" class="pull-right">
+        <span class="label label-info">From revision: </span>
+        <code class="small">
+            <a ui-sref="history.preview({ revisionDate: articleRevision.dateId })">
+                {{articleRevision.dateFormatted | localUtcTime}}
+            </a>
+        </code>
+    </div>
+    <div class="clearfix"></div>
+
+    <div id="wmd-preview-container" class="panel panel-primary panel-body">
+        <div id="wmd-preview" wmd-preview></div>
     </div>
 </div>
 
-<div class="label label-primary pull-right">Preview</div>
+<div class="col-lg-6 col-md-6 col-sm-12 form-group">
+    <label for="edit-summary">Edit summary</label>
+    <input id="edit-summary" type="text" ng-model="articleRevision.editSummary" ng-disabled="@ngDisabled"
+           wmd-preview class="form-control" />
+</div>
 <div class="clearfix"></div>
 
-<div id="wmd-preview-container" class="panel panel-primary panel-body">
-    <div id="wmd-preview"></div>
-</div>
-
-<div class="form-group">
-    <label for="edit-summary">Edit summary</label>
-    <input id="edit-summary" type="text" ng-model="articleRevision.editSummary" ng-disabled="@ngDisabled" class="form-control" />
-</div>
-
-<div class="form-group">
+<div class="container form-group">
     <button ng-click="saveArticleRevision()" ng-disabled="@ngDisabled" class="btn btn-primary">
         Save
     </button>

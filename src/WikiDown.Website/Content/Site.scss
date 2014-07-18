@@ -1,4 +1,8 @@
-﻿/* Sticky Footer */
+﻿$bootstrap-lg: 1200px;
+$bootstrap-md: 992px;
+$bootstrap-sm: 768px;
+
+/* Sticky Footer */
 
 $footer-height: 68px;
 
@@ -29,47 +33,55 @@ $wmd-height-small: 300px;
 
 $wmd-buttons-height: 35px;
 
-#wmd-input {
-    height: (($wmd-height-large / 2) - 20px);
-    height: 45vh;    
+#wmd-editor-wrapper {
+    margin-top: 20px;
 }
-#wmd-preview-container {
-    max-height: (($wmd-height-large / 2) - 20px);
-    max-height: 45vh;   
-	overflow: auto; 
+@media screen and (min-width: $bootstrap-md) {
+    #wmd-preview-wrapper {
+        margin-top: 35px;
+    }
 }
 
-@media screen and (max-height: $wmd-height-large) {
-    #wmd-input {
-        height: ($wmd-height-large - $wmd-buttons-height);
-        height: 80vh;
-    }
-    
-    #wmd-preview-container {
-        max-height: ($wmd-height-large - $wmd-buttons-height);
-        max-height: 80vh;
-    }
+#wmd-input {
+    height: ($wmd-height-small - $wmd-buttons-height);
+    height: 85vh;
 }
-@media screen and (max-height: $wmd-height-medium) {
+#wmd-preview-container {
+    height: ($wmd-height-small - $wmd-buttons-height);
+    height: 85vh;
+	overflow: auto;
+}
+
+@media screen and (min-height: $wmd-height-medium) {
     #wmd-input {
         height: ($wmd-height-medium - $wmd-buttons-height);
-        height: 90vh;
+        height: 75vh;
     }
     #wmd-preview-container {
-        max-height: ($wmd-height-medium - $wmd-buttons-height);
-        max-height: 90vh;    
+        height: ($wmd-height-medium - $wmd-buttons-height);
+        height: 75vh;    
     }
 }
-@media screen and (max-height: $wmd-height-small) {
+@media screen and (min-height: $wmd-height-large) {
+    #wmd-input {
+        height: ($wmd-height-large - $wmd-buttons-height);
+        height: 60vh;
+    }
+    #wmd-preview-container {
+        height: ($wmd-height-large - $wmd-buttons-height);
+        height: 60vh;    
+    }
+}
+/*@media screen and (min-height: $wmd-height-small) {
     #wmd-input {
         height: ($wmd-height-small - $wmd-buttons-height);
         height: 85vh;
     }
     #wmd-preview-container {
-        max-height: ($wmd-height-small - $wmd-buttons-height);
-        max-height: 85vh;    
+        height: ($wmd-height-small - $wmd-buttons-height);
+        height: 85vh;    
     }
-}
+}*/
 
 /* Autocomplete */
 .autocomplete-suggestions {
@@ -104,10 +116,6 @@ $wmd-buttons-height: 35px;
 
 /* Site */
 
-#wmd-container {
-    margin-top: 20px;
-}
-
 a.external-link .glyphicon {
     padding-left: 0.5em;
 }
@@ -136,6 +144,10 @@ a.no-article {
     &:hover, &:active {
         text-decoration: none;
     }
+}
+
+.history-element-details .panel-body {
+    min-height: 33vh;
 }
 
 .revisions-diff {

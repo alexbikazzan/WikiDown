@@ -10,15 +10,22 @@
 
             var cachedPreview = cachedRevisionPreviews[revisionDate];
             if (cachedPreview) {
-                $scope.revisionPreview = cachedPreview;
+                showPreview(cachedPreview);
                 return;
             }
 
             var params = { slug: $scope.articleSlug, revisionDate: revisionDate };
-            $scope.revisionPreview = articleRevisionsDataApi.getPreview(params,
+            $scope.revisionPreview = articleRevisionsDataApi.getPreview(
+                params,
                 function() {
                     cachedRevisionPreviews[revisionDate] = $scope.revisionPreview;
+                    showPreview($scope.revisionPreview);
                 });
+        }
+
+        function showPreview(preview) {
+            $scope.revisionPreview = preview;
+            $scope.$broadcast('historyElementDetailShow');
         }
 
         var revisionDateParam = $scope.$state.params.revisionDate;

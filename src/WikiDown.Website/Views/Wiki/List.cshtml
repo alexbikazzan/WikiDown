@@ -8,9 +8,13 @@
         @foreach (var article in Model.LatestChangedArticles)
         {
             <li class="list-group-item">
-                <a href="@Url.WikiArticle(article.ArticleId)" class="list-group-item-heading">
-                    @article.ArticleTitle
-                </a>
+                <div class="list-group-item-heading">
+                    <strong>
+                        <a href="@Url.WikiArticle(article.ArticleId)" class="list-group-item-heading">
+                            @article.ArticleTitle
+                        </a>
+                    </strong>
+                </div>
 
                 <div class="list-group-item-text">
                     @if (!string.IsNullOrWhiteSpace(article.LastPublishedAtFormatted))

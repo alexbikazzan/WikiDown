@@ -11,23 +11,22 @@
         }
 
         function autoresizeSuggestionsContainer($this, $parent, $suggestionsContainer) {
-            var left = parseInt($suggestionsContainer.css('left'), 10) || 0,
-                width = parseInt($suggestionsContainer.css('width'), 10) || 0;
+            var bodyWidth = $('body').width(),
+                parentWidth = $parent.outerWidth(true),
+                width = getHiddenWidth($suggestionsContainer);
 
-            var measuredWidth = getHiddenWidth($suggestionsContainer);
-            if (measuredWidth <= width) {
-                resetSuggestionsContainer($parent, $suggestionsContainer);
+            if (width <= parentWidth || bodyWidth < width) {
                 return;
             }
 
-            var bodyWidth = $('body').width();
-            var autoWidth = Math.min(measuredWidth, bodyWidth - 4);
+            var left = parseInt($suggestionsContainer.css('left'), 10) || 0,
+                extra = width - parentWidth,
+                newLeft = left - extra;
 
-            var autoLeft = left - (autoWidth - width);
-            autoLeft = Math.max(autoLeft, 0);
-
-            $suggestionsContainer.css('left', autoLeft);
-            $suggestionsContainer.width(autoWidth);
+            $suggestionsContainer.css({
+                width: 'auto',
+                left: newLeft
+            });
         }
 
         function formatResult(item, query) {
@@ -51,7 +50,7 @@
         }
 
         function getHiddenWidth($el) {
-            var $clone = $el.clone().css('visibility', 'hidden').appendTo($('body'));
+            var $clone = $el.clone().css('visibility', 'hidden').css('width', '').appendTo($('body'));
             var width = $clone.outerWidth(true);
 
             $clone.remove();
@@ -60,10 +59,14 @@
 
         function resetSuggestionsContainer($parent, $suggestionsContainer) {
             var offset = $parent.offset(),
+                height = $parent.height(),
                 width = $parent.outerWidth(true);
 
-            $suggestionsContainer.css('left', offset.left);
-            $suggestionsContainer.css('width', width);
+            $suggestionsContainer.css({
+                left: offset.left,
+                top: offset.top + height,
+                width: width
+            });
         }
 
         $('.autocomplete').each(function() {
@@ -100,7 +103,7 @@
                         $containsSuggestion.appendTo($suggestionsContainer);
 
                         var capitalizedQuery = capitalise(query);
-                        $queryLink.attr('href', '/search/?q' + query);
+                        $queryLink.attr('href', '/search/?q=' + query);
                         $queryText.text(capitalizedQuery);
 
                         setTimeout(function() {

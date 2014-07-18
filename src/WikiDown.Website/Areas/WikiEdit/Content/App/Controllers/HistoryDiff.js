@@ -7,19 +7,23 @@
             $scope.revisionPreview = undefined;
 
             var params = { slug: $scope.articleSlug, oldRevisionDate: oldRevisionDate, newRevisionDate: newRevisionDate };
-            $scope.revisionDiff = articleRevisionsDataApi.getDiff(params);
+            $scope.revisionDiff = articleRevisionsDataApi.getDiff(
+                params,
+                function() {
+                    $scope.$broadcast('historyElementDetailShow');
+                });
         }
 
         var diffDatesParams = {
             oldRevisionDate: $scope.$state.params.oldRevisionDate,
             newRevisionDate: $scope.$state.params.newRevisionDate,
         };
-
+        
         if (!diffDatesParams.oldRevisionDate || !diffDatesParams.newRevisionDate) {
             $scope.$state.go('history');
             return;
         }
-
+        
         diffRevisions(diffDatesParams.oldRevisionDate, diffDatesParams.newRevisionDate);
     }
 ]);

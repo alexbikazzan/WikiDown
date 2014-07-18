@@ -176,6 +176,7 @@
     <Compile Include="Areas\AccountAdmin\Models\AccountUserApiModel.cs" />
     <Compile Include="Areas\Assets\AssetsAreaRegistration.cs" />
     <Compile Include="Areas\Assets\Models\AssetsWikiDownJsViewModel.cs" />
+    <Compile Include="Areas\WikiEdit\Controllers\Api\ArticlesController.cs" />
     <Compile Include="Areas\WikiEdit\Controllers\Api\ArticlesMetaController.cs" />
     <Compile Include="Areas\WikiEdit\Models\ArticleRevisionApiModel.cs" />
     <Compile Include="Areas\WikiEdit\Models\ArticleRevisionListItemApiModel.cs" />
@@ -206,6 +207,9 @@
     <Content Include="Areas\WikiEdit\Content\App\Controllers\HistoryDiff.js" />
     <Content Include="Areas\WikiEdit\Content\App\Controllers\Meta.js" />
     <Content Include="Areas\WikiEdit\Content\App\Controllers\Admin.js" />
+    <Content Include="Areas\WikiEdit\Content\App\Directives\WmdPreview.js" />
+    <Content Include="Content\App\_Shared\Directives\DirtyFormUnloadConfirm.js" />
+    <Content Include="Content\App\_Shared\Directives\ScrollToOn.js" />
     <Content Include="Areas\WikiEdit\Content\App\Directives\WmdEditor.js" />
     <Content Include="Content\App\_Shared\DataApis.js" />
     <Content Include="Content\App\_Shared\Filters\LocalUtcTime.js" />
@@ -217,7 +221,7 @@
     <Content Include="Areas\WikiEdit\Views\web.config" />
     <Content Include="Areas\WikiEdit\Views\WikiEditPartials\HistoryDiff.cshtml" />
     <Content Include="Areas\WikiEdit\Views\WikiEditPartials\HistoryPreview.cshtml" />
-    <None Include="Content\Libraries\pagedown\Markdown.Editor.bak" />
+    <None Include="Content\Libraries\pagedown\Markdown.Editor.js.bak" />
     <Content Include="Content\Site.css.map">
       <DependentUpon>Site.css</DependentUpon>
     </Content>

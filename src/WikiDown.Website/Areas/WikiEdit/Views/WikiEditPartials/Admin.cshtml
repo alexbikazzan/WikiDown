@@ -9,20 +9,22 @@
 
 <div class="panel panel-default">
     <div class="panel-body">
-        <div class="form-group col-sm-4">
-            <label for="can-read">Can Read</label>
-            @CanDoSelect("can-read", "canRead", ngDisabled)
-        </div>
+        <form dirty-form-unload-confirm dirty-form-reset-on="formDataSaved">
+            <div class="form-group col-sm-4">
+                <label for="can-read">Can Read</label>
+                @CanDoSelect("can-read", "canRead", ngDisabled)
+            </div>
 
-        <div class="form-group col-sm-4">
-            <label for="can-edit">Can Edit</label>
-            @CanDoSelect("can-edit", "canEdit", ngDisabled)
-        </div>
+            <div class="form-group col-sm-4">
+                <label for="can-edit">Can Edit</label>
+                @CanDoSelect("can-edit", "canEdit", ngDisabled)
+            </div>
 
-        <div class="form-group col-sm-4">
-            <label for="can-admin">Can Admin</label>
-            @CanDoSelect("can-admin", "canAdmin", ngDisabled)
-        </div>
+            <div class="form-group col-sm-4">
+                <label for="can-admin">Can Admin</label>
+                @CanDoSelect("can-admin", "canAdmin", ngDisabled)
+            </div>
+        </form>
     </div>
     <div class="panel-footer">
         <button ng-click="saveArticleAccess()" ng-disabled="@ngDisabled" class="btn btn-primary">Save</button>

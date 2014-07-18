@@ -156,22 +156,6 @@ namespace WikiDown
             return result.Select(x => new ArticleId(x)).ToList();
         }
 
-        //public IReadOnlyCollection<ArticleId> GetArticleList()
-        //{
-        //    var query = this.GetArticlesQuery();
-
-        //    var result = query.As<Article>().Select(x => x.Title).ToList();
-
-        //    return result.Select(x => new ArticleId(x)).ToList();
-        //}
-
-        //private IRavenQueryable<ArticlesIndex.Result> GetArticlesQuery()
-        //{
-        //    var baseQuery = this.GetArticlesQueryBase();
-
-        //    return baseQuery.Where(x => x.ActiveRevisionId != null && x.ActiveRevisionId != string.Empty);
-        //}
-
         public ArticleRedirect GetArticleRedirect(ArticleId originalArticleId)
         {
             string articleRedirectId = IdUtility.CreateArticleRedirectId(originalArticleId);
@@ -427,19 +411,52 @@ namespace WikiDown
         public IReadOnlyCollection<ArticleSearchResultItem> SearchArticleTitles(string searchTerm)
         {
             searchTerm = (searchTerm ?? string.Empty).Trim();
-            var queryResult = this.GetArticlesSearchQueryBase(searchTerm, isFullSearch: false);
+            if (string.IsNullOrWhiteSpace(searchTerm))
+            {
+                return new List<ArticleSearchResultItem>(0);
+            }
 
-            return GetArticlesSearchResults(queryResult, searchTerm).ToList();
+            var searchTermWildcard = GetArticlesSearchTermWildcard(searchTerm);
+
+            var query =
+                this.CurrentSession.Query<SearchArticlesIndex.Result, SearchArticlesIndex>()
+                    .Where(
+                        x =>
+                        x.Slug.StartsWith(searchTermWildcard, StringComparison.InvariantCultureIgnoreCase)
+                        && this.principalAccessLevel.Value >= x.CanReadAccess)
+                    .As<ArticleSearchResultItem>();
+
+            return GetArticlesSearchResults(query, searchTerm).ToList();
         }
 
         public ArticleSearchResult SearchArticles(string searchTerm)
         {
             searchTerm = (searchTerm ?? string.Empty).Trim();
+            if (string.IsNullOrWhiteSpace(searchTerm))
+            {
+                return new ArticleSearchResult(Enumerable.Empty<ArticleSearchResultItem>(), null);
+            }
 
-            var queryResult = this.GetArticlesSearchQueryBase(searchTerm, isFullSearch: true);
-            var results = GetArticlesSearchResults(queryResult, searchTerm).ToList();
+            var searchTermWildcard = GetArticlesSearchTermWildcard(searchTerm);
 
-            var suggestionResults = !results.Any() ? queryResult.Suggest() : null;
+            var query =
+                this.CurrentSession.Query<SearchArticlesIndex.Result, SearchArticlesIndex>()
+                    .Customize(
+                        x =>
+                        x.Highlight("TextContent", SearchArticlesIndex.HighlightFragmentLength, 1, "Highlightings")
+                            .SetHighlighterTags("<mark>", "</mark>"))
+                    .Search(
+                        x => x.Slug,
+                        searchTermWildcard,
+                        escapeQueryOptions: EscapeQueryOptions.AllowPostfixWildcard)
+                    .Search(x => x.TextContent, searchTerm, 0.75M)
+                    .Search(x => x.Tags, searchTerm, 0.5M)
+                    .Where(x => this.principalAccessLevel.Value >= x.CanReadAccess)
+                    .As<ArticleSearchResultItem>();
+
+            var results = GetArticlesSearchResults(query, searchTerm).ToList();
+
+            var suggestionResults = !results.Any() ? query.Suggest() : null;
             var suggestions = (suggestionResults != null) ? suggestionResults.Suggestions : null;
 
             return new ArticleSearchResult(results, suggestions);
@@ -487,26 +504,9 @@ namespace WikiDown
                    select article;
         }
 
-        private IQueryable<ArticleSearchResultItem> GetArticlesSearchQueryBase(string searchTerm, bool isFullSearch)
+        private static string GetArticlesSearchTermWildcard(string searchTerm)
         {
-            var searchTermWildcard = searchTerm.TrimEnd('*').Trim() + '*';
-
-            var query = this.CurrentSession.Query<SearchArticlesIndex.Result, SearchArticlesIndex>()
-                .Search(x => x.Slug, searchTermWildcard, escapeQueryOptions: EscapeQueryOptions.AllowPostfixWildcard);
-
-            if (isFullSearch)
-            {
-                query =
-                    query.Customize(
-                        x =>
-                        x.Highlight("TextContent", SearchArticlesIndex.HighlightFragmentLength, 1, "Highlightings")
-                            .SetHighlighterTags("<mark>", "</mark>"))
-                        .Search(x => x.TextContent, searchTerm, 0.75M)
-                        .Search(x => x.Tags, searchTerm, 0.5M);
-            }
-
-            query = query.Where(x => this.principalAccessLevel.Value >= x.CanReadAccess);
-            return query.As<ArticleSearchResultItem>();
+            return searchTerm.TrimEnd('*').Trim() + '*';
         }
 
         private static IEnumerable<ArticleSearchResultItem> GetArticlesSearchResults(

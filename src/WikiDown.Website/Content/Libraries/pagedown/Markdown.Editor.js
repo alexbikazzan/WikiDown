@@ -26,8 +26,11 @@
 
         link: "Hyperlink <a> Ctrl+L",
         linkdescription: "enter link description here",
-        linkdialog: "<p><b>Insert Hyperlink</b></p><p>http://example.com/ \"optional title\"</p>"
-        + "<p>Leave empty to link to word inside wiki</p>",
+        linkdialog: "<p><b>Insert Hyperlink</b></p>" //"<p>http://example.com/ \"optional title\"</p>"
+            + "<ul>"
+            + "<li>Write word(s) to link inside wiki</li>"
+            + "<li>Leave empty to link inside wiki to marked word(s) in editor</li>"
+            + "</ul>",
 
         quote: "Blockquote <blockquote> Ctrl+Q",
         quoteexample: "Blockquote",
@@ -66,7 +69,6 @@
     // The default text that appears in the dialog input box when entering
     // links.
     var imageDefaultText = "http://";
-    // CHANGED
     var linkDefaultText = ''; //"http://";
 
     // -------------------------------------------------------------------
@@ -1099,7 +1101,6 @@
                 // Fixes common pasting errors.
                 text = text.replace(/^http:\/\/(https?|ftp):\/\//, '$1://');
 
-                // CHANGED
                 if (!/^(?:https?|ftp):\/\//.test(text) && /^([^\.]+)\.([^\.])+$/.test(text)) {
                     text = 'http://' + text;
                 }
@@ -1737,24 +1738,22 @@
             // Marks up the link and adds the ref.
             var linkEnteredCallback = function (link) {
 
-                background.parentNode.removeChild(background);
+                function wikiDownFormatUrl(url) {
+                    return properlyEncoded(url.replace(' ', '_'));
+                }
 
+                background.parentNode.removeChild(background);
+                
                 if (!isImage && !link && chunk.selection) {
                     var selection = chunk.selection.charAt(0).toUpperCase() + chunk.selection.slice(1);
-
+                    link = wikiDownFormatUrl(selection);
+                }
+                
+                var isRelativeLink = link && !/^(?:https?|ftp):\/\//.test(link);
+                if (!isImage && isRelativeLink) {
                     chunk.startTag = "[";
-                    chunk.endTag = "](" + selection + ")";
+                    chunk.endTag = "](" + link + ")";
                 } else if (link !== null) {
-                    if (link && !/^(?:https?|ftp):\/\//.test(link)) {
-                        link = link.replace(' ', '_');
-                        if (!/^\//.test(link)) {
-                            link = '/' + link;
-                        }
-                        if (!/^\/wiki/.test(link)) {
-                            link = '/wiki' + link;
-                        }
-                    }
-                    
                     // (                          $1
                     //     [^\\]                  anything that's not a backslash
                     //     (?:\\\\)*              an even number (this includes zero) of backslashes

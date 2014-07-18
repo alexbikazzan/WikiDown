@@ -1,31 +1,35 @@
 ﻿angular.module('WikiEdit')
-    .value('articlesBaseUrl', '/api/articles/')
+    .value('articlesBaseUrl', '/api/articles/:slug/')
     .factory('articlesDataApi', [
         '$resource', 'articlesBaseUrl',
         function ($resource, articlesBaseUrl) {
-            return $resource(articlesBaseUrl, {}, {});
+            return $resource(articlesBaseUrl, {}, {
+                getExists: {
+                    url: articlesBaseUrl + 'exists/'
+                }
+            });
         }
     ])
-    .value('articleRevisionsBaseUrl', '/api/article-revisions/:slug/:revisionDate/')
+    .value('articleRevisionsBaseUrl', '/api/article-revisions/:slug/')
     .factory('articleRevisionsDataApi', [
         '$resource', 'articleRevisionsBaseUrl',
         function($resource, articleRevisionsBaseUrl) {
-            return $resource(articleRevisionsBaseUrl, {}, {
+            return $resource(articleRevisionsBaseUrl + ':revisionDate/', {}, {
                 getDiff: {
                     url: articleRevisionsBaseUrl + 'diff/:oldRevisionDate/:newRevisionDate/'
                 },
                 getLatest: {
-                    url: articleRevisionsBaseUrl + 'latest/'
+                    url: articleRevisionsBaseUrl + ':revisionDate/latest/'
                 },
                 getPreview: {
-                    url: articleRevisionsBaseUrl + 'preview/'
+                    url: articleRevisionsBaseUrl + ':revisionDate/preview/'
                 },
                 publishRevision: {
-                    url: articleRevisionsBaseUrl + 'publish/',
+                    url: articleRevisionsBaseUrl + ':revisionDate/publish/',
                     method: 'POST'
                 },
                 revertArticleToDraft: {
-                    url: articleRevisionsBaseUrl + 'revert-to-draft/',
+                    url: articleRevisionsBaseUrl + ':revisionDate/revert-to-draft/',
                     method: 'POST'
                 }
             });

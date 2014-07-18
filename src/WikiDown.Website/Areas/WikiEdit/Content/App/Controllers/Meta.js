@@ -31,7 +31,10 @@
             $scope.articleRedirectsSaving = articlesMetaDataApi.saveArticleRedirects(
                 { slug: $scope.articleSlug },
                 redirects,
-                populateArticleRedirects);
+                function() {
+                    $scope.$broadcast('formDataSaved');
+                    populateArticleRedirects();
+                });
         };
 
         $scope.saveArticleTags = function() {
@@ -40,7 +43,10 @@
             $scope.articleTagsSaving = articlesMetaDataApi.saveArticleTags(
                 { slug: $scope.articleSlug },
                 tags,
-                populateArticleTags);
+                function() {
+                    $scope.$broadcast('formDataSaved');
+                    populateArticleTags();
+                });
         };
 
         $scope.articleRedirectsLoading = articlesMetaDataApi.getArticleRedirects(

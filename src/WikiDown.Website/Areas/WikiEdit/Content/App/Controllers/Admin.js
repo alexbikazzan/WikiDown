@@ -24,7 +24,10 @@
         $scope.saveArticleAccess = function() {
             $scope.articleAccessSaving = articlesAdminDataApi.save(
                 { slug: $scope.articleSlug },
-                $scope.articleAccess);
+                $scope.articleAccess,
+                function() {
+                    $scope.$broadcast('formDataSaved');
+                });
         };
 
         $scope.setDefaultArticleAccess = function() {
