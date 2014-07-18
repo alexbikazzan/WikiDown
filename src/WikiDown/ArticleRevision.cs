@@ -9,8 +9,6 @@ namespace WikiDown
 {
     public class ArticleRevision
     {
-        private string textContent;
-
         public ArticleRevision(
             ArticleId articleId,
             IPrincipal principal,
